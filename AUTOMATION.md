@@ -362,5 +362,5 @@ Example changelog format:
 - fix: resolve configuration loading issue
 - docs: update installation instructions
 
-**Full Changelog**: https://github.com/wopee-io/wopee-mcp/compare/v1.0.0...v1.1.0
+**Full Changelog**: https://github.com/autonomous-testing/wopee-mcp/compare/v1.0.0...v1.1.0
 ```

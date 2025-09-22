@@ -63,13 +63,13 @@
     "url": "https://wopee.io"
   },
   "license": "Apache-2.0",
-  "homepage": "https://github.com/wopee-io/wopee-mcp#readme",
+  "homepage": "https://github.com/autonomous-testing/wopee-mcp#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wopee-io/wopee-mcp.git"
+    "url": "git+https://github.com/autonomous-testing/wopee-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/wopee-io/wopee-mcp/issues"
+    "url": "https://github.com/autonomous-testing/wopee-mcp/issues"
   },
   "funding": {
     "type": "github",

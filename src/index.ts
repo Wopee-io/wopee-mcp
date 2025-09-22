@@ -680,7 +680,7 @@ EXAMPLES:
   # Show help
   wopee-mcp --help
 
-For more information, visit: https://github.com/wopee-io/wopee-mcp
+For more information, visit: https://github.com/autonomous-testing/wopee-mcp
 `);
     process.exit(0);
   }
