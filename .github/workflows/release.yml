@@ -68,13 +68,33 @@ jobs:
           RELEASE_TYPE="${{ github.event.inputs.release_type }}"
           IS_PRERELEASE="${{ github.event.inputs.prerelease }}"
           
-          # Calculate new version
+          # Calculate new version manually to avoid triggering npm scripts
+          # Parse current version
+          IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
+          
+          # Calculate new version based on release type
+          case "$RELEASE_TYPE" in
+            "major")
+              NEW_MAJOR=$((major + 1))
+              NEW_VERSION="$NEW_MAJOR.0.0"
+              ;;
+            "minor")
+              NEW_MINOR=$((minor + 1))
+              NEW_VERSION="$major.$NEW_MINOR.0"
+              ;;
+            "patch")
+              NEW_PATCH=$((patch + 1))
+              NEW_VERSION="$major.$minor.$NEW_PATCH"
+              ;;
+            *)
+              echo "Invalid release type: $RELEASE_TYPE"
+              exit 1
+              ;;
+          esac
+          
+          # Add prerelease identifier if needed
           if [ "$IS_PRERELEASE" = "true" ]; then
-            # For prerelease, add prerelease identifier
-            NEW_VERSION=$(npm version $RELEASE_TYPE --preid=beta --no-git-tag-version --json | jq -r '.')
-          else
-            # For regular release
-            NEW_VERSION=$(npm version $RELEASE_TYPE --no-git-tag-version --json | jq -r '.')
+            NEW_VERSION="${NEW_VERSION}-beta.1"
           fi
           
           TAG="v$NEW_VERSION"

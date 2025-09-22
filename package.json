@@ -1,6 +1,6 @@
 {
   "name": "wopee-mcp",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "MCP server for Wopee.io autonomous testing platform",
   "main": "dist/index.js",
   "type": "module",
@@ -30,7 +30,7 @@
     "prepublishOnly": "npm run build:clean && npm test",
     "prepack": "npm run build:clean",
     "postpack": "echo 'Package ready for publishing'",
-    "version": "npm run build:clean && git add -f dist",
+    "version": "npm run build:clean",
     "postversion": "git push && git push --tags",
     "publish:patch": "npm version patch && npm publish",
     "publish:minor": "npm version minor && npm publish",
