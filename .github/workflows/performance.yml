@@ -1,0 +1,279 @@
+name: Performance Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run performance tests weekly on Sundays at 3 AM UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # Performance baseline tests
+  performance-baseline:
+    name: Performance Baseline
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build project
+        run: npm run build
+        
+      - name: Install performance testing tools
+        run: |
+          npm install -g autocannon
+          npm install -g clinic
+          
+      - name: Run performance tests
+        run: |
+          echo "Running performance baseline tests..."
+          
+          # Test server startup time
+          echo "Testing server startup time..."
+          time node dist/index.js --help > /dev/null 2>&1 &
+          SERVER_PID=$!
+          sleep 2
+          kill $SERVER_PID 2>/dev/null || true
+          
+          # Test memory usage
+          echo "Testing memory usage..."
+          node --max-old-space-size=512 -e "
+            const start = process.memoryUsage();
+            console.log('Initial memory:', start);
+            
+            // Simulate tool execution
+            const { wopee_dispatch_analysis } = require('./dist/tools/wopee_dispatch_analysis.js');
+            
+            const end = process.memoryUsage();
+            console.log('Final memory:', end);
+            console.log('Memory delta:', {
+              rss: end.rss - start.rss,
+              heapUsed: end.heapUsed - start.heapUsed,
+              heapTotal: end.heapTotal - start.heapTotal,
+              external: end.external - start.external
+            });
+          " > memory-test-results.txt
+          
+      - name: Run load tests
+        run: |
+          echo "Running load tests..."
+          
+          # Create a simple test server for load testing
+          cat > test-server.js << 'EOF'
+          const http = require('http');
+          const { spawn } = require('child_process');
+          
+          const server = http.createServer((req, res) => {
+            if (req.url === '/health') {
+              res.writeHead(200, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ status: 'healthy', timestamp: new Date().toISOString() }));
+            } else {
+              res.writeHead(404);
+              res.end('Not found');
+            }
+          });
+          
+          server.listen(3000, () => {
+            console.log('Test server running on port 3000');
+          });
+          EOF
+          
+          # Start test server
+          node test-server.js &
+          SERVER_PID=$!
+          sleep 2
+          
+          # Run load test
+          autocannon -c 10 -d 30 -p 10 http://localhost:3000/health > load-test-results.txt || true
+          
+          # Cleanup
+          kill $SERVER_PID 2>/dev/null || true
+          rm -f test-server.js
+          
+      - name: Analyze performance results
+        run: |
+          echo "Analyzing performance results..."
+          
+          # Parse memory test results
+          if [ -f memory-test-results.txt ]; then
+            echo "Memory test results:"
+            cat memory-test-results.txt
+          fi
+          
+          # Parse load test results
+          if [ -f load-test-results.txt ]; then
+            echo "Load test results:"
+            cat load-test-results.txt
+          fi
+          
+      - name: Upload performance results
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-results
+          path: |
+            memory-test-results.txt
+            load-test-results.txt
+          retention-days: 30
+
+  # Bundle size analysis
+  bundle-analysis:
+    name: Bundle Size Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build project
+        run: npm run build
+        
+      - name: Analyze bundle size
+        run: |
+          echo "Analyzing bundle size..."
+          
+          # Get dist directory size
+          DIST_SIZE=$(du -sh dist | cut -f1)
+          echo "Distribution size: $DIST_SIZE"
+          
+          # Get individual file sizes
+          echo "File sizes:"
+          find dist -type f -name "*.js" -exec du -h {} \; | sort -hr
+          
+          # Create bundle analysis
+          cat > bundle-analysis.json << EOF
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "totalSize": "$DIST_SIZE",
+            "files": [
+              $(find dist -type f -name "*.js" -exec echo "{\"file\": \"{}\", \"size\": \"$(du -h {} | cut -f1)\"}" \; | paste -sd,)
+            ]
+          }
+          EOF
+          
+      - name: Check for size regressions
+        run: |
+          echo "Checking for size regressions..."
+          
+          # Define size limits (in KB)
+          MAX_MAIN_SIZE=500
+          MAX_TOTAL_SIZE=2000
+          
+          # Check main file size
+          MAIN_SIZE=$(find dist -name "index.js" -exec du -k {} \; | cut -f1)
+          if [ "$MAIN_SIZE" -gt "$MAX_MAIN_SIZE" ]; then
+            echo "::warning::Main file size ($MAIN_SIZE KB) exceeds limit ($MAX_MAIN_SIZE KB)"
+          else
+            echo "✅ Main file size ($MAIN_SIZE KB) is within limit"
+          fi
+          
+          # Check total size
+          TOTAL_SIZE=$(du -k dist | cut -f1)
+          if [ "$TOTAL_SIZE" -gt "$MAX_TOTAL_SIZE" ]; then
+            echo "::warning::Total bundle size ($TOTAL_SIZE KB) exceeds limit ($MAX_TOTAL_SIZE KB)"
+          else
+            echo "✅ Total bundle size ($TOTAL_SIZE KB) is within limit"
+          fi
+          
+      - name: Upload bundle analysis
+        uses: actions/upload-artifact@v3
+        with:
+          name: bundle-analysis
+          path: bundle-analysis.json
+          retention-days: 30
+
+  # Performance regression detection
+  regression-detection:
+    name: Performance Regression Detection
+    runs-on: ubuntu-latest
+    needs: [performance-baseline, bundle-analysis]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Download performance artifacts
+        uses: actions/download-artifact@v3
+        
+      - name: Compare with baseline
+        run: |
+          echo "Comparing performance with baseline..."
+          
+          # This would typically compare with stored baseline metrics
+          # For now, we'll just report the current metrics
+          
+          if [ -f performance-results/memory-test-results.txt ]; then
+            echo "Current memory usage:"
+            cat performance-results/memory-test-results.txt
+          fi
+          
+          if [ -f bundle-analysis/bundle-analysis.json ]; then
+            echo "Current bundle size:"
+            cat bundle-analysis/bundle-analysis.json
+          fi
+          
+      - name: Generate performance report
+        run: |
+          echo "# Performance Report" > performance-report.md
+          echo "" >> performance-report.md
+          echo "## Memory Usage" >> performance-report.md
+          echo "" >> performance-report.md
+          
+          if [ -f performance-results/memory-test-results.txt ]; then
+            echo '```' >> performance-report.md
+            cat performance-results/memory-test-results.txt >> performance-report.md
+            echo '```' >> performance-report.md
+          fi
+          
+          echo "" >> performance-report.md
+          echo "## Bundle Size" >> performance-report.md
+          echo "" >> performance-report.md
+          
+          if [ -f bundle-analysis/bundle-analysis.json ]; then
+            echo '```json' >> performance-report.md
+            cat bundle-analysis/bundle-analysis.json >> performance-report.md
+            echo '```' >> performance-report.md
+          fi
+          
+          echo "" >> performance-report.md
+          echo "## Load Test Results" >> performance-report.md
+          echo "" >> performance-report.md
+          
+          if [ -f performance-results/load-test-results.txt ]; then
+            echo '```' >> performance-report.md
+            cat performance-results/load-test-results.txt >> performance-report.md
+            echo '```' >> performance-report.md
+          fi
+          
+          cat performance-report.md
+          
+      - name: Upload performance report
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-report
+          path: performance-report.md
+          retention-days: 30

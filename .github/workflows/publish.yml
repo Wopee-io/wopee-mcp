@@ -1,0 +1,365 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers on version tags like v1.0.0, v1.2.3, etc.
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      dry_run:
+        description: 'Dry run (test without publishing)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '18'
+  REGISTRY_URL: 'https://registry.npmjs.org/'
+
+jobs:
+  # Validate and prepare for publishing
+  prepare:
+    name: Prepare for Publishing
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      dry_run: ${{ steps.version.outputs.dry_run }}
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          registry-url: ${{ env.REGISTRY_URL }}
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Get version and tag
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # Manual dispatch - bump version
+            VERSION_TYPE="${{ github.event.inputs.version_type }}"
+            DRY_RUN="${{ github.event.inputs.dry_run }}"
+            
+            # Get current version
+            CURRENT_VERSION=$(node -p "require('./package.json').version")
+            echo "Current version: $CURRENT_VERSION"
+            
+            # Bump version
+            npm version $VERSION_TYPE --no-git-tag-version
+            NEW_VERSION=$(node -p "require('./package.json').version")
+            TAG="v$NEW_VERSION"
+            
+            echo "New version: $NEW_VERSION"
+            echo "Tag: $TAG"
+            echo "Dry run: $DRY_RUN"
+          else
+            # Tag push - extract from tag
+            TAG="${{ github.ref_name }}"
+            NEW_VERSION="${TAG#v}"
+            DRY_RUN="false"
+            
+            echo "Tag: $TAG"
+            echo "New version: $NEW_VERSION"
+            echo "Dry run: $DRY_RUN"
+          fi
+          
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "dry_run=$DRY_RUN" >> $GITHUB_OUTPUT
+          
+      - name: Validate package.json
+        run: |
+          echo "Validating package.json..."
+          node -e "
+            const pkg = require('./package.json');
+            if (!pkg.name || !pkg.version || !pkg.main) {
+              throw new Error('Invalid package.json: missing required fields');
+            }
+            console.log('Package name:', pkg.name);
+            console.log('Package version:', pkg.version);
+            console.log('Main entry:', pkg.main);
+          "
+          
+      - name: Check if version already exists
+        if: steps.version.outputs.dry_run == 'false'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          
+          echo "Checking if version $VERSION of $PACKAGE_NAME already exists..."
+          
+          if npm view "$PACKAGE_NAME@$VERSION" version > /dev/null 2>&1; then
+            echo "Version $VERSION already exists on npm"
+            exit 1
+          else
+            echo "Version $VERSION is available for publishing"
+          fi
+
+  # Run full test suite before publishing
+  test:
+    name: Pre-publish Tests
+    runs-on: ubuntu-latest
+    needs: prepare
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run linting
+        run: npm run lint
+        
+      - name: Run tests
+        run: npm test
+        
+      - name: Run tests with coverage
+        run: npm run test:coverage
+        
+      - name: Security audit
+        run: npm audit --audit-level=moderate
+
+  # Build and validate package
+  build:
+    name: Build Package
+    runs-on: ubuntu-latest
+    needs: [prepare, test]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build package
+        run: npm run build:clean
+        
+      - name: Validate build output
+        run: |
+          echo "Validating build output..."
+          if [ ! -d "dist" ] || [ ! "$(ls -A dist)" ]; then
+            echo "Build output directory is missing or empty"
+            exit 1
+          fi
+          
+          # Check main entry point exists
+          MAIN_FILE=$(node -p "require('./package.json').main")
+          if [ ! -f "$MAIN_FILE" ]; then
+            echo "Main entry point $MAIN_FILE not found"
+            exit 1
+          fi
+          
+          echo "Build validation successful"
+          
+      - name: Test package creation
+        run: npm pack --dry-run
+        
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: package-artifacts
+          path: |
+            dist/
+            package.json
+            README.md
+            LICENSE
+            env.example
+            INTEGRATION.md
+            QUICK_START.md
+          retention-days: 1
+
+  # Publish to npm
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    needs: [prepare, build]
+    if: needs.prepare.outputs.dry_run == 'false'
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          registry-url: ${{ env.REGISTRY_URL }}
+          
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: package-artifacts
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+      - name: Verify publication
+        run: |
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          VERSION="${{ needs.prepare.outputs.version }}"
+          
+          echo "Verifying publication of $PACKAGE_NAME@$VERSION..."
+          
+          # Wait a moment for npm to process
+          sleep 10
+          
+          # Check if package is available
+          if npm view "$PACKAGE_NAME@$VERSION" version > /dev/null 2>&1; then
+            echo "✅ Package $PACKAGE_NAME@$VERSION successfully published to npm"
+          else
+            echo "❌ Package publication verification failed"
+            exit 1
+          fi
+
+  # Dry run (test without publishing)
+  dry-run:
+    name: Dry Run
+    runs-on: ubuntu-latest
+    needs: [prepare, build]
+    if: needs.prepare.outputs.dry_run == 'true'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          registry-url: ${{ env.REGISTRY_URL }}
+          
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: package-artifacts
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Dry run publish
+        run: npm publish --dry-run
+        
+      - name: Show package contents
+        run: |
+          echo "Package contents that would be published:"
+          npm pack --dry-run
+
+  # Create GitHub release
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [prepare, publish]
+    if: needs.prepare.outputs.dry_run == 'false' && success()
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Generate changelog
+        id: changelog
+        run: |
+          TAG="${{ needs.prepare.outputs.tag }}"
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          
+          echo "Current tag: $TAG"
+          echo "Previous tag: $PREVIOUS_TAG"
+          
+          if [ -n "$PREVIOUS_TAG" ]; then
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" $PREVIOUS_TAG..HEAD)
+          else
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --max-count=20)
+          fi
+          
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.prepare.outputs.tag }}
+          release_name: Release ${{ needs.prepare.outputs.tag }}
+          body: |
+            ## Changes in this release
+            
+            ${{ steps.changelog.outputs.changelog }}
+            
+            ## Installation
+            
+            ```bash
+            npm install -g wopee-mcp@${{ needs.prepare.outputs.version }}
+            ```
+            
+            ## Documentation
+            
+            - [Quick Start Guide](QUICK_START.md)
+            - [Integration Guide](INTEGRATION.md)
+            - [Examples](EXAMPLES.md)
+          draft: false
+          prerelease: false
+
+  # Notify on success
+  notify:
+    name: Notify Success
+    runs-on: ubuntu-latest
+    needs: [prepare, publish, release]
+    if: always() && needs.prepare.outputs.dry_run == 'false'
+    
+    steps:
+      - name: Notify success
+        if: needs.publish.result == 'success'
+        run: |
+          echo "🎉 Successfully published wopee-mcp@${{ needs.prepare.outputs.version }} to npm"
+          echo "📦 Package: https://www.npmjs.com/package/wopee-mcp"
+          echo "🏷️  Release: ${{ needs.prepare.outputs.tag }}"
+          
+      - name: Notify failure
+        if: needs.publish.result == 'failure'
+        run: |
+          echo "❌ Failed to publish wopee-mcp@${{ needs.prepare.outputs.version }}"
+          exit 1

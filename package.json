@@ -1,0 +1,113 @@
+{
+  "name": "wopee-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Wopee.io autonomous testing platform",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "wopee-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE",
+    "env.example",
+    "INTEGRATION.md",
+    "QUICK_START.md"
+  ],
+  "scripts": {
+    "build": "tsc && node scripts/add-js-extensions.js",
+    "build:clean": "rm -rf dist && npm run build",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:integration": "jest --testPathPattern=integration",
+    "test:performance": "jest --testPathPattern=performance",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "prepublishOnly": "npm run build:clean && npm test",
+    "prepack": "npm run build:clean",
+    "postpack": "echo 'Package ready for publishing'",
+    "version": "npm run build:clean && git add -A dist",
+    "postversion": "git push && git push --tags",
+    "publish:patch": "npm version patch && npm publish",
+    "publish:minor": "npm version minor && npm publish",
+    "publish:major": "npm version major && npm publish",
+    "publish:dry-run": "npm run build:clean && npm publish --dry-run",
+    "validate": "npm run lint && npm test && npm run build",
+    "security:audit": "npm audit --audit-level=moderate",
+    "security:check": "npm audit --audit-level=high",
+    "deps:check": "npm outdated",
+    "deps:update": "npx npm-check-updates -u",
+    "deps:update:patch": "npx npm-check-updates -u --target patch",
+    "deps:update:minor": "npx npm-check-updates -u --target minor",
+    "deps:update:major": "npx npm-check-updates -u --target major"
+  },
+  "keywords": [
+    "mcp",
+    "wopee",
+    "testing",
+    "autonomous",
+    "automation",
+    "graphql",
+    "model-context-protocol",
+    "ai-testing",
+    "test-automation",
+    "quality-assurance"
+  ],
+  "author": {
+    "name": "Wopee Labs",
+    "email": "contact@wopee.io",
+    "url": "https://wopee.io"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/wopee-io/wopee-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wopee-io/wopee-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wopee-io/wopee-mcp/issues"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/wopee-io"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "dotenv": "^16.4.5",
+    "graphql-request": "^6.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
+    "npm-check-updates": "^16.14.15",
+    "ts-jest": "^29.1.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

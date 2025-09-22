@@ -1,0 +1,243 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run security scan daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # Dependency vulnerability scan
+  dependency-scan:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run npm audit
+        run: |
+          echo "Running npm audit..."
+          npm audit --audit-level=moderate --json > audit-results.json || true
+          
+      - name: Parse audit results
+        run: |
+          if [ -f audit-results.json ]; then
+            VULNERABILITIES=$(jq '.metadata.vulnerabilities.total' audit-results.json)
+            echo "Total vulnerabilities found: $VULNERABILITIES"
+            
+            if [ "$VULNERABILITIES" -gt 0 ]; then
+              echo "Vulnerability details:"
+              jq '.vulnerabilities' audit-results.json
+              echo "::warning::Found $VULNERABILITIES vulnerabilities"
+            else
+              echo "✅ No vulnerabilities found"
+            fi
+          fi
+          
+      - name: Upload audit results
+        uses: actions/upload-artifact@v3
+        with:
+          name: audit-results
+          path: audit-results.json
+          retention-days: 30
+
+  # Code security scan with CodeQL
+  codeql:
+    name: CodeQL Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+      
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript' ]
+        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build project
+        run: npm run build
+        
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:${{matrix.language}}"
+
+  # License compliance check
+  license-check:
+    name: License Compliance Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install license checker
+        run: npm install -g license-checker
+        
+      - name: Check licenses
+        run: |
+          echo "Checking package licenses..."
+          license-checker --onlyAllow 'MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;Unlicense' --excludePrivatePackages --json > license-results.json || true
+          
+      - name: Parse license results
+        run: |
+          if [ -f license-results.json ]; then
+            INVALID_LICENSES=$(jq 'to_entries | map(select(.value.licenses | test("MIT|Apache-2.0|BSD-2-Clause|BSD-3-Clause|ISC|Unlicense") | not)) | length' license-results.json)
+            
+            if [ "$INVALID_LICENSES" -gt 0 ]; then
+              echo "❌ Found packages with incompatible licenses:"
+              jq 'to_entries | map(select(.value.licenses | test("MIT|Apache-2.0|BSD-2-Clause|BSD-3-Clause|ISC|Unlicense") | not)) | .[] | "\(.key): \(.value.licenses)"' license-results.json
+              echo "::warning::Found packages with incompatible licenses"
+            else
+              echo "✅ All packages have compatible licenses"
+            fi
+          fi
+          
+      - name: Upload license results
+        uses: actions/upload-artifact@v3
+        with:
+          name: license-results
+          path: license-results.json
+          retention-days: 30
+
+  # Secret scanning
+  secret-scan:
+    name: Secret Scanning
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Install truffleHog
+        run: |
+          wget https://github.com/trufflesecurity/trufflehog/releases/latest/download/trufflehog_3.63.3_linux_amd64.tar.gz
+          tar -xzf trufflehog_3.63.3_linux_amd64.tar.gz
+          chmod +x trufflehog
+          sudo mv trufflehog /usr/local/bin/
+          
+      - name: Run secret scan
+        run: |
+          echo "Scanning for secrets..."
+          trufflehog filesystem . --no-verification --format json > secret-scan-results.json || true
+          
+      - name: Parse secret scan results
+        run: |
+          if [ -f secret-scan-results.json ]; then
+            SECRET_COUNT=$(jq '. | length' secret-scan-results.json)
+            
+            if [ "$SECRET_COUNT" -gt 0 ]; then
+              echo "❌ Found potential secrets:"
+              jq '.[] | "\(.SourceMetadata.Data.Filesystem.file): \(.DetectorName)"' secret-scan-results.json
+              echo "::warning::Found $SECRET_COUNT potential secrets"
+            else
+              echo "✅ No secrets found"
+            fi
+          fi
+          
+      - name: Upload secret scan results
+        uses: actions/upload-artifact@v3
+        with:
+          name: secret-scan-results
+          path: secret-scan-results.json
+          retention-days: 7
+
+  # Security summary
+  security-summary:
+    name: Security Summary
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, codeql, license-check, secret-scan]
+    if: always()
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        
+      - name: Generate security summary
+        run: |
+          echo "# Security Scan Summary" > security-summary.md
+          echo "" >> security-summary.md
+          echo "## Scan Results" >> security-summary.md
+          echo "" >> security-summary.md
+          
+          # Dependency scan results
+          if [ -f audit-results/audit-results.json ]; then
+            VULNERABILITIES=$(jq '.metadata.vulnerabilities.total' audit-results/audit-results.json)
+            echo "- **Dependency Vulnerabilities**: $VULNERABILITIES" >> security-summary.md
+          fi
+          
+          # License check results
+          if [ -f license-results/license-results.json ]; then
+            INVALID_LICENSES=$(jq 'to_entries | map(select(.value.licenses | test("MIT|Apache-2.0|BSD-2-Clause|BSD-3-Clause|ISC|Unlicense") | not)) | length' license-results/license-results.json)
+            echo "- **License Issues**: $INVALID_LICENSES" >> security-summary.md
+          fi
+          
+          # Secret scan results
+          if [ -f secret-scan-results/secret-scan-results.json ]; then
+            SECRET_COUNT=$(jq '. | length' secret-scan-results/secret-scan-results.json)
+            echo "- **Potential Secrets**: $SECRET_COUNT" >> security-summary.md
+          fi
+          
+          echo "" >> security-summary.md
+          echo "## Job Status" >> security-summary.md
+          echo "- Dependency Scan: ${{ needs.dependency-scan.result }}" >> security-summary.md
+          echo "- CodeQL Scan: ${{ needs.codeql.result }}" >> security-summary.md
+          echo "- License Check: ${{ needs.license-check.result }}" >> security-summary.md
+          echo "- Secret Scan: ${{ needs.secret-scan.result }}" >> security-summary.md
+          
+          cat security-summary.md
+          
+      - name: Upload security summary
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-summary
+          path: security-summary.md
+          retention-days: 30
