@@ -622,7 +622,7 @@ class WopeeMCPServer {
     // Validate configuration before starting
     try {
       const config = configManager.getInstance().getConfig();
-      console.error(`[Wopee MCP] Starting server with API URL: ${config.apiUrl}`);
+      console.log(`[Wopee MCP] Starting server with API URL: ${config.apiUrl}`);
     } catch (error) {
       console.error('[Wopee MCP] Configuration error:', error);
       process.exit(1);
@@ -630,7 +630,7 @@ class WopeeMCPServer {
 
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
-    console.error('[Wopee MCP] Server started successfully');
+    console.log('[Wopee MCP] Server started successfully');
   }
 }
 

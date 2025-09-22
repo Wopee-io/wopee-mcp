@@ -103,7 +103,7 @@ export class ConfigManager {
     if (existsSync(envPath)) {
       try {
         config({ path: envPath });
-        console.error(`[Wopee MCP] Loaded environment from: ${envPath}`);
+        console.log(`[Wopee MCP] Loaded environment from: ${envPath}`);
       } catch (error) {
         console.error(`[Wopee MCP] Failed to load .env from ${envPath}:`, error);
       }

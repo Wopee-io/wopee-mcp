@@ -57,7 +57,7 @@ export async function wopee_fetch_analysis_suites(
     // Validate input parameters
     const validatedParams = FetchAnalysisSuitesSchema.parse(params);
 
-    console.error(`[Wopee MCP] Fetching analysis suites for project: ${validatedParams.projectUuid}`);
+    console.log(`[Wopee MCP] Fetching analysis suites for project: ${validatedParams.projectUuid}`);
 
     const response = await graphqlClient.getInstance().request<{
       fetchAnalysisSuites: FetchAnalysisSuiteResponse[];
@@ -72,7 +72,7 @@ export async function wopee_fetch_analysis_suites(
       };
     }
 
-    console.error(`[Wopee MCP] Successfully fetched ${response.fetchAnalysisSuites.length} analysis suites`);
+    console.log(`[Wopee MCP] Successfully fetched ${response.fetchAnalysisSuites.length} analysis suites`);
 
     return {
       success: true,
