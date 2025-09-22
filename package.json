@@ -30,7 +30,7 @@
     "prepublishOnly": "npm run build:clean && npm test",
     "prepack": "npm run build:clean",
     "postpack": "echo 'Package ready for publishing'",
-    "version": "npm run build:clean && git add -A dist",
+    "version": "npm run build:clean && git add -f dist",
     "postversion": "git push && git push --tags",
     "publish:patch": "npm version patch && npm publish",
     "publish:minor": "npm version minor && npm publish",
