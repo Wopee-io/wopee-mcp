@@ -87,7 +87,6 @@ export enum GenerationStatus {
  * API Input Types
  */
 export const SuiteAnalysisConfigInputSchema = z.object({
-  startingUrl: z.string().url('Invalid starting URL').optional(),
   username: z.string().optional(),
   password: z.string().optional(),
   cookiesPreference: z.nativeEnum(CookiesPreference).optional(),

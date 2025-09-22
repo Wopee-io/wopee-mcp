@@ -66,7 +66,6 @@ describe('wopee_dispatch_analysis', () => {
       projectUuid: 'project-123',
       iterations: 5,
       suiteAnalysisConfig: {
-        startingUrl: 'https://example.com',
         username: 'testuser',
         password: 'testpass',
         cookiesPreference: 'ACCEPT_ALL' as any,
@@ -110,19 +109,4 @@ describe('wopee_dispatch_analysis', () => {
     expect(mockMutate).not.toHaveBeenCalled();
   });
 
-  it('should validate URL format in suiteAnalysisConfig', async () => {
-    const invalidParams = {
-      projectUuid: 'project-123',
-      suiteAnalysisConfig: {
-        startingUrl: 'not-a-valid-url',
-      },
-    };
-
-    const result = await wopee_dispatch_analysis(invalidParams as any);
-
-    expect(result.success).toBe(false);
-    expect(result.error).toContain('Failed to dispatch analysis');
-    // The validation happens before the GraphQL call, so mockMutate should not be called
-    expect(mockMutate).not.toHaveBeenCalled();
-  });
 });

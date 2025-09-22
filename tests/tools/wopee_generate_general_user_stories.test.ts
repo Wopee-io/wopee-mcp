@@ -142,7 +142,6 @@ describe('wopee_generate_general_user_stories', () => {
       extraPrompt: 'Generate comprehensive general user stories',
       selectedUserStories: ['story-1', 'story-2'],
       suiteAnalysisConfig: {
-        startingUrl: 'https://example.com',
         username: 'testuser',
         password: 'testpass',
         cookiesPreference: 'ACCEPT_ALL' as any,

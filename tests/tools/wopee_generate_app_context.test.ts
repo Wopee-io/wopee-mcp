@@ -143,7 +143,6 @@ describe('wopee_generate_app_context', () => {
       extraPrompt: 'Generate comprehensive app context',
       selectedUserStories: ['story-1', 'story-2'],
       suiteAnalysisConfig: {
-        startingUrl: 'https://example.com',
         username: 'testuser',
         password: 'testpass',
         cookiesPreference: 'ACCEPT_ALL' as any,

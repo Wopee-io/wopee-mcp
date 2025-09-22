@@ -191,11 +191,6 @@ class WopeeMCPServer {
                   type: 'object',
                   description: 'Configuration for the analysis suite',
                   properties: {
-                    startingUrl: {
-                      type: 'string',
-                      description: 'Starting URL for the analysis',
-                      format: 'uri',
-                    },
                     username: {
                       type: 'string',
                       description: 'Username for authentication',
@@ -256,11 +251,6 @@ class WopeeMCPServer {
                   type: 'object',
                   description: 'Configuration for the analysis suite',
                   properties: {
-                    startingUrl: {
-                      type: 'string',
-                      description: 'Starting URL for the analysis',
-                      format: 'uri',
-                    },
                     username: {
                       type: 'string',
                       description: 'Username for authentication',
@@ -321,11 +311,6 @@ class WopeeMCPServer {
                   type: 'object',
                   description: 'Configuration for the analysis suite',
                   properties: {
-                    startingUrl: {
-                      type: 'string',
-                      description: 'Starting URL for the analysis',
-                      format: 'uri',
-                    },
                     username: {
                       type: 'string',
                       description: 'Username for authentication',
@@ -386,11 +371,6 @@ class WopeeMCPServer {
                   type: 'object',
                   description: 'Configuration for the analysis suite',
                   properties: {
-                    startingUrl: {
-                      type: 'string',
-                      description: 'Starting URL for the analysis',
-                      format: 'uri',
-                    },
                     username: {
                       type: 'string',
                       description: 'Username for authentication',
