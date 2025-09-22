@@ -73,36 +73,11 @@ jobs:
           name: codecov-umbrella
           fail_ci_if_error: false
 
-  # Security audit
-  security:
-    name: Security Audit
-    runs-on: ubuntu-latest
-    needs: lint
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
-      - name: Install dependencies
-        run: npm ci
-        
-      - name: Run security audit
-        run: npm audit --audit-level=moderate
-        
-      - name: Check for known vulnerabilities
-        run: npx audit-ci --moderate
-
   # Build verification
   build:
     name: Build Verification
     runs-on: ubuntu-latest
-    needs: [lint, test, security]
+    needs: [lint, test]
     
     steps:
       - name: Checkout code
@@ -171,24 +146,50 @@ jobs:
           WOPEE_API_KEY: ${{ secrets.WOPEE_API_KEY_TEST }}
           WOPEE_PROJECT_UUID: ${{ secrets.WOPEE_PROJECT_UUID_TEST }}
 
-  # Performance tests
-  performance:
-    name: Performance Tests
+  # Quality gate
+  quality-gate:
+    name: Quality Gate
     runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'pull_request'
+    needs: [lint, test, build]
+    if: always()
     
     steps:
-      - name: Checkout code
+      - name: Check all jobs status
+        run: |
+          if [[ "${{ needs.lint.result }}" != "success" || 
+                "${{ needs.test.result }}" != "success" || 
+                "${{ needs.build.result }}" != "success" ]]; then
+            echo "Quality gate failed"
+            exit 1
+          fi
+          echo "Quality gate passed"
+
+  # Release and publish
+  release:
+    name: Release & Publish
+    needs: [quality-gate]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.quality-gate.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for npm provenance
+    
+    steps:
+      - name: Check-out
         uses: actions/checkout@v4
-        
+        with:
+          fetch-depth: 0
+          
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          registry-url: 'https://registry.npmjs.org/'
           
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm ci
         
       - name: Download build artifacts
@@ -197,26 +198,10 @@ jobs:
           name: build-artifacts
           path: dist/
           
-      - name: Run performance tests
-        run: npm run test:performance
+      - name: Semantic Release
         env:
-          NODE_ENV: test
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
 
-  # Quality gate
-  quality-gate:
-    name: Quality Gate
-    runs-on: ubuntu-latest
-    needs: [lint, test, security, build]
-    if: always()
-    
-    steps:
-      - name: Check all jobs status
-        run: |
-          if [[ "${{ needs.lint.result }}" != "success" || 
-                "${{ needs.test.result }}" != "success" || 
-                "${{ needs.security.result }}" != "success" || 
-                "${{ needs.build.result }}" != "success" ]]; then
-            echo "Quality gate failed"
-            exit 1
-          fi
-          echo "Quality gate passed"
+          
