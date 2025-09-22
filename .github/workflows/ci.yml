@@ -198,18 +198,33 @@ jobs:
           name: build-artifacts
           path: dist/
 
+      - name: Debug npm token
+        run: |
+          echo "Token length: ${#NPM_TOKEN}"
+          echo "Token starts with: ${NPM_TOKEN:0:10}..."
+          echo "Token ends with: ...${NPM_TOKEN: -10}"
+          # Check if token looks like a valid npm token (should start with 'npm_')
+          if [[ "$NPM_TOKEN" == npm_* ]]; then
+            echo "✅ Token format looks correct (starts with 'npm_')"
+          else
+            echo "❌ Token format looks incorrect (should start with 'npm_')"
+          fi
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Login to npm
         run: |
           # Create npmrc with authentication
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-          # Add other necessary npm configurations
           echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
           echo "access=public" >> ~/.npmrc
+          # Show the created npmrc (without exposing the token)
+          echo "Created .npmrc with auth token"
           # Verify authentication
           npm whoami --registry https://registry.npmjs.org/
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
+          
       - name: Semantic Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
