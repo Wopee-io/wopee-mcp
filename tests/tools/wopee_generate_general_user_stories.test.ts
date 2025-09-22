@@ -43,7 +43,7 @@ describe('wopee_generate_general_user_stories', () => {
     expect(result.message).toContain('General user stories generated successfully');
     expect(mockMutate).toHaveBeenCalledWith(
       expect.stringContaining('generateGeneralUserStories'),
-      params
+      { input: params }
     );
     expect(mockRequest).toHaveBeenCalledWith(
       expect.stringContaining('fetchFile'),
@@ -158,7 +158,7 @@ describe('wopee_generate_general_user_stories', () => {
     expect(result.data).toBe('general user stories content here');
     expect(mockMutate).toHaveBeenCalledWith(
       expect.stringContaining('generateGeneralUserStories'),
-      params
+      { input: params }
     );
   });
 });

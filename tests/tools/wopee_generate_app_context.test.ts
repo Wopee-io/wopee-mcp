@@ -44,7 +44,7 @@ describe('wopee_generate_app_context', () => {
     expect(result.message).toContain('App context generated successfully');
     expect(mockMutate).toHaveBeenCalledWith(
       expect.stringContaining('generateAppContext'),
-      params
+      { input: params }
     );
     expect(mockRequest).toHaveBeenCalledWith(
       expect.stringContaining('fetchFile'),
@@ -159,7 +159,7 @@ describe('wopee_generate_app_context', () => {
     expect(result.data).toBe('app context content here');
     expect(mockMutate).toHaveBeenCalledWith(
       expect.stringContaining('generateAppContext'),
-      params
+      { input: params }
     );
   });
 });

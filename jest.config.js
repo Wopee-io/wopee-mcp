@@ -10,14 +10,8 @@ export default {
       tsconfig: 'tsconfig.test.json',
     }],
   },
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
-  },
-  extensionsToTreatAsEsm: ['.ts'],
-  globals: {
-    'ts-jest': {
-      useESM: true,
-    },
   },
   collectCoverageFrom: [
     'src/**/*.ts',

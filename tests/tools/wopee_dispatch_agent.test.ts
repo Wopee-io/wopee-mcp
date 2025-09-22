@@ -38,7 +38,7 @@ describe('wopee_dispatch_agent', () => {
     expect(result.message).toContain('Agent dispatched successfully');
     expect(mockMutate).toHaveBeenCalledWith(
       expect.stringContaining('dispatchAgent'),
-      params
+      { input: params }
     );
   });
 
@@ -72,7 +72,7 @@ describe('wopee_dispatch_agent', () => {
     expect(result.data).toBe(true);
     expect(mockMutate).toHaveBeenCalledWith(
       expect.stringContaining('dispatchAgent'),
-      params
+      { input: params }
     );
   });
 

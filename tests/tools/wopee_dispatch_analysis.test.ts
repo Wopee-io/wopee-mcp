@@ -122,6 +122,7 @@ describe('wopee_dispatch_analysis', () => {
 
     expect(result.success).toBe(false);
     expect(result.error).toContain('Failed to dispatch analysis');
+    // The validation happens before the GraphQL call, so mockMutate should not be called
     expect(mockMutate).not.toHaveBeenCalled();
   });
 });
