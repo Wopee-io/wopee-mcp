@@ -53,7 +53,7 @@ jobs:
           fi
           
       - name: Upload audit results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: audit-results
           path: audit-results.json
@@ -78,7 +78,7 @@ jobs:
         uses: actions/checkout@v4
         
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
           
@@ -95,7 +95,7 @@ jobs:
         run: npm run build
         
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{matrix.language}}"
 
@@ -140,7 +140,7 @@ jobs:
           fi
           
       - name: Upload license results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: license-results
           path: license-results.json
@@ -184,7 +184,7 @@ jobs:
           fi
           
       - name: Upload secret scan results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: secret-scan-results
           path: secret-scan-results.json
@@ -199,7 +199,7 @@ jobs:
     
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         
       - name: Generate security summary
         run: |
@@ -236,7 +236,7 @@ jobs:
           cat security-summary.md
           
       - name: Upload security summary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: security-summary
           path: security-summary.md

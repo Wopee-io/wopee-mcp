@@ -70,7 +70,7 @@ jobs:
           fi
           
       - name: Upload outdated dependencies
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: outdated-dependencies
           path: outdated.json
