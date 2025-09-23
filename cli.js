@@ -14,7 +14,7 @@ const __dirname = dirname(__filename);
 
 function showHelp() {
   console.log(`
-Wopee MCP Server CLI
+Wopee.io MCP Server CLI
 
 Usage: node cli.js [options]
 

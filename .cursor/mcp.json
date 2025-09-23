@@ -1,0 +1,22 @@
+{
+    "mcpServers": {
+      "Playwright": {
+        "command": "npx @playwright/mcp@latest",
+        "env": {},
+        "args": []
+      },
+      "wopee": {
+        "command": "node",
+        "args": [
+          "/Users/vem/Projects/wopee-mcp/dist/index.js"
+        ],
+        "env": {}
+      },
+      "wopee-with-npx": {
+        "command": "npx wopee-mcp@latest",
+        "args": [],
+        "env": {}
+      }
+    }
+  }
+  
