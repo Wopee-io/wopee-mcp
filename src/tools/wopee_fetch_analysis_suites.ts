@@ -57,8 +57,6 @@ export async function wopee_fetch_analysis_suites(
     // Validate input parameters
     const validatedParams = FetchAnalysisSuitesSchema.parse(params);
 
-    console.log(`[Wopee MCP] Fetching analysis suites for project: ${validatedParams.projectUuid}`);
-
     const response = await graphqlClient.getInstance().request<{
       fetchAnalysisSuites: FetchAnalysisSuiteResponse[];
     }>(FETCH_ANALYSIS_SUITES_QUERY, {
@@ -71,8 +69,6 @@ export async function wopee_fetch_analysis_suites(
         error: 'No analysis suites found for the specified project',
       };
     }
-
-    console.log(`[Wopee MCP] Successfully fetched ${response.fetchAnalysisSuites.length} analysis suites`);
 
     return {
       success: true,
