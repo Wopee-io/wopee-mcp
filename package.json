@@ -1,6 +1,6 @@
 {
   "name": "wopee-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MCP server for Wopee.io autonomous testing platform",
   "main": "dist/index.js",
   "type": "module",
