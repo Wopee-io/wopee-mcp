@@ -6,15 +6,13 @@
         "args": []
       },
       "wopee": {
-        "command": "node",
-        "args": [
-          "/Users/vem/Projects/wopee-mcp/dist/index.js"
-        ],
-        "env": {}
+        "command": "node /Users/vem/Projects/wopee-mcp/dist/index.js",
+        "env": {},       
+        "args": []
       },
       "wopee-with-npx": {
-        "command": "npx wopee-mcp@latest",
-        "args": [],
+        "command": "npx",
+        "args": ["wopee-mcp@latest"],
         "env": {}
       }
     }
