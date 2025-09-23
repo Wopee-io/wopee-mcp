@@ -633,7 +633,13 @@ class WopeeMCPServer {
 }
 
 // Start the server if this file is run directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Check if this is the main module being executed
+const isMainModule = import.meta.url === `file://${process.argv[1]}` || 
+                     (process.argv[1] && import.meta.url.endsWith(process.argv[1])) ||
+                     process.argv[1]?.includes('wopee-mcp') ||
+                     process.argv[0]?.includes('wopee-mcp');
+
+if (isMainModule) {
   // Check for help flag
   if (process.argv.includes('--help') || process.argv.includes('-h')) {
     console.log(`
