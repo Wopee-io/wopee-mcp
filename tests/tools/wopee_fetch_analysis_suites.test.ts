@@ -1,5 +1,5 @@
 import { wopee_fetch_analysis_suites } from '../../src/tools/wopee_fetch_analysis_suites';
-import { FetchAnalysisSuiteResponse, SuiteType, SuiteRunningStatus, UploadStatus, ExecutionStatus, GenerationStatus } from '../../src/types/index';
+import { FetchAnalysisSuiteResponse, SuiteType, SuiteRunningStatus, ExecutionStatus, GenerationStatus } from '../../src/types/index';
 
 // Mock the GraphQL client
 const mockRequest = jest.fn();
@@ -24,7 +24,6 @@ describe('wopee_fetch_analysis_suites', () => {
         uuid: 'suite-uuid-1',
         name: 'Test Suite 1',
         suiteType: SuiteType.ANALYSIS,
-        uploadStatus: UploadStatus.FINISHED,
         executionStatus: ExecutionStatus.FINISHED,
         analysisIdentifier: 'analysis-1',
         suiteRunningStatus: SuiteRunningStatus.FINISHED,
@@ -59,7 +58,6 @@ describe('wopee_fetch_analysis_suites', () => {
         uuid: 'suite-uuid-2',
         name: 'Test Suite 2',
         suiteType: SuiteType.CODE,
-        uploadStatus: UploadStatus.IN_PROGRESS,
         executionStatus: ExecutionStatus.IN_PROGRESS,
         analysisIdentifier: 'analysis-2',
         suiteRunningStatus: SuiteRunningStatus.IN_PROGRESS,
@@ -175,7 +173,6 @@ describe('wopee_fetch_analysis_suites', () => {
         uuid: 'suite-uuid-partial',
         name: 'Partial Suite',
         suiteType: SuiteType.AGENT,
-        uploadStatus: UploadStatus.FINISHED,
         executionStatus: ExecutionStatus.FINISHED,
         analysisIdentifier: 'analysis-partial',
         suiteRunningStatus: SuiteRunningStatus.IDLE,

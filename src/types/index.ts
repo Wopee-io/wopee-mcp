@@ -63,12 +63,6 @@ export enum GeneratedAnalysisDataState {
   FAILED = 'FAILED'
 }
 
-export enum UploadStatus {
-  IN_PROGRESS = 'IN_PROGRESS',
-  FINISHED = 'FINISHED',
-  FAILED = 'FAILED'
-}
-
 export enum ExecutionStatus {
   IN_PROGRESS = 'IN_PROGRESS',
   FINISHED = 'FINISHED',
