@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.0.4...v1.1.0) (2025-11-03)
+
+
+### Features
+
+* a few buttons added into docs ([201d268](https://github.com/autonomous-testing/wopee-mcp/commit/201d268c73eef9e59faa4ce4e3210d334ddb5ee3))
+
 ## [1.0.4](https://github.com/autonomous-testing/wopee-mcp/compare/v1.0.3...v1.0.4) (2025-11-03)
 
 
