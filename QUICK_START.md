@@ -1,5 +1,8 @@
 # Quick Start Guide
 
+[![Install in VS Code](https://img.shields.io/badge/VS%20Code-Install-blue?logo=visual-studio-code&style=for-the-badge)](INTEGRATION.md#vs-code-integration)
+[![Install in Cursor](https://img.shields.io/badge/Cursor-Install-blue?logo=cursor&style=for-the-badge)](INTEGRATION.md#cursor-integration)
+
 ## 🚀 One-Click Installation
 
 ### VS Code / Cursor
