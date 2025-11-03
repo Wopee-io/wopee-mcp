@@ -46,5 +46,5 @@ export WOPEE_PROJECT_UUID=your_project_uuid_here
 ## 📚 More Info
 
 - [Full Integration Guide](INTEGRATION.md)
+- [Usage Examples](EXAMPLES.md)
 - [Main Documentation](README.md)
-- [Publishing Guide](PUBLISHING.md)
