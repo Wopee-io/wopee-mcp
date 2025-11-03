@@ -232,7 +232,6 @@ export interface FetchAnalysisSuiteResponse {
   uuid: string;
   name?: string;
   suiteType?: SuiteType;
-  uploadStatus?: UploadStatus;
   executionStatus?: ExecutionStatus;
   analysisIdentifier?: string;
   suiteRunningStatus?: SuiteRunningStatus;
