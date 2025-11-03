@@ -2,6 +2,16 @@
 
 A Model Context Protocol (MCP) server for integrating with the Wopee testing platform. This server provides tools for dispatching analysis, generating app context, user stories, test cases, and running test executions through GraphQL API calls.
 
+![npm version](https://img.shields.io/npm/v/wopee-mcp.svg)
+![npm downloads](https://img.shields.io/npm/dm/wopee-mcp.svg)
+![Node.js version](https://img.shields.io/node/v/wopee-mcp.svg)
+![License](https://img.shields.io/npm/l/wopee-mcp.svg)
+
+[![Install in VS Code](https://img.shields.io/badge/VS%20Code-Install-blue?logo=visual-studio-code&style=for-the-badge)](INTEGRATION.md#vs-code-integration)
+[![Install in Cursor](https://img.shields.io/badge/Cursor-Install-blue?logo=cursor&style=for-the-badge)](INTEGRATION.md#cursor-integration)
+
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Playwright_MCP-0098FF?style=flat-square&logo=visualstudiocode&logoColor=ffffff)](vscode:mcp/install?%7B%22name%22%3A%22playwright%22%2C%22type%22%3A%22stdio%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22%40playwright%2Fmcp%40latest%22%5D%7D)
+
 ## Features
 
 - **Dispatch Analysis**: Start analysis of web applications to understand their structure and behavior
@@ -22,6 +32,7 @@ See [INTEGRATION.md](INTEGRATION.md) for detailed installation instructions for 
 ### Quick Install
 
 **One-Click Installation (Recommended):**
+
 1. Open VS Code or Cursor
 2. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
 3. Type "MCP: Install Server" and select it
@@ -29,6 +40,7 @@ See [INTEGRATION.md](INTEGRATION.md) for detailed installation instructions for 
 5. Configure your API key when prompted
 
 **Manual Installation:**
+
 ```bash
 npm install -g wopee-mcp
 ```
@@ -58,6 +70,7 @@ Before using the Wopee MCP server, ensure you have:
 For detailed integration instructions, see [INTEGRATION.md](INTEGRATION.md).
 
 **Quick Setup:**
+
 - VS Code: Install MCP extension, then use one-click installation
 - Cursor: Built-in MCP support, use one-click installation
 - Both: The server automatically loads `.env` files from your project root
@@ -67,6 +80,7 @@ For detailed integration instructions, see [INTEGRATION.md](INTEGRATION.md).
 Once configured, you can use the Wopee tools in your chat interface:
 
 #### Dispatch Analysis
+
 ```
 @wopee wopee_dispatch_analysis
 Project UUID: project-123
@@ -79,6 +93,7 @@ Suite Analysis Config:
 ```
 
 #### Dispatch Agent
+
 ```
 @wopee wopee_dispatch_agent
 Project UUID: project-123
@@ -88,6 +103,7 @@ Test Cases: [{"testCaseId": "test-1", "userStoryId": "story-1"}]
 ```
 
 #### Generate App Context
+
 ```
 @wopee wopee_generate_app_context
 Project UUID: project-123
@@ -96,6 +112,7 @@ Extra Prompt: Focus on user authentication flows
 ```
 
 #### Generate General User Stories
+
 ```
 @wopee wopee_generate_general_user_stories
 Project UUID: project-123
@@ -104,6 +121,7 @@ Extra Prompt: Include high-level business requirements
 ```
 
 #### Generate User Stories
+
 ```
 @wopee wopee_generate_user_stories
 Project UUID: project-123
@@ -112,6 +130,7 @@ Extra Prompt: Include edge cases and error scenarios
 ```
 
 #### Generate Test Cases
+
 ```
 @wopee wopee_generate_test_cases
 Project UUID: project-123
@@ -121,6 +140,7 @@ Selected User Stories: ["story-1", "story-2"]
 ```
 
 #### Get App Context
+
 ```
 @wopee wopee_get_app_context
 Project UUID: project-123
@@ -128,6 +148,7 @@ Suite UUID: suite-123
 ```
 
 #### Get User Stories
+
 ```
 @wopee wopee_get_user_stories
 Project UUID: project-123
@@ -135,6 +156,7 @@ Suite UUID: suite-123
 ```
 
 #### Get Test Cases
+
 ```
 @wopee wopee_get_test_cases
 Project UUID: project-123
@@ -142,6 +164,7 @@ Suite UUID: suite-123
 ```
 
 #### Fetch Analysis Suites
+
 ```
 @wopee wopee_fetch_analysis_suites
 Project UUID: project-123
@@ -154,14 +177,17 @@ Returns an array of analysis suites with detailed information including suite UU
 #### Common Issues
 
 1. **"Command not found" error**:
+
    - Ensure the package is installed globally: `npm install -g wopee-mcp`
    - Check that Node.js is in your PATH
 
 2. **"API key not configured" error**:
+
    - Verify your API key is set in the environment variables
    - Check the MCP server configuration in VS Code/Cursor settings
 
 3. **"Connection failed" error**:
+
    - Verify your internet connection
    - Check if the Wopee API URL is correct
    - Ensure your API key is valid
@@ -192,11 +218,13 @@ The server loads configuration from a `.env` file in the project root directory 
 ### Setting up .env file
 
 1. **Copy the example file:**
+
    ```bash
    cp env.example .env
    ```
 
 2. **Edit the .env file in the project root:**
+
    ```bash
    # Wopee API Configuration
    WOPEE_API_KEY=your_actual_api_key_here
@@ -205,14 +233,13 @@ The server loads configuration from a `.env` file in the project root directory 
    ```
 
 3. **For MCP integration, update your `mcp.json`:**
+
    ```json
    {
      "mcpServers": {
        "wopee": {
          "command": "npx",
-         "args": [
-           "wopee-mcp@latest"
-         ],
+         "args": ["wopee-mcp@latest"],
          "env": {}
        }
      }
@@ -226,6 +253,7 @@ The server loads configuration from a `.env` file in the project root directory 
 ### Development
 
 Run the server in development mode:
+
 ```bash
 npm run dev
 ```
@@ -233,6 +261,7 @@ npm run dev
 ### Production
 
 Build and run the server:
+
 ```bash
 npm run build
 npm start
@@ -241,16 +270,19 @@ npm start
 ### Testing
 
 Run the test suite:
+
 ```bash
 npm test
 ```
 
 Run tests in watch mode:
+
 ```bash
 npm run test:watch
 ```
 
 Run tests with coverage:
+
 ```bash
 npm run test:coverage
 ```
@@ -260,11 +292,13 @@ npm run test:coverage
 #### Building the Package
 
 Clean build (removes dist and rebuilds):
+
 ```bash
 npm run build:clean
 ```
 
 Validate the package:
+
 ```bash
 npm run validate
 ```
@@ -272,6 +306,7 @@ npm run validate
 #### Publishing to npm
 
 **Prerequisites:**
+
 1. Create an npm account at [npmjs.com](https://www.npmjs.com)
 2. Login to npm: `npm login`
 3. Ensure you have publish permissions for the package
@@ -279,31 +314,35 @@ npm run validate
 **Publishing Workflow:**
 
 1. **Prepare for release:**
+
    ```bash
    ./scripts/prepare-release.sh
    ```
 
 2. **Publish the package:**
+
    ```bash
    ./scripts/publish.sh
    ```
 
 3. **Or use npm scripts directly:**
+
    ```bash
    # Dry run (test without publishing)
    npm run publish:dry-run
-   
+
    # Publish patch version (1.0.0 -> 1.0.1)
    npm run publish:patch
-   
+
    # Publish minor version (1.0.0 -> 1.1.0)
    npm run publish:minor
-   
+
    # Publish major version (1.0.0 -> 2.0.0)
    npm run publish:major
    ```
 
 **Manual Publishing:**
+
 ```bash
 # 1. Update version
 npm version patch  # or minor, major
@@ -317,6 +356,7 @@ npm publish
 For detailed usage examples, see the [Usage Examples](#using-the-tools) section above and [EXAMPLES.md](EXAMPLES.md).
 
 All tools require a `projectUuid` parameter. You can either:
+
 - Pass `projectUuid` as a parameter to each tool call, or
 - Set `WOPEE_PROJECT_UUID` in your `.env` file (tools will use it if not provided as a parameter)
 
@@ -342,7 +382,9 @@ All tools return responses in the following format:
 ```json
 {
   "success": true,
-  "data": { /* tool-specific data */ },
+  "data": {
+    /* tool-specific data */
+  },
   "message": "Success message",
   "error": "Error message (only present if success is false)"
 }
@@ -351,6 +393,7 @@ All tools return responses in the following format:
 ## Error Handling
 
 The server provides detailed error messages for:
+
 - Invalid parameters
 - GraphQL API errors
 - Network connectivity issues
@@ -400,6 +443,7 @@ tests/
 ### Code Quality
 
 The project includes:
+
 - TypeScript for type safety
 - ESLint for code linting
 - Jest for testing
@@ -437,6 +481,7 @@ See [AUTOMATION.md](AUTOMATION.md) for detailed information about the automation
 To publish a new version:
 
 1. **Automatic (recommended):**
+
    ```bash
    git tag v1.0.0
    git push origin v1.0.0

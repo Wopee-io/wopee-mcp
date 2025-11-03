@@ -1,5 +1,8 @@
 # VS Code & Cursor Integration Guide
 
+[![Install in VS Code](https://img.shields.io/badge/VS%20Code-Install-blue?logo=visual-studio-code&style=for-the-badge)](#vs-code-integration)
+[![Install in Cursor](https://img.shields.io/badge/Cursor-Install-blue?logo=cursor&style=for-the-badge)](#cursor-integration)
+
 This guide provides detailed instructions for integrating the Wopee.io MCP server with VS Code and Cursor editors.
 
 > **Note:** For general installation and usage, see [README.md](README.md). This guide focuses on IDE-specific setup and advanced configuration.
