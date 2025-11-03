@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/autonomous-testing/wopee-mcp/compare/v1.0.3...v1.0.4) (2025-11-03)
+
+
+### Bug Fixes
+
+* update integration and quick start documentation ([dd3ca19](https://github.com/autonomous-testing/wopee-mcp/commit/dd3ca1995430b1b692cd2b5bba8e4f657722be68))
+
 ## [1.0.3](https://github.com/autonomous-testing/wopee-mcp/compare/v1.0.2...v1.0.3) (2025-09-23)
 
 
