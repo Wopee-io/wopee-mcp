@@ -10,7 +10,6 @@ const FETCH_ANALYSIS_SUITES_QUERY = `
       uuid
       name
       suiteType
-      uploadStatus
       executionStatus
       analysisIdentifier
       suiteRunningStatus
