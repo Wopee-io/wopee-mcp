@@ -2,19 +2,7 @@
 
 This guide provides detailed instructions for integrating the Wopee.io MCP server with VS Code and Cursor editors.
 
-## Quick Start
-
-### One-Click Installation
-
-**For both VS Code and Cursor:**
-
-1. Open your editor
-2. Press `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac)
-3. Type "MCP: Install Server" and select it
-4. Enter: `wopee-mcp`
-5. Configure your API key when prompted
-
-That's it! The Wopee MCP server is now ready to use.
+> **Note:** For general installation and usage, see [README.md](README.md). This guide focuses on IDE-specific setup and advanced configuration.
 
 ## 🔐 Environment Configuration
 
@@ -46,9 +34,11 @@ The server will automatically load your `.env` file from the project root direct
 
 Before starting, ensure you have:
 
-- **VS Code** with MCP extension or **Cursor** (built-in MCP support)
-- **Node.js 18+** installed
+- **VS Code** with MCP extension installed, or **Cursor** (built-in MCP support)
+- **Node.js 18+** installed on your system
 - **Wopee API key** from [wopee.io](https://wopee.io)
+
+> **Quick Install:** Both editors support one-click installation via Command Palette → "MCP: Install Server" → `wopee-mcp`
 
 ## VS Code Integration
 
@@ -61,15 +51,16 @@ If you don't have the MCP extension:
 3. Search for "MCP" or "Model Context Protocol"
 4. Install the official MCP extension
 
-### Method 1: One-Click Installation (Recommended)
+### Quick Setup (One-Click Installation)
 
-1. **Open Command Palette**: `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac)
-2. **Type**: `MCP: Install Server`
-3. **Enter package name**: `wopee-mcp`
-4. **Configure API key** when prompted
-5. **Restart VS Code** if required
+1. Open Command Palette: `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac)
+2. Type: `MCP: Install Server`
+3. Enter package name: `wopee-mcp`
+4. Configure API key when prompted
 
-### Method 2: Manual Configuration
+### Manual Configuration
+
+If you prefer manual setup or need custom configuration:
 
 1. **Install globally**:
    ```bash
@@ -85,8 +76,10 @@ If you don't have the MCP extension:
    {
      "mcp.servers": {
        "wopee": {
-         "command": "wopee-mcp",
-         "args": [],
+         "command": "npx",
+         "args": [
+           "wopee-mcp@latest"
+         ],
          "env": {}
        }
      }
@@ -103,8 +96,10 @@ For project-specific configuration, create `.vscode/settings.json`:
 {
   "mcp.servers": {
     "wopee": {
-      "command": "wopee-mcp",
-      "args": [],
+      "command": "npx",
+      "args": [
+        "wopee-mcp@latest"
+      ],
       "env": {}
     }
   }
@@ -113,15 +108,16 @@ For project-specific configuration, create `.vscode/settings.json`:
 
 ## Cursor Integration
 
-### Method 1: One-Click Installation (Recommended)
+### Quick Setup (One-Click Installation)
 
-1. **Open Command Palette**: `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac)
-2. **Type**: `MCP: Install Server`
-3. **Enter package name**: `wopee-mcp`
-4. **Configure API key** when prompted
-5. **Restart Cursor** if required
+1. Open Command Palette: `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac)
+2. Type: `MCP: Install Server`
+3. Enter package name: `wopee-mcp`
+4. Configure API key when prompted
 
-### Method 2: Manual Configuration
+### Manual Configuration
+
+For custom setup:
 
 1. **Install globally**:
    ```bash
@@ -137,94 +133,23 @@ For project-specific configuration, create `.vscode/settings.json`:
    {
      "mcp.servers": {
        "wopee": {
-         "command": "wopee-mcp",
-         "args": [],
-         "env": {
-           "WOPEE_API_KEY": "your_api_key_here",
-           "WOPEE_PROJECT_UUID": "your_project_uuid_here",
-           "WOPEE_API_URL": "https://api.wopee.io/"
-         }
+         "command": "npx",
+         "args": [
+           "wopee-mcp@latest"
+         ],
+         "env": {}
        }
      }
    }
    ```
 
+   **Note:** The server automatically loads configuration from `.env` file. You can override with environment variables in the config if needed.
+
 5. **Restart Cursor**
 
 ## Using the Tools
 
-Once configured, you can use Wopee tools in your chat interface:
-
-### Available Tools
-
-#### 1. Dispatch Analysis
-```
-@wopee wopee_dispatch_analysis
-Suite Analysis Config:
-  - Username: testuser
-  - Password: testpass
-  - Cookies Preference: ACCEPT_ALL
-```
-
-#### 2. Dispatch Agent
-```
-@wopee wopee_dispatch_agent
-Analysis Identifier: analysis-123
-Test Cases: [{"testCaseId": "test-1", "userStoryId": "story-1"}]
-```
-
-#### 3. Generate App Context
-```
-@wopee wopee_generate_app_context
-Suite UUID: suite-123
-Extra Prompt: Focus on user authentication flows
-```
-
-#### 4. Generate General User Stories
-```
-@wopee wopee_generate_general_user_stories
-Suite UUID: suite-123
-Extra Prompt: Include high-level business requirements
-```
-
-#### 5. Generate User Stories
-```
-@wopee wopee_generate_user_stories
-Suite UUID: suite-123
-Extra Prompt: Include edge cases and error scenarios
-```
-
-#### 6. Generate Test Cases
-```
-@wopee wopee_generate_test_cases
-Suite UUID: suite-123
-Extra Prompt: Generate comprehensive test coverage
-Selected User Stories: ["story-1", "story-2"]
-```
-
-#### 7. Get App Context
-```
-@wopee wopee_get_app_context
-Suite UUID: suite-123
-```
-
-#### 8. Get User Stories
-```
-@wopee wopee_get_user_stories
-Suite UUID: suite-123
-```
-
-#### 9. Get Test Cases
-```
-@wopee wopee_get_test_cases
-Suite UUID: suite-123
-```
-
-#### 10. Fetch Analysis Suites
-```
-@wopee wopee_fetch_analysis_suites
-Project UUID: project-123
-```
+Once configured, you can use Wopee tools in your chat interface. See [README.md](README.md#using-the-tools) and [EXAMPLES.md](EXAMPLES.md) for detailed tool usage.
 
 ### Example Workflow
 
@@ -363,8 +288,10 @@ You can set additional environment variables:
 {
   "mcp.servers": {
     "wopee": {
-      "command": "wopee-mcp",
-      "args": [],
+      "command": "npx",
+      "args": [
+        "wopee-mcp@latest"
+      ],
       "env": {
         "WOPEE_API_KEY": "your_api_key_here",
         "WOPEE_PROJECT_UUID": "your_project_uuid_here",
@@ -377,6 +304,8 @@ You can set additional environment variables:
 }
 ```
 
+**Note:** Usually, you don't need to set environment variables in the config since the server loads from `.env` files automatically.
+
 ### Multiple Server Instances
 
 You can run multiple instances with different configurations:
@@ -385,16 +314,20 @@ You can run multiple instances with different configurations:
 {
   "mcp.servers": {
     "wopee-prod": {
-      "command": "wopee-mcp",
-      "args": [],
+      "command": "npx",
+      "args": [
+        "wopee-mcp@latest"
+      ],
       "env": {
         "WOPEE_API_KEY": "prod_api_key",
         "WOPEE_API_URL": "https://api.wopee.io/"
       }
     },
     "wopee-dev": {
-      "command": "wopee-mcp",
-      "args": [],
+      "command": "npx",
+      "args": [
+        "wopee-mcp@latest"
+      ],
       "env": {
         "WOPEE_API_KEY": "dev_api_key",
         "WOPEE_API_URL": "https://api.dev.wopee.io/"
@@ -404,23 +337,7 @@ You can run multiple instances with different configurations:
 }
 ```
 
-### Custom Arguments
-
-You can pass custom arguments to the server:
-
-```json
-{
-  "mcp.servers": {
-    "wopee": {
-      "command": "wopee-mcp",
-      "args": ["--verbose", "--debug"],
-      "env": {
-        "WOPEE_API_KEY": "your_api_key_here"
-      }
-    }
-  }
-}
-```
+**Note:** Custom arguments are rarely needed. The server loads configuration from `.env` files automatically.
 
 ## Best Practices
 

@@ -17,67 +17,32 @@ A Model Context Protocol (MCP) server for integrating with the Wopee testing pla
 
 ## Installation
 
-### Option 1: One-Click Installation (Recommended)
+See [INTEGRATION.md](INTEGRATION.md) for detailed installation instructions for VS Code and Cursor.
 
-**For VS Code:**
-1. Open VS Code
+### Quick Install
+
+**One-Click Installation (Recommended):**
+1. Open VS Code or Cursor
 2. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
 3. Type "MCP: Install Server" and select it
 4. Enter: `wopee-mcp`
 5. Configure your API key when prompted
 
-**For Cursor:**
-1. Open Cursor
-2. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
-3. Type "MCP: Install Server" and select it
-4. Enter: `wopee-mcp`
-5. Configure your API key when prompted
-
-### Option 2: Manual Installation
-
-1. Install the package globally:
+**Manual Installation:**
 ```bash
 npm install -g wopee-mcp
 ```
 
-2. Set up environment variables using a `.env` file:
-```bash
-# Create a .env file in the project root
-cp env.example .env
+### Development Installation
 
-# Edit the .env file with your API key
-# WOPEE_API_KEY=your_api_key_here
-# WOPEE_API_URL=https://api.wopee.io/
-```
+For contributing or local development:
 
-**Alternative: Set system environment variables:**
-```bash
-export WOPEE_API_KEY=your_api_key_here
-export WOPEE_API_URL=https://api.wopee.io/
-```
-
-### Option 3: Development Installation
-
-1. Clone the repository:
 ```bash
 git clone <repository-url>
 cd wopee-mcp
-```
-
-2. Install dependencies:
-```bash
 npm install
-```
-
-3. Set up environment variables:
-```bash
 cp env.example .env
-```
-
-4. Edit `.env` file with your Wopee API credentials:
-```env
-WOPEE_API_KEY=your_api_key_here
-WOPEE_API_URL=https://api.wopee.io/
+# Edit .env with your credentials
 ```
 
 ## VS Code & Cursor Integration
@@ -90,83 +55,12 @@ Before using the Wopee MCP server, ensure you have:
 2. A **Wopee API key** from [wopee.io](https://wopee.io)
 3. **Node.js 18+** installed on your system
 
-### VS Code Setup
+For detailed integration instructions, see [INTEGRATION.md](INTEGRATION.md).
 
-#### Method 1: One-Click Installation (Easiest)
-
-1. **Open VS Code** and ensure you have the MCP extension installed
-2. **Open Command Palette**: `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac)
-3. **Type**: `MCP: Install Server`
-4. **Enter package name**: `wopee-mcp`
-5. **Configure API key** when prompted
-
-#### Method 2: Manual Configuration
-
-1. **Install the package globally**:
-   ```bash
-   npm install -g wopee-mcp
-   ```
-
-2. **Open VS Code settings** (`Ctrl+,` or `Cmd+,`)
-
-3. **Search for "MCP"** and find the MCP settings
-
-4. **Add server configuration**:
-   ```json
-   {
-     "mcp.servers": {
-       "wopee": {
-         "command": "wopee-mcp",
-         "args": [],
-         "env": {
-           "WOPEE_API_KEY": "your_api_key_here",
-           "WOPEE_API_URL": "https://api.wopee.io/"
-         }
-       }
-     }
-   }
-   ```
-
-5. **Restart VS Code** to load the new MCP server
-
-### Cursor Setup
-
-#### Method 1: One-Click Installation (Easiest)
-
-1. **Open Cursor** (MCP support is built-in)
-2. **Open Command Palette**: `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac)
-3. **Type**: `MCP: Install Server`
-4. **Enter package name**: `wopee-mcp`
-5. **Configure API key** when prompted
-
-#### Method 2: Manual Configuration
-
-1. **Install the package globally**:
-   ```bash
-   npm install -g wopee-mcp
-   ```
-
-2. **Open Cursor settings** (`Ctrl+,` or `Cmd+,`)
-
-3. **Navigate to MCP settings** in the sidebar
-
-4. **Add server configuration**:
-   ```json
-   {
-     "mcp.servers": {
-       "wopee": {
-         "command": "wopee-mcp",
-         "args": [],
-         "env": {
-           "WOPEE_API_KEY": "your_api_key_here",
-           "WOPEE_API_URL": "https://api.wopee.io/"
-         }
-       }
-     }
-   }
-   ```
-
-5. **Restart Cursor** to load the new MCP server
+**Quick Setup:**
+- VS Code: Install MCP extension, then use one-click installation
+- Cursor: Built-in MCP support, use one-click installation
+- Both: The server automatically loads `.env` files from your project root
 
 ### Using the Tools
 
@@ -226,76 +120,34 @@ Extra Prompt: Generate comprehensive test coverage
 Selected User Stories: ["story-1", "story-2"]
 ```
 
-### 7. wopee_get_app_context
-
-Get existing app context for a project and suite.
-
-**Parameters:**
-- `projectUuid` (string, required): UUID of the project
-- `suiteUuid` (string, required): UUID of the test suite
-
-**Example:**
-```json
-{
-  "projectUuid": "project-123",
-  "suiteUuid": "suite-123"
-}
+#### Get App Context
+```
+@wopee wopee_get_app_context
+Project UUID: project-123
+Suite UUID: suite-123
 ```
 
-### 8. wopee_get_user_stories
-
-Get existing user stories for a project and suite.
-
-**Parameters:**
-- `projectUuid` (string, required): UUID of the project
-- `suiteUuid` (string, required): UUID of the test suite
-
-**Example:**
-```json
-{
-  "projectUuid": "project-123",
-  "suiteUuid": "suite-123"
-}
+#### Get User Stories
+```
+@wopee wopee_get_user_stories
+Project UUID: project-123
+Suite UUID: suite-123
 ```
 
-### 9. wopee_get_test_cases
-
-Get existing test cases for a project and suite.
-
-**Parameters:**
-- `projectUuid` (string, required): UUID of the project
-- `suiteUuid` (string, required): UUID of the test suite
-
-**Example:**
-```json
-{
-  "projectUuid": "project-123",
-  "suiteUuid": "suite-123"
-}
+#### Get Test Cases
+```
+@wopee wopee_get_test_cases
+Project UUID: project-123
+Suite UUID: suite-123
 ```
 
-### 10. wopee_fetch_analysis_suites
-
-Fetch all analysis suites for a given project.
-
-**Parameters:**
-- `projectUuid` (string, required): UUID of the project
-
-**Example:**
-```json
-{
-  "projectUuid": "project-123"
-}
+#### Fetch Analysis Suites
+```
+@wopee wopee_fetch_analysis_suites
+Project UUID: project-123
 ```
 
-**Response:**
-Returns an array of analysis suites with detailed information including:
-- Suite UUID, name, and type
-- Upload and execution status
-- Analysis identifier
-- Suite running status
-- Generation state for app context, user stories, and test cases
-- Creation and update timestamps
+Returns an array of analysis suites with detailed information including suite UUID, name, type, status, analysis identifier, and generation states.
 
 ### Troubleshooting
 
@@ -323,7 +175,7 @@ Returns an array of analysis suites with detailed information including:
 
 - **Check logs**: Look in the MCP server output panel
 - **Verify installation**: Run `wopee-mcp --help` in terminal
-- **Test connection**: Use the `wopee_start_analysis` tool with a simple URL
+- **Test connection**: Use the `wopee_dispatch_analysis` tool with a simple project UUID
 
 ## Configuration
 
@@ -331,9 +183,11 @@ The server loads configuration from a `.env` file in the project root directory 
 
 ### Environment Variables
 
-- `WOPEE_API_KEY` (required): Your Wopee API key
-- `WOPEE_PROJECT_UUID` (required): Your Wopee project UUID
+- `WOPEE_API_KEY` (required): Your Wopee API key for authentication
+- `WOPEE_PROJECT_UUID` (optional): Your Wopee project UUID - can be set in `.env` for convenience, but tools also accept `projectUuid` as a parameter
 - `WOPEE_API_URL` (optional): Wopee API endpoint (defaults to `https://api.wopee.io/`)
+
+**Note:** All tools accept `projectUuid` as a parameter. Setting `WOPEE_PROJECT_UUID` in `.env` is optional and provides a default value, but you can override it by passing `projectUuid` in each tool call.
 
 ### Setting up .env file
 
@@ -355,8 +209,10 @@ The server loads configuration from a `.env` file in the project root directory 
    {
      "mcpServers": {
        "wopee": {
-         "command": "node",
-         "args": ["/path/to/wopee-mcp/dist/index.js"],
+         "command": "npx",
+         "args": [
+           "wopee-mcp@latest"
+         ],
          "env": {}
        }
      }
@@ -456,95 +312,28 @@ npm version patch  # or minor, major
 npm publish
 ```
 
-## Available Tools
+## Available Tools Reference
 
-### 1. wopee_start_analysis
+For detailed usage examples, see the [Usage Examples](#using-the-tools) section above and [EXAMPLES.md](EXAMPLES.md).
 
-Start a new analysis for a given URL.
+All tools require a `projectUuid` parameter. You can either:
+- Pass `projectUuid` as a parameter to each tool call, or
+- Set `WOPEE_PROJECT_UUID` in your `.env` file (tools will use it if not provided as a parameter)
 
-**Parameters:**
-- `url` (string, required): URL of the application to analyze
+### Tool List
 
-**Example:**
-```json
-{
-  "url": "https://example.com"
-}
-```
+1. **wopee_dispatch_analysis** - Start a new analysis for a project
+2. **wopee_dispatch_agent** - Execute tests for a project and suite
+3. **wopee_generate_app_context** - Generate application context from analysis
+4. **wopee_generate_general_user_stories** - Generate high-level user stories
+5. **wopee_generate_user_stories** - Generate detailed user stories
+6. **wopee_generate_test_cases** - Generate test cases from user stories
+7. **wopee_get_app_context** - Retrieve existing app context
+8. **wopee_get_user_stories** - Retrieve existing user stories
+9. **wopee_get_test_cases** - Retrieve existing test cases
+10. **wopee_fetch_analysis_suites** - Fetch all analysis suites for a project
 
-### 2. wopee_generate_app_context
-
-Generate application context based on analysis results.
-
-**Parameters:**
-- `analysisId` (string, required): ID of the analysis to generate context from
-- `prompt` (string, optional): Optional prompt to modify the app context generation
-
-**Example:**
-```json
-{
-  "analysisId": "analysis-123",
-  "prompt": "Focus on user authentication flows"
-}
-```
-
-### 3. wopee_generate_user_stories
-
-Generate user stories based on analysis results.
-
-**Parameters:**
-- `analysisId` (string, required): ID of the analysis to generate user stories from
-- `prompt` (string, optional): Optional prompt to modify the user story generation
-
-**Example:**
-```json
-{
-  "analysisId": "analysis-123",
-  "prompt": "Include edge cases and error scenarios"
-}
-```
-
-### 4. wopee_generate_tests
-
-Generate test files by fetching generated scenarios from the Wopee platform.
-
-**Parameters:**
-- `projectUuid` (string, required): UUID of the project
-- `suiteUuid` (string, required): UUID of the test suite
-- `bucket` (string, required): Bucket name containing the generated scenarios
-
-**Example:**
-```json
-{
-  "projectUuid": "e70d893f-b70a-4e45-a93a-7c08ef289aa9",
-  "suiteUuid": "f0cd35a5-0e11-4d33-995b-433706e10542",
-  "bucket": "project-suite-generated-scenarios"
-}
-```
-
-### 5. wopee_run_tests
-
-Run tests either by analysis ID or specific test IDs.
-
-**Parameters:**
-- `analysisId` (string, optional): ID of the analysis to run tests for
-- `testIds` (array of strings, optional): Array of specific test IDs to run
-
-**Note:** Either `analysisId` or `testIds` must be provided.
-
-**Example with analysis ID:**
-```json
-{
-  "analysisId": "analysis-123"
-}
-```
-
-**Example with test IDs:**
-```json
-{
-  "testIds": ["test-1", "test-2", "test-3"]
-}
-```
+See [INTEGRATION.md](INTEGRATION.md) for detailed tool usage examples and workflows.
 
 ## Response Format
 
@@ -577,11 +366,16 @@ src/
 ├── graphql/
 │   └── client.ts          # GraphQL client implementation
 ├── tools/                 # Individual tool implementations
-│   ├── wopee_start_analysis.ts
+│   ├── wopee_dispatch_analysis.ts
+│   ├── wopee_dispatch_agent.ts
 │   ├── wopee_generate_app_context.ts
+│   ├── wopee_generate_general_user_stories.ts
 │   ├── wopee_generate_user_stories.ts
-│   ├── wopee_generate_tests.ts
-│   └── wopee_run_tests.ts
+│   ├── wopee_generate_test_cases.ts
+│   ├── wopee_get_app_context.ts
+│   ├── wopee_get_user_stories.ts
+│   ├── wopee_get_test_cases.ts
+│   └── wopee_fetch_analysis_suites.ts
 ├── types/
 │   └── index.ts           # TypeScript type definitions
 └── index.ts               # Main MCP server implementation
@@ -589,9 +383,10 @@ src/
 tests/
 ├── config.test.ts         # Configuration tests
 └── tools/                 # Tool-specific tests
-    ├── wopee_start_analysis.test.ts
-    ├── wopee_generate_tests.test.ts
-    └── wopee_run_tests.test.ts
+    ├── wopee_dispatch_analysis.test.ts
+    ├── wopee_dispatch_agent.test.ts
+    ├── wopee_generate_app_context.test.ts
+    └── [other tool tests]
 ```
 
 ### Adding New Tools
