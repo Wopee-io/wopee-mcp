@@ -1,20 +1,19 @@
 {
-    "mcpServers": {
-      "Playwright": {
-        "command": "npx @playwright/mcp@latest",
-        "env": {},
-        "args": []
-      },
-      "wopee": {
-        "command": "node /Users/vem/Projects/wopee-mcp/dist/index.js",
-        "env": {},       
-        "args": []
-      },
-      "wopee-with-npx": {
-        "command": "npx",
-        "args": ["wopee-mcp@latest"],
-        "env": {}
-      }
+  "mcpServers": {
+    "Playwright": {
+      "command": "npx @playwright/mcp@latest",
+      "env": {},
+      "args": []
+    },
+    "wopee-dev": {
+      "command": "node /Users/vem/Projects/wopee-mcp/dist/index.js",
+      "env": {},
+      "args": []
+    },
+    "wopee-with-npx": {
+      "command": "npx wopee-mcp@latest",
+      "args": [],
+      "env": {}
     }
   }
-  
+}
