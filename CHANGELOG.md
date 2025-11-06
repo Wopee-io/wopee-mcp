@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/autonomous-testing/wopee-mcp/compare/v1.1.0...v1.1.1) (2025-11-06)
+
+
+### Bug Fixes
+
+* update wopee server configuration in mcp.json ([d8398e7](https://github.com/autonomous-testing/wopee-mcp/commit/d8398e79f899bbcb894ccbbf2e3d6a8c50cd7eca))
+
 # [1.1.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.0.4...v1.1.0) (2025-11-03)
 
 
