@@ -1,0 +1,46 @@
+name: CI/CD
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  setup-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check-out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Npm install and cache
+        uses: autonomous-testing/npm-install-action@v2.3.1
+
+  release:
+    needs: [setup-npm]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node/NPM/Cache
+        uses: autonomous-testing/npm-install-action@v2.3.1
+
+      - name: Install dependencies
+        run: npm clean-install
+
+      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+        run: npm audit signatures
+
+      - name: Release
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npx semantic-release
