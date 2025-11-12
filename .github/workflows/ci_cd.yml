@@ -5,7 +5,7 @@ on:
       - "main"
 jobs:
   setup-npm:
-    runs-on: ubuntu-latest
+    runs-on: builder
     steps:
       - name: Check-out
         uses: actions/checkout@v4
@@ -15,9 +15,24 @@ jobs:
       - name: Npm install and cache
         uses: autonomous-testing/npm-install-action@v2.3.1
 
-  release:
+  test-build:
     needs: [setup-npm]
-    runs-on: ubuntu-latest
+    runs-on: builder
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node/NPM/Cache
+        uses: autonomous-testing/npm-install-action@v2.3.1
+
+      - name: Build
+        run: npm run build:clean
+
+  release:
+    needs: [test-build]
+    runs-on: builder
     permissions:
       contents: write
       issues: write
