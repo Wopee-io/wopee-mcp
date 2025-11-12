@@ -1,3 +1,18 @@
+# [1.5.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.4.0...v1.5.0) (2025-11-12)
+
+
+### Bug Fixes
+
+add 'test-build' job to ci/cd to catch ts compilation errors([696a317](https://github.com/autonomous-testing/wopee-mcp/commit/696a317bbb9260cd1a32eb5b46dcd78bff557dbb))
+run 'release' only on push to 'main'([f5641a9](https://github.com/autonomous-testing/wopee-mcp/commit/f5641a94530e5784860e085160f3f4ce7007938d))
+- run 'test-build' on both pull and push
+temporarily switch back to ubuntu-latest for ci/cd([925f3b6](https://github.com/autonomous-testing/wopee-mcp/commit/925f3b6adca478180223dc0dfad820e941c570be))
+
+
+### Features
+
+combine fetch and generate files tools into unified tools([3f587a6](https://github.com/autonomous-testing/wopee-mcp/commit/3f587a6fb8cd9ba999dee34a1dbfd457f019d88f))
+
 # [1.4.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.3.0...v1.4.0) (2025-11-12)
 
 
