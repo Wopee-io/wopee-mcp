@@ -11,8 +11,8 @@ const server = new McpServer({
 for (const { name, config, handler } of TOOLS) {
   server.registerTool(
     name,
-    config,
-    handler as unknown as Parameters<typeof server.registerTool>[2]
+    config as Parameters<typeof server.registerTool>[1],
+    handler as Parameters<typeof server.registerTool>[2]
   );
 }
 

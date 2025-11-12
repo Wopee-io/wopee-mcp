@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   FetchFileInputSchema,
+  FetchFileHandlerInput,
   UpdateFileInputSchema,
   UpdateFileHandlerInput,
   GenerateAIDataInputSchema,
@@ -51,7 +52,7 @@ function parseFileType(type: FileType) {
         query: GenerateAppContext,
         dataKey: "generateAppContext",
         bucket: Bucket.APP_CONTEXT,
-        type: "markdown" as const,
+        outputType: "markdown" as const,
         description: "application's context markdown file for selected suite",
       };
     case FileType.GENERAL_USER_STORIES:
@@ -59,7 +60,7 @@ function parseFileType(type: FileType) {
         query: GenerateGeneralUserStories,
         dataKey: "generateGeneralUserStories",
         bucket: Bucket.GENERAL_USER_STORIES,
-        type: "markdown" as const,
+        outputType: "markdown" as const,
         description: "general user stories markdown file for selected suite",
       };
     case FileType.USER_STORIES:
@@ -67,7 +68,7 @@ function parseFileType(type: FileType) {
         query: GenerateUserStories,
         dataKey: "generateUserStories",
         bucket: Bucket.USER_STORIES,
-        type: "json" as const,
+        outputType: "json" as const,
         description: "user stories JSON file for selected suite",
       };
     case FileType.TEST_CASES:
@@ -75,7 +76,7 @@ function parseFileType(type: FileType) {
         query: GenerateTestCases,
         dataKey: "generateTestCases",
         bucket: Bucket.USER_STORIES,
-        type: "json" as const,
+        outputType: "json" as const,
         description: "test cases for selected suite",
       };
     default:
@@ -83,23 +84,33 @@ function parseFileType(type: FileType) {
         query: null,
         dataKey: null,
         bucket: null,
-        type: null,
+        outputType: null,
         description: null,
       };
   }
 }
 
-export async function fetchFile(input: {
-  suiteUuid: string;
-  bucket: (typeof Bucket)[keyof typeof Bucket];
-}): Promise<{
+export async function fetchFile(input: FetchFileHandlerInput): Promise<{
   content: {
     type: "text";
     text: string;
   }[];
 }> {
   try {
-    const fetchFileInput = createFetchFileInput(input);
+    const { bucket, description } = parseFileType(input.fileType);
+    if (!bucket || !description)
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: "Failed to parse file type",
+          },
+        ],
+      };
+    const fetchFileInput = createFetchFileInput({
+      bucket,
+      suiteUuid: input.suiteUuid,
+    });
     const parsedInput = FetchFileInputSchema.parse(fetchFileInput);
 
     const result: { fetchFile: string } | null = await requestClient(
@@ -129,7 +140,6 @@ export async function fetchFile(input: {
 }
 
 export async function generateAIDataFile(
-  type: FileType,
   input: GenerateAIDataHandlerInput
 ): Promise<{
   content: {
@@ -137,7 +147,7 @@ export async function generateAIDataFile(
     text: string;
   }[];
 }> {
-  const { query, dataKey, bucket, description } = parseFileType(type);
+  const { query, dataKey, bucket, description } = parseFileType(input.fileType);
   if (!query || !dataKey || !description || !bucket)
     return {
       content: [
@@ -169,7 +179,7 @@ export async function generateAIDataFile(
 
     return await fetchFile({
       suiteUuid: parsedInput.suiteUuid,
-      bucket,
+      fileType: input.fileType,
     });
   } catch (error) {
     return parseError(error);
@@ -178,8 +188,8 @@ export async function generateAIDataFile(
 
 export async function updateFile(input: UpdateFileHandlerInput) {
   try {
-    const { bucket, type } = parseFileType(input.fileType);
-    if (!bucket || !type)
+    const { bucket, outputType } = parseFileType(input.fileType);
+    if (!bucket || !outputType)
       return {
         content: [
           {
@@ -190,8 +200,8 @@ export async function updateFile(input: UpdateFileHandlerInput) {
       };
 
     const updateFileInput = createUpdateFileInput({
-      type,
       bucket,
+      outputType,
       suiteUuid: input.suiteUuid,
       fileContent: input.fileContent,
     });

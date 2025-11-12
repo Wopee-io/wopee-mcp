@@ -1,19 +1,12 @@
 export enum ToolName {
+  WOPEE_FETCH_ANALYSIS_SUITES = "wopee_fetch_analysis_suites",
+
   WOPEE_DISPATCH_ANALYSIS = "wopee_dispatch_analysis",
   WOPEE_DISPATCH_AGENT = "wopee_dispatch_agent",
 
-  WOPEE_FETCH_ANALYSIS_SUITES = "wopee_fetch_analysis_suites",
-  WOPEE_FETCH_APP_CONTEXT = "wopee_fetch_app_context",
-  WOPEE_FETCH_GENERAL_USER_STORIES = "wopee_fetch_general_user_stories",
-  WOPEE_FETCH_USER_STORIES = "wopee_fetch_user_stories",
-  WOPEE_FETCH_TEST_CASES = "wopee_fetch_test_cases",
-
-  WOPEE_GENERATE_APP_CONTEXT = "wopee_generate_app_context",
-  WOPEE_GENERATE_GENERAL_USER_STORIES = "wopee_generate_general_user_stories",
-  WOPEE_GENERATE_USER_STORIES = "wopee_generate_user_stories",
-  WOPEE_GENERATE_TEST_CASES = "wopee_generate_test_cases",
-
+  WOPEE_FETCH_FILE = "wopee_fetch_file",
   WOPEE_UPDATE_FILE = "wopee_update_file",
+  WOPEE_GENERATE_FILE = "wopee_generate_file",
 }
 
 export const Bucket = {

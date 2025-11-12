@@ -17,8 +17,11 @@ export const SuiteAnalysisConfigSchema = z.object({
 });
 
 export const GenerateAIDataHandlerInputSchema = z.object({
+  fileType: z.nativeEnum(FileType, {
+    description: "Chosen type of file(artifact) to generate",
+  }),
   suiteUuid: z
-    .string({ description: "UUID of the suite to generate AI data for" })
+    .string({ description: "UUID of the suite to generate file(artifact) for" })
     .min(1, "Suite UUID is required"),
 });
 
@@ -33,6 +36,9 @@ export const GenerateAIDataInputSchema = z.object({
 });
 
 export const FetchFileHandlerInputSchema = z.object({
+  fileType: z.nativeEnum(FileType, {
+    description: "Chosen file(artifact) to fetch",
+  }),
   suiteUuid: z
     .string({ description: "UUID of the suite to fetch the file from" })
     .min(1, "Suite UUID is required"),
@@ -51,10 +57,10 @@ export const FetchFileInputSchema = z.object({
 
 export const UpdateFileHandlerInputSchema = z.object({
   fileType: z.nativeEnum(FileType, {
-    description: "Chosen file/artifact to update",
+    description: "Chosen file(artifact) to update",
   }),
   fileContent: z.string({
-    description: "Content of the file/artifact to update",
+    description: "Content of the file(artifact) to update",
   }),
   suiteUuid: z
     .string({ description: "UUID of the suite to update the file for" })
@@ -65,7 +71,7 @@ export const UpdateFileFactoryInputSchema = z.object({
   bucket: z.nativeEnum(Bucket),
   suiteUuid: z.string().min(1, "Suite UUID is required"),
   fileContent: z.string(),
-  type: z.enum(["markdown", "json"]),
+  outputType: z.enum(["markdown", "json"]),
 });
 
 export const UpdateFileInputSchema = z.object({
