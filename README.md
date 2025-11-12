@@ -92,122 +92,40 @@ Dispatch a new analysis suite
 
 ### Generation Tools
 
-These tools generate various artifacts for a specific suite. All require a `suiteUuid`.
+These tools generate various artifacts for a specific suite. All require a `suiteUuid` and `fileType` to generate.
 
-#### `wopee_generate_app_context`
+#### `wopee_generate_file`
 
-Generates an application context markdown file for the selected suite. This provides a comprehensive overview of the application being analyzed.
-
-- **Parameters:**
-  - `suiteUuid` - The UUID of the suite to generate context for
-- **Returns:** Generated output in case of successful generation
-
-**Example Usage:**
-
-```
-Generate app context for suite abc-123-def-456
-```
-
-#### `wopee_generate_general_user_stories`
-
-Generates general user stories markdown file for the selected suite.
+Generates a specific file(artifact) for the selected suite.
 
 - **Parameters:**
   - `suiteUuid` - The UUID of the suite
-- **Returns:** Generated output in case of successful generation
+  - `fileType` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES" | "TEST_CASES"`
+- **Returns:** Generated output in case of successful generation.
 
 **Example Usage:**
 
 ```
-Generate general user stories for my latest suite
-```
-
-#### `wopee_generate_user_stories`
-
-Generates detailed user stories JSON file for the selected suite.
-
-- **Parameters:**
-  - `suiteUuid` - The UUID of the suite
-- **Returns:** Generated output in case of successful generation
-
-**Example Usage:**
-
-```
-Generate user stories for suite abc-123-def-456
-```
-
-#### `wopee_generate_test_cases`
-
-Generates test cases for the selected suite based on the analysis and user stories.
-
-- **Parameters:**
-  - `suiteUuid` - The UUID of the suite
-- **Returns:** Generated output in case of successful generation
-
-**Example Usage:**
-
-```
-Generate test cases for suite abc-123-def-456
+Generate app context for my most recent analysis suite
 ```
 
 ### Fetch Tools
 
-These tools retrieve generated artifacts for a specific suite. All require a `suiteUuid`.
+These tools retrieve generated artifacts for a specific suite. All require a `suiteUuid` and `fileType`.
 
-#### `wopee_fetch_app_context`
+#### `wopee_fetch_file`
 
-Fetches the application context markdown file for a suite.
+Fetches the enquired file(artifact) from the selected suite.
 
 - **Parameters:**
   - `suiteUuid` - The UUID of the suite
-- **Returns:** The application context markdown content
+  - `fileType` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES" | "TEST_CASES"`
+- **Returns:** The file contents in case of successful fetch.
 
 **Example Usage:**
 
 ```
-Fetch app context for my latest suite
-```
-
-#### `wopee_fetch_general_user_stories`
-
-Fetches the general user stories markdown file for a suite.
-
-- **Parameters:**
-  - `suiteUuid` - The UUID of the suite
-- **Returns:** The general user stories markdown content
-
-**Example Usage:**
-
-```
-Fetch general user stories for suite abc-123-def-456
-```
-
-#### `wopee_fetch_user_stories`
-
-Fetches the user stories JSON file for a suite.
-
-- **Parameters:**
-  - `suiteUuid` - The UUID of the suite
-- **Returns:** The user stories JSON content
-
-**Example Usage:**
-
-```
-Fetch user stories for suite abc-123-def-456
-```
-
-#### `wopee_fetch_test_cases`
-
-Fetches the test cases JSON file for a suite.
-
-- **Parameters:**
-  - `suiteUuid` - The UUID of the suite
-- **Returns:** The test cases JSON content
-
-**Example Usage:**
-
-```
-Fetch test cases for suite abc-123-def-456
+Fetch user stories for the latest suite
 ```
 
 ### Update Tools
@@ -259,9 +177,10 @@ Dispatch agent for my latest suite's user story US001 and test case TC003
 
 2. **Generate artifacts:**
 
-   - Generate app context: `wopee_generate_app_context`
-   - Generate user stories: `wopee_generate_user_stories` or `wopee_generate_general_user_stories`
-   - Generate test cases: `wopee_generate_test_cases`
+   - Generate app context: `wopee_generate_file` with `APP_CONTEXT` and specific `suiteUuid`
+   - Generate general user stories: `wopee_generate_file` with `GENERAL_USER_STORIES` and specific `suiteUuid`
+   - Generate user stories: `wopee_generate_file` with `USER_STORIES` and specific `suiteUuid`
+   - Generate test cases: `wopee_generate_file` with `TEST_CASES` and specific `suiteUuid`
 
 3. **Fetch generated content:**
 
@@ -273,5 +192,5 @@ Dispatch agent for my latest suite's user story US001 and test case TC003
 ## Notes
 
 - Most tools require a `suiteUuid`. Always start by fetching or creating a suite.
-- `wopee_dispatch_analysis` tool will go through whole cycle of processing - crawling the application and generating all of the artifacts one by one.
+- `wopee_dispatch_analysis` tool will go through whole cycle of processing - crawling the application and generating all of the files(artifacts) one by one.
 - It is advisable to use [cmd.wopee.io](https://cmd.wopee.io) for a convenient visual representation of the generated data and results of the agent runs.
