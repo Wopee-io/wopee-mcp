@@ -1,3 +1,12 @@
+# [1.4.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.3.0...v1.4.0) (2025-11-12)
+
+
+### Features
+
+implement wopee_update_file tool([7387d8e](https://github.com/autonomous-testing/wopee-mcp/commit/7387d8e2876978dbfe555dd3d8f1e1328a22351c))
+- add descriptions for handler parameters
+- update README to include usage of the 'wopee_update_file' tool
+
 # [1.3.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.2.2...v1.3.0) (2025-11-11)
 
 
