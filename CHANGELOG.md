@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/autonomous-testing/wopee-mcp/compare/v1.5.0...v1.5.1) (2025-11-12)
+
+
+### Bug Fixes
+
+update README to sync with updated tools and usage([eb2729c](https://github.com/autonomous-testing/wopee-mcp/commit/eb2729c3b0073f0588585a59e3b60ddd7bdac536))
+
 # [1.5.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.4.0...v1.5.0) (2025-11-12)
 
 
