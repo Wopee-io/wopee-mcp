@@ -2,8 +2,8 @@ import {
   GenerateAIDataHandlerInput,
   GenerateAIDataHandlerInputSchema,
 } from "../shared/schemas.js";
+import { FileType, ToolName } from "../shared/types.js";
 import { generateAIDataFile } from "../shared/handlers.js";
-import { GenerationType, ToolName } from "../shared/types.js";
 
 export const wopeeGenerateUserStories = {
   name: ToolName.WOPEE_GENERATE_USER_STORIES,
@@ -13,5 +13,5 @@ export const wopeeGenerateUserStories = {
     inputSchema: GenerateAIDataHandlerInputSchema.shape,
   },
   handler: async (input: GenerateAIDataHandlerInput) =>
-    await generateAIDataFile(GenerationType.USER_STORIES, input),
+    await generateAIDataFile(FileType.USER_STORIES, input),
 };

@@ -1,7 +1,9 @@
 import {
   FetchFileInput,
-  GenerateAIDataInput,
   FetchFileFactoryInput,
+  UpdateFileFactoryInput,
+  UpdateFileInput,
+  GenerateAIDataInput,
   GenerateAIDataHandlerInput,
 } from "./schemas.js";
 import { getConfig } from "../../utils/getConfig.js";
@@ -40,5 +42,19 @@ export const createGenerateAIDataInput = (
     extraPrompt: null,
     selectedUserStories: null,
     sourceSuiteUuid: null,
+  };
+};
+
+export const createUpdateFileInput = (
+  input: UpdateFileFactoryInput
+): UpdateFileInput => {
+  const { WOPEE_PROJECT_UUID } = getConfig();
+  if (!WOPEE_PROJECT_UUID) throw new Error("WOPEE_PROJECT_UUID is not set");
+
+  return {
+    bucket: input.bucket,
+    projectUuid: WOPEE_PROJECT_UUID,
+    suiteUuid: input.suiteUuid,
+    [input.type === "markdown" ? "code" : "json"]: input.fileContent,
   };
 };

@@ -1,3 +1,4 @@
+import { wopeeUpdateFile } from "./wopee_update_file/index.js";
 import { wopeeDispatchAgent } from "./wopee_dispatch_agent/index.js";
 import { wopeeFetchTestCases } from "./wopee_fetch_test_cases/index.js";
 import { wopeeFetchAppContext } from "./wopee_fetch_app_context/index.js";
@@ -24,4 +25,6 @@ export const TOOLS = [
   wopeeFetchGeneralUserStories,
   wopeeFetchUserStories,
   wopeeFetchTestCases,
+
+  wopeeUpdateFile,
 ];

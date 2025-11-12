@@ -1,11 +1,14 @@
 import { z } from "zod";
 import {
   FetchFileInputSchema,
+  UpdateFileInputSchema,
+  UpdateFileHandlerInput,
   GenerateAIDataInputSchema,
   GenerateAIDataHandlerInput,
 } from "./schemas.js";
 import {
   FetchFile,
+  UpdateFile,
   GenerateTestCases,
   GenerateAppContext,
   GenerateUserStories,
@@ -13,9 +16,10 @@ import {
 } from "./gql-queries.js";
 import {
   createFetchFileInput,
+  createUpdateFileInput,
   createGenerateAIDataInput,
 } from "./factories.js";
-import { Bucket, GenerationType } from "./types.js";
+import { Bucket, FileType } from "./types.js";
 import { requestClient } from "../../utils/requestClient.js";
 
 export function parseError(error: unknown) {
@@ -40,40 +44,46 @@ export function parseError(error: unknown) {
   };
 }
 
-function parseGenerationType(type: GenerationType) {
+function parseFileType(type: FileType) {
   switch (type) {
-    case GenerationType.APP_CONTEXT:
+    case FileType.APP_CONTEXT:
       return {
         query: GenerateAppContext,
         dataKey: "generateAppContext",
         bucket: Bucket.APP_CONTEXT,
+        type: "markdown" as const,
         description: "application's context markdown file for selected suite",
       };
-    case GenerationType.GENERAL_USER_STORIES:
+    case FileType.GENERAL_USER_STORIES:
       return {
         query: GenerateGeneralUserStories,
         dataKey: "generateGeneralUserStories",
         bucket: Bucket.GENERAL_USER_STORIES,
+        type: "markdown" as const,
         description: "general user stories markdown file for selected suite",
       };
-    case GenerationType.USER_STORIES:
+    case FileType.USER_STORIES:
       return {
         query: GenerateUserStories,
         dataKey: "generateUserStories",
         bucket: Bucket.USER_STORIES,
+        type: "json" as const,
         description: "user stories JSON file for selected suite",
       };
-    case GenerationType.TEST_CASES:
+    case FileType.TEST_CASES:
       return {
         query: GenerateTestCases,
         dataKey: "generateTestCases",
         bucket: Bucket.USER_STORIES,
+        type: "json" as const,
         description: "test cases for selected suite",
       };
     default:
       return {
         query: null,
         dataKey: null,
+        bucket: null,
+        type: null,
         description: null,
       };
   }
@@ -119,7 +129,7 @@ export async function fetchFile(input: {
 }
 
 export async function generateAIDataFile(
-  type: GenerationType,
+  type: FileType,
   input: GenerateAIDataHandlerInput
 ): Promise<{
   content: {
@@ -127,7 +137,7 @@ export async function generateAIDataFile(
     text: string;
   }[];
 }> {
-  const { query, dataKey, bucket, description } = parseGenerationType(type);
+  const { query, dataKey, bucket, description } = parseFileType(type);
   if (!query || !dataKey || !description || !bucket)
     return {
       content: [
@@ -161,6 +171,54 @@ export async function generateAIDataFile(
       suiteUuid: parsedInput.suiteUuid,
       bucket,
     });
+  } catch (error) {
+    return parseError(error);
+  }
+}
+
+export async function updateFile(input: UpdateFileHandlerInput) {
+  try {
+    const { bucket, type } = parseFileType(input.fileType);
+    if (!bucket || !type)
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: "Failed to parse file type",
+          },
+        ],
+      };
+
+    const updateFileInput = createUpdateFileInput({
+      type,
+      bucket,
+      suiteUuid: input.suiteUuid,
+      fileContent: input.fileContent,
+    });
+
+    const parsedInput = UpdateFileInputSchema.parse(updateFileInput);
+    const updateFileResult: { updateFile: boolean } | null =
+      await requestClient(UpdateFile, {
+        input: parsedInput,
+      });
+    if (!updateFileResult || !updateFileResult.updateFile)
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: "Failed to update file",
+          },
+        ],
+      };
+
+    return {
+      content: [
+        {
+          type: "text" as const,
+          text: "File updated successfully",
+        },
+      ],
+    };
   } catch (error) {
     return parseError(error);
   }

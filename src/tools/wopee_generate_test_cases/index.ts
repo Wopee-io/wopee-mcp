@@ -2,8 +2,8 @@ import {
   GenerateAIDataHandlerInput,
   GenerateAIDataHandlerInputSchema,
 } from "../shared/schemas.js";
+import { FileType, ToolName } from "../shared/types.js";
 import { generateAIDataFile } from "../shared/handlers.js";
-import { GenerationType, ToolName } from "../shared/types.js";
 
 export const wopeeGenerateTestCases = {
   name: ToolName.WOPEE_GENERATE_TEST_CASES,
@@ -13,5 +13,5 @@ export const wopeeGenerateTestCases = {
     inputSchema: GenerateAIDataHandlerInputSchema.shape,
   },
   handler: async (input: GenerateAIDataHandlerInput) =>
-    await generateAIDataFile(GenerationType.TEST_CASES, input),
+    await generateAIDataFile(FileType.TEST_CASES, input),
 };
