@@ -1,8 +1,10 @@
 name: CI/CD
 on:
+  pull_request:
   push:
     branches:
       - "main"
+
 jobs:
   setup-npm:
     runs-on: builder
@@ -33,6 +35,7 @@ jobs:
   release:
     needs: [test-build]
     runs-on: builder
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: write
       issues: write
