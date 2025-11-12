@@ -111,3 +111,9 @@ export const GenerateUserStories = `
     generateUserStories(input: $input)
   }
 `;
+
+export const UpdateFile = `
+  mutation UpdateFile($input: UpdateFileInput!) {
+    updateFile(input: $input)
+  }
+`;

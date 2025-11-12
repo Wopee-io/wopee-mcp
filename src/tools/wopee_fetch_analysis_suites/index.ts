@@ -1,7 +1,7 @@
+import { getConfig } from "../../utils/getConfig.js";
 import { requestClient } from "../../utils/requestClient.js";
 import { AnalysisSuite, ToolName } from "../shared/types.js";
 import { FetchAnalysisSuites } from "../shared/gql-queries.js";
-import { getConfig } from "../../utils/getConfig.js";
 
 export const wopeeFetchAnalysisSuites = {
   name: ToolName.WOPEE_FETCH_ANALYSIS_SUITES,

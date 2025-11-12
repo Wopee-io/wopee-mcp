@@ -12,6 +12,8 @@ export enum ToolName {
   WOPEE_GENERATE_GENERAL_USER_STORIES = "wopee_generate_general_user_stories",
   WOPEE_GENERATE_USER_STORIES = "wopee_generate_user_stories",
   WOPEE_GENERATE_TEST_CASES = "wopee_generate_test_cases",
+
+  WOPEE_UPDATE_FILE = "wopee_update_file",
 }
 
 export const Bucket = {
@@ -24,12 +26,13 @@ export const Bucket = {
   UPLOADED_PAGE_DATA: "project-uploaded-page-data",
 } as const;
 
-export enum GenerationType {
+export enum FileType {
   APP_CONTEXT = "APP_CONTEXT",
   GENERAL_USER_STORIES = "GENERAL_USER_STORIES",
   USER_STORIES = "USER_STORIES",
   TEST_CASES = "TEST_CASES",
 }
+
 export enum SuiteType {
   BOT = "BOT",
   CODE = "CODE",

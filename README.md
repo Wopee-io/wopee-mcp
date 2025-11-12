@@ -210,6 +210,26 @@ Fetches the test cases JSON file for a suite.
 Fetch test cases for suite abc-123-def-456
 ```
 
+### Update Tools
+
+These tools are used to update or set certain files(artifacts) for a specific suite. `suiteUuid`, `fileType` and `fileContent` is required.
+
+#### `wopee_update_file`
+
+Updates/replaces existing file(artifact) for a specific suite
+
+- **Parameters:**
+  - `suiteUuid` - The UUID of the suite
+  - `fileType` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES" | "TEST_CASES"`
+  - `fileContent` - Markdown content for `app context` and `general user stories`, structured JSON for `user stories` and `test cases`
+- **Returns:** Boolean based of success status of the tool call
+
+**Example Usage:**
+
+```
+Update app context file for the most recent suite with this content: <YourMarkdown>
+```
+
 ### Agent Testing
 
 #### `wopee_dispatch_agent`
