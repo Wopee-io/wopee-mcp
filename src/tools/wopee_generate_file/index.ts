@@ -5,13 +5,13 @@ import {
 import { FileType, ToolName } from "../shared/types.js";
 import { generateAIDataFile } from "../shared/handlers.js";
 
-export const wopeeGenerateTestCases = {
-  name: ToolName.WOPEE_GENERATE_TEST_CASES,
+export const wopeeGenerateFile = {
+  name: ToolName.WOPEE_GENERATE_FILE,
   config: {
-    title: "Generate test cases",
-    description: "Generate test cases for selected suite",
+    title: "Generate file(artifact)",
+    description: "Generate AI data file for selected suite",
     inputSchema: GenerateAIDataHandlerInputSchema.shape,
   },
   handler: async (input: GenerateAIDataHandlerInput) =>
-    await generateAIDataFile(FileType.TEST_CASES, input),
+    await generateAIDataFile(input),
 };

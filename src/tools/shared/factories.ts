@@ -55,6 +55,6 @@ export const createUpdateFileInput = (
     bucket: input.bucket,
     projectUuid: WOPEE_PROJECT_UUID,
     suiteUuid: input.suiteUuid,
-    [input.type === "markdown" ? "code" : "json"]: input.fileContent,
+    [input.outputType === "markdown" ? "code" : "json"]: input.fileContent,
   };
 };
