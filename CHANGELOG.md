@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.5.1...v1.6.0) (2025-11-14)
+
+
+### Features
+
+implement 'fetch-project-summary' prompt([248e7cb](https://github.com/autonomous-testing/wopee-mcp/commit/248e7cb04f7f4d836dc4ec17b1ad27026a97048d))
+
 ## [1.5.1](https://github.com/autonomous-testing/wopee-mcp/compare/v1.5.0...v1.5.1) (2025-11-12)
 
 
