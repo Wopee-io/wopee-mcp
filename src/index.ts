@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 import { TOOLS } from "./tools/index.js";
+import { PROMPTS } from "./prompts/index.js";
 
 const server = new McpServer({
   name: "wopee-mcp",
@@ -13,6 +14,14 @@ for (const { name, config, handler } of TOOLS) {
     name,
     config as Parameters<typeof server.registerTool>[1],
     handler as Parameters<typeof server.registerTool>[2]
+  );
+}
+
+for (const { name, config, handler } of PROMPTS) {
+  server.registerPrompt(
+    name,
+    config as Parameters<typeof server.registerPrompt>[1],
+    handler as Parameters<typeof server.registerPrompt>[2]
   );
 }
 
