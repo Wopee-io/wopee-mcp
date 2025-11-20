@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/autonomous-testing/wopee-mcp/compare/v1.6.0...v1.6.1) (2025-11-20)
+
+
+### Bug Fixes
+
+add shebang to the entry file([f71780b](https://github.com/autonomous-testing/wopee-mcp/commit/f71780b689250c0615859559236d262b0c23bbe2))
+
 # [1.6.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.5.1...v1.6.0) (2025-11-14)
 
 
