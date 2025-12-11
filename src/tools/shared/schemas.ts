@@ -30,7 +30,8 @@ export const GenerateAIDataInputSchema = z.object({
   suiteUuid: z.string().min(1, "Suite UUID is required"),
   extraPrompt: z.string().nullish(),
   sourceSuiteUuid: z.string().nullish(),
-  selectedUserStories: z.array(z.string()).nullish(),
+  selectedUserStories: z.array(z.string()).nullish(), // ["US001", "US002", "US003"]
+  selectedTestCases: z.array(z.string()).nullish(), // ["US001:TC001", "US003:TC002", "US015:TC033"]
   suiteAnalysisConfig: SuiteAnalysisConfigSchema,
   continueGeneration: z.boolean().nullish().default(false),
 });
