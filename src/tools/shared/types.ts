@@ -22,8 +22,11 @@ export const Bucket = {
 export enum FileType {
   APP_CONTEXT = "APP_CONTEXT",
   GENERAL_USER_STORIES = "GENERAL_USER_STORIES",
-  USER_STORIES = "USER_STORIES",
+  USER_STORIES_WITH_TEST_CASES = "USER_STORIES_WITH_TEST_CASES",
   TEST_CASES = "TEST_CASES",
+  TEST_CASE_STEPS = "TEST_CASE_STEPS",
+  REUSABLE_TEST_CASES = "REUSABLE_TEST_CASES",
+  REUSABLE_TEST_CASE_STEPS = "REUSABLE_TEST_CASE_STEPS",
 }
 
 export enum SuiteType {
@@ -69,6 +72,8 @@ type GeneratedAnalysisDataState = {
   generalUserStories: GenerationState;
   userStories: GenerationState;
   testCases: GenerationState;
+  reusableTestCases: GenerationState;
+  testCaseSteps: string[];
 };
 
 export type AnalysisSuite = {

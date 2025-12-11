@@ -40,6 +40,14 @@ export const DispatchAnalysis = `
           status
           isGenerated
         }
+        reusableTestCases {
+          status
+          isGenerated
+        }
+        testCaseSteps {
+          status
+          isGenerated
+        }
       }
     }
   }
@@ -79,6 +87,12 @@ export const FetchAnalysisSuites = `
           isGenerated
           status
         }
+        reusableTestCases {
+          uuid
+          isGenerated
+          status
+        }
+        testCaseSteps
       }
     }
   }
@@ -100,15 +114,33 @@ export const GenerateGeneralUserStories = `
   }
 `;
 
+export const GenerateUserStoriesWithTestCases = `
+  mutation GenerateUserStoriesWithTestCases($input: GenerateAIDataInput!) {
+    generateUserStories(input: $input)
+  }
+`;
+
 export const GenerateTestCases = `
  mutation GenerateTestCases($input: GenerateAIDataInput!) {
     generateTestCases(input: $input)
   }
 `;
 
-export const GenerateUserStories = `
-  mutation GenerateUserStories($input: GenerateAIDataInput!) {
-    generateUserStories(input: $input)
+export const GenerateTestCaseSteps = `
+ mutation GenerateTestCaseSteps($input: GenerateAIDataInput!) {
+    generateTestCaseSteps(input: $input)
+  }
+`;
+
+export const GenerateReusableTestCases = `
+  mutation GenerateReusableTestCases($input: GenerateAIDataInput!) {
+    generateReusableTestCases(input: $input)
+  }
+`;
+
+export const GenerateReusableTestCaseSteps = `
+  mutation GenerateReusableTestCaseSteps($input: GenerateAIDataInput!) {
+    generateReusableTestCaseSteps(input: $input)
   }
 `;
 

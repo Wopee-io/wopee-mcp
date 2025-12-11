@@ -10,10 +10,13 @@ import {
 import {
   FetchFile,
   UpdateFile,
-  GenerateTestCases,
   GenerateAppContext,
-  GenerateUserStories,
   GenerateGeneralUserStories,
+  GenerateUserStoriesWithTestCases,
+  GenerateTestCases,
+  GenerateReusableTestCases,
+  GenerateReusableTestCaseSteps,
+  GenerateTestCaseSteps,
 } from "./gql-queries.js";
 import {
   createFetchFileInput,
@@ -63,13 +66,14 @@ function parseFileType(type: FileType) {
         outputType: "markdown" as const,
         description: "general user stories markdown file for selected suite",
       };
-    case FileType.USER_STORIES:
+    case FileType.USER_STORIES_WITH_TEST_CASES:
       return {
-        query: GenerateUserStories,
-        dataKey: "generateUserStories",
+        query: GenerateUserStoriesWithTestCases,
+        dataKey: "generateUserStoriesWithTestCases",
         bucket: Bucket.USER_STORIES,
         outputType: "json" as const,
-        description: "user stories JSON file for selected suite",
+        description:
+          "generate user stories with test cases without test case steps JSON file for selected suite",
       };
     case FileType.TEST_CASES:
       return {
@@ -77,7 +81,35 @@ function parseFileType(type: FileType) {
         dataKey: "generateTestCases",
         bucket: Bucket.USER_STORIES,
         outputType: "json" as const,
-        description: "test cases for selected suite",
+        description:
+          "generate test cases without test case steps in user stories for selected suite",
+      };
+    case FileType.REUSABLE_TEST_CASES:
+      return {
+        query: GenerateReusableTestCases,
+        dataKey: "generateReusableTestCases",
+        bucket: Bucket.USER_STORIES,
+        outputType: "json" as const,
+        description:
+          "generate reusable blocks without test case steps in user stories for selected suite",
+      };
+    case FileType.REUSABLE_TEST_CASE_STEPS:
+      return {
+        query: GenerateReusableTestCaseSteps,
+        dataKey: "generateReusableTestCaseSteps",
+        bucket: Bucket.USER_STORIES,
+        outputType: "json" as const,
+        description:
+          "generate steps for reusable blocks in user stories for selected suite",
+      };
+    case FileType.TEST_CASE_STEPS:
+      return {
+        query: GenerateTestCaseSteps,
+        dataKey: "generateTestCaseSteps",
+        bucket: Bucket.USER_STORIES,
+        outputType: "json" as const,
+        description:
+          "generate test case steps for test cases in user stories for selected suite",
       };
     default:
       return {

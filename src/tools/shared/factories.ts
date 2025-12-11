@@ -41,6 +41,7 @@ export const createGenerateAIDataInput = (
     continueGeneration: false,
     extraPrompt: null,
     selectedUserStories: null,
+    selectedTestCases: null,
     sourceSuiteUuid: null,
   };
 };
