@@ -1,3 +1,12 @@
+# [1.7.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.6.1...v1.7.0) (2025-12-11)
+
+
+### Features
+
+sync with changes on API([6d2cfad](https://github.com/autonomous-testing/wopee-mcp/commit/6d2cfad53227781a655f0ae108895fed4b766a11))
+- add new endpoints
+- update existing endpoints
+
 ## [1.6.1](https://github.com/autonomous-testing/wopee-mcp/compare/v1.6.0...v1.6.1) (2025-11-20)
 
 

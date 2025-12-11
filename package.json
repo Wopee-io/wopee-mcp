@@ -4,7 +4,7 @@
   "bin": {
     "wopee-mcp": "./build/index.js"
   },
-  "version": "1.6.1",
+  "version": "1.7.0",
   "description": "Wopee.io MCP server",
   "main": "./build/index.js",
   "scripts": {
