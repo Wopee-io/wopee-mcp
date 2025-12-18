@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/autonomous-testing/wopee-mcp/compare/v1.7.0...v1.7.1) (2025-12-18)
+
+
+### Bug Fixes
+
+correct return value for 'testCaseSteps'([303c6b2](https://github.com/autonomous-testing/wopee-mcp/commit/303c6b2a7f426a9cb6333b7c1805573e18921aca))
+
 # [1.7.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.6.1...v1.7.0) (2025-12-11)
 
 
