@@ -44,10 +44,7 @@ export const DispatchAnalysis = `
           status
           isGenerated
         }
-        testCaseSteps {
-          status
-          isGenerated
-        }
+        testCaseSteps
       }
     }
   }

@@ -100,7 +100,7 @@ Generates a specific file(artifact) for the selected suite.
 
 - **Parameters:**
   - `suiteUuid` - The UUID of the suite
-  - `fileType` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES" | "TEST_CASES"`
+  - `fileType` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES_WITH_TEST_CASES" | "TEST_CASES" | "TEST_CASE_STEPS" | "REUSABLE_TEST_CASES" | "REUSABLE_TEST_CASE_STEPS"`
 - **Returns:** Generated output in case of successful generation.
 
 **Example Usage:**
