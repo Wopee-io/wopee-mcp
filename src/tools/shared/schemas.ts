@@ -17,9 +17,14 @@ export const SuiteAnalysisConfigSchema = z.object({
 });
 
 export const GenerateAIDataHandlerInputSchema = z.object({
-  fileType: z.nativeEnum(FileType, {
-    description: "Chosen type of file(artifact) to generate",
-  }),
+  fileType: z.enum(
+    Object.values(FileType).filter(
+      (type) => type !== FileType.PLAYWRIGHT_CODE
+    ) as [FileType, ...FileType[]],
+    {
+      description: "Chosen type of file(artifact) to generate",
+    }
+  ),
   suiteUuid: z
     .string({ description: "UUID of the suite to generate file(artifact) for" })
     .min(1, "Suite UUID is required"),
@@ -43,17 +48,25 @@ export const FetchFileHandlerInputSchema = z.object({
   suiteUuid: z
     .string({ description: "UUID of the suite to fetch the file from" })
     .min(1, "Suite UUID is required"),
+  identifier: z
+    .string({
+      description:
+        "Identifier for the test case to fetch playwright code for, ex. `US004:TC006`, should be provided only for `PLAYWRIGHT_CODE` file type",
+    })
+    .optional(),
 });
 
 export const FetchFileFactoryInputSchema = z.object({
   suiteUuid: z.string().min(1, "Suite UUID is required"),
   bucket: z.nativeEnum(Bucket),
+  identifier: z.string().nullish(),
 });
 
 export const FetchFileInputSchema = z.object({
   projectUuid: z.string().min(1, "Project UUID is required"),
   suiteUuid: z.string().min(1, "Suite UUID is required"),
   bucket: z.nativeEnum(Bucket),
+  testCaseId: z.string().nullish(),
 });
 
 export const UpdateFileHandlerInputSchema = z.object({
@@ -66,13 +79,20 @@ export const UpdateFileHandlerInputSchema = z.object({
   suiteUuid: z
     .string({ description: "UUID of the suite to update the file for" })
     .min(1, "Suite UUID is required"),
+  identifier: z
+    .string({
+      description:
+        "Identifier for the test case to update playwright code for, ex. `US004:TC006`, should be provided only for `PLAYWRIGHT_CODE` file type",
+    })
+    .optional(),
 });
 
 export const UpdateFileFactoryInputSchema = z.object({
   bucket: z.nativeEnum(Bucket),
   suiteUuid: z.string().min(1, "Suite UUID is required"),
   fileContent: z.string(),
-  outputType: z.enum(["markdown", "json"]),
+  outputType: z.enum(["markdown", "json", "typescript"]),
+  identifier: z.string().optional(),
 });
 
 export const UpdateFileInputSchema = z.object({
@@ -81,6 +101,8 @@ export const UpdateFileInputSchema = z.object({
   bucket: z.nativeEnum(Bucket),
   json: z.string().nullish(),
   code: z.string().nullish(),
+  testCaseId: z.string().nullish(),
+  userStoryId: z.string().nullish(),
 });
 
 export type GenerateAIDataHandlerInput = z.infer<

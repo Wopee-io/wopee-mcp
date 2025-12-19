@@ -111,6 +111,14 @@ function parseFileType(type: FileType) {
         description:
           "generate test case steps for test cases in user stories for selected suite",
       };
+    case FileType.PLAYWRIGHT_CODE:
+      return {
+        query: null,
+        dataKey: null,
+        bucket: Bucket.PLAYWRIGHT_CODE,
+        outputType: "typescript" as const,
+        description: "fetch playwright code for selected test case",
+      };
     default:
       return {
         query: null,
@@ -142,9 +150,11 @@ export async function fetchFile(input: FetchFileHandlerInput): Promise<{
     const fetchFileInput = createFetchFileInput({
       bucket,
       suiteUuid: input.suiteUuid,
+      identifier: input.identifier,
     });
+    console.error("FETCH FILE INPUT", fetchFileInput);
     const parsedInput = FetchFileInputSchema.parse(fetchFileInput);
-
+    console.error("PARSED INPUT", parsedInput);
     const result: { fetchFile: string } | null = await requestClient(
       FetchFile,
       parsedInput
@@ -236,6 +246,7 @@ export async function updateFile(input: UpdateFileHandlerInput) {
       outputType,
       suiteUuid: input.suiteUuid,
       fileContent: input.fileContent,
+      identifier: input.identifier,
     });
 
     const parsedInput = UpdateFileInputSchema.parse(updateFileInput);
