@@ -13,11 +13,18 @@ export const createFetchFileInput = (
 ): FetchFileInput => {
   const { WOPEE_PROJECT_UUID } = getConfig();
   if (!WOPEE_PROJECT_UUID) throw new Error("WOPEE_PROJECT_UUID is not set");
+  let testCaseId;
+  if (input.identifier) {
+    // Temporary solution for fetching playwright code for a specific test case TODO: replace with proper identifier later
+    const [usId, tcId] = input.identifier.split(":");
+    testCaseId = `${usId}/${tcId}`;
+  }
 
   return {
     projectUuid: WOPEE_PROJECT_UUID,
     suiteUuid: input.suiteUuid,
     bucket: input.bucket,
+    ...(testCaseId ? { testCaseId } : {}),
   };
 };
 
@@ -51,11 +58,19 @@ export const createUpdateFileInput = (
 ): UpdateFileInput => {
   const { WOPEE_PROJECT_UUID } = getConfig();
   if (!WOPEE_PROJECT_UUID) throw new Error("WOPEE_PROJECT_UUID is not set");
+  let userStoryId;
+  let testCaseId;
+  if (input.identifier) {
+    [userStoryId, testCaseId] = input.identifier.split(":");
+  }
 
   return {
     bucket: input.bucket,
     projectUuid: WOPEE_PROJECT_UUID,
     suiteUuid: input.suiteUuid,
-    [input.outputType === "markdown" ? "code" : "json"]: input.fileContent,
+    [input.outputType === "markdown" || input.outputType === "typescript"
+      ? "code"
+      : "json"]: input.fileContent,
+    ...(userStoryId && testCaseId ? { testCaseId, userStoryId } : {}),
   };
 };

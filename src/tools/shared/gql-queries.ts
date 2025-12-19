@@ -1,6 +1,6 @@
 export const FetchFile = `
-  query FetchFile($projectUuid: ID!, $suiteUuid: ID!, $bucket: String!) {
-    fetchFile(projectUuid: $projectUuid, suiteUuid: $suiteUuid, bucket: $bucket)
+  query FetchFile($projectUuid: ID!, $suiteUuid: ID!, $bucket: String!, $testCaseId: String) {
+    fetchFile(projectUuid: $projectUuid, suiteUuid: $suiteUuid, bucket: $bucket, testCaseId: $testCaseId)
   }
 `;
 
