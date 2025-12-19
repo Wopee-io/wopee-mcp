@@ -1,3 +1,12 @@
+# [1.8.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.7.1...v1.8.0) (2025-12-19)
+
+
+### Features
+
+enable fetch/update for playwright code([e059e06](https://github.com/autonomous-testing/wopee-mcp/commit/e059e06f464338b4662dc07a68a0322601029b44))
+- temporary workaround inside 'fetch file' with identifier
+- add optional params to update file endpoint to support pw code
+
 ## [1.7.1](https://github.com/autonomous-testing/wopee-mcp/compare/v1.7.0...v1.7.1) (2025-12-18)
 
 
