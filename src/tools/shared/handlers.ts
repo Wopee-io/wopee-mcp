@@ -152,9 +152,7 @@ export async function fetchFile(input: FetchFileHandlerInput): Promise<{
       suiteUuid: input.suiteUuid,
       identifier: input.identifier,
     });
-    console.error("FETCH FILE INPUT", fetchFileInput);
     const parsedInput = FetchFileInputSchema.parse(fetchFileInput);
-    console.error("PARSED INPUT", parsedInput);
     const result: { fetchFile: string } | null = await requestClient(
       FetchFile,
       parsedInput
