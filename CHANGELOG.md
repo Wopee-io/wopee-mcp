@@ -1,3 +1,10 @@
+## [1.8.1](https://github.com/autonomous-testing/wopee-mcp/compare/v1.8.0...v1.8.1) (2025-12-19)
+
+
+### Bug Fixes
+
+remove leftover logs([e166353](https://github.com/autonomous-testing/wopee-mcp/commit/e1663537f6703e5125d40d7e85d2077c55098f8d))
+
 # [1.8.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.7.1...v1.8.0) (2025-12-19)
 
 
