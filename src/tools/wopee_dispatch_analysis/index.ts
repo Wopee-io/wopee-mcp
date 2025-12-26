@@ -1,4 +1,4 @@
-import { parseError } from "../shared/handlers.js";
+import { _parseError } from "../shared/helpers.js";
 import { DispatchAnalysisInputSchema } from "./schema.js";
 import { createDispatchAnalysisInput } from "./factory.js";
 import { DispatchAnalysis } from "../shared/gql-queries.js";
@@ -39,7 +39,7 @@ export const wopeeDispatchAnalysis = {
         ],
       };
     } catch (error) {
-      return parseError(error);
+      return _parseError(error);
     }
   },
 };

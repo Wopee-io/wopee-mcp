@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Bucket, FileType } from "./types.js";
+import { ArtifactType, GenerateArtifactType } from "./types.js";
 
 enum CookiesPreference {
   ACCEPT_ALL = "ACCEPT_ALL",
@@ -17,14 +17,9 @@ export const SuiteAnalysisConfigSchema = z.object({
 });
 
 export const GenerateAIDataHandlerInputSchema = z.object({
-  fileType: z.enum(
-    Object.values(FileType).filter(
-      (type) => type !== FileType.PLAYWRIGHT_CODE
-    ) as [FileType, ...FileType[]],
-    {
-      description: "Chosen type of file(artifact) to generate",
-    }
-  ),
+  type: z.nativeEnum(GenerateArtifactType, {
+    description: "Chosen type of file(artifact) to generate",
+  }),
   suiteUuid: z
     .string({ description: "UUID of the suite to generate file(artifact) for" })
     .min(1, "Suite UUID is required"),
@@ -41,8 +36,8 @@ export const GenerateAIDataInputSchema = z.object({
   continueGeneration: z.boolean().nullish().default(false),
 });
 
-export const FetchFileHandlerInputSchema = z.object({
-  fileType: z.nativeEnum(FileType, {
+export const FetchArtifactHandlerInputSchema = z.object({
+  type: z.nativeEnum(ArtifactType, {
     description: "Chosen file(artifact) to fetch",
   }),
   suiteUuid: z
@@ -51,29 +46,40 @@ export const FetchFileHandlerInputSchema = z.object({
   identifier: z
     .string({
       description:
-        "Identifier for the test case to fetch playwright code for, ex. `US004:TC006`, should be provided only for `PLAYWRIGHT_CODE` file type",
+        "Identifier for the test case to fetch playwright code for, ex. `US004:TC006`, should be provided only for `PLAYWRIGHT_CODE` artifact type",
     })
     .optional(),
 });
 
-export const FetchFileFactoryInputSchema = z.object({
+export const FetchArtifactFactoryInputSchema = z.object({
   suiteUuid: z.string().min(1, "Suite UUID is required"),
-  bucket: z.nativeEnum(Bucket),
-  identifier: z.string().nullish(),
+  type: z.nativeEnum(ArtifactType),
+  identifier: z
+    .string({
+      description:
+        "Identifier for the test case to fetch playwright code for, ex. `US004:TC006`, should be provided only for `PLAYWRIGHT_CODE` artifact type",
+    })
+    .nullish(),
 });
 
-export const FetchFileInputSchema = z.object({
+export const FetchArtifactInputSchema = z.object({
   projectUuid: z.string().min(1, "Project UUID is required"),
   suiteUuid: z.string().min(1, "Suite UUID is required"),
-  bucket: z.nativeEnum(Bucket),
-  testCaseId: z.string().nullish(),
+  type: z.nativeEnum(ArtifactType),
+  identifier: z
+    .string({
+      description:
+        "Identifier for the test case to fetch playwright code for, ex. `US004:TC006`, should be provided only for `PLAYWRIGHT_CODE` artifact type",
+    })
+    .nullish(),
+  ref: z.string().nullish(), // branch, tag or commit sha
 });
 
-export const UpdateFileHandlerInputSchema = z.object({
-  fileType: z.nativeEnum(FileType, {
+export const UpdateArtifactHandlerInputSchema = z.object({
+  type: z.nativeEnum(ArtifactType, {
     description: "Chosen file(artifact) to update",
   }),
-  fileContent: z.string({
+  content: z.string({
     description: "Content of the file(artifact) to update",
   }),
   suiteUuid: z
@@ -82,40 +88,48 @@ export const UpdateFileHandlerInputSchema = z.object({
   identifier: z
     .string({
       description:
-        "Identifier for the test case to update playwright code for, ex. `US004:TC006`, should be provided only for `PLAYWRIGHT_CODE` file type",
+        "Identifier for the test case to update playwright code for, ex. `US004:TC006`, should be provided only for `PLAYWRIGHT_CODE` artifact type",
     })
     .optional(),
 });
 
-export const UpdateFileFactoryInputSchema = z.object({
-  bucket: z.nativeEnum(Bucket),
+export const UpdateArtifactFactoryInputSchema = z.object({
+  type: z.nativeEnum(ArtifactType),
   suiteUuid: z.string().min(1, "Suite UUID is required"),
-  fileContent: z.string(),
-  outputType: z.enum(["markdown", "json", "typescript"]),
+  content: z.string(),
   identifier: z.string().optional(),
 });
 
-export const UpdateFileInputSchema = z.object({
+export const UpdateArtifactInputSchema = z.object({
   projectUuid: z.string().min(1, "Project UUID is required"),
   suiteUuid: z.string().min(1, "Suite UUID is required"),
-  bucket: z.nativeEnum(Bucket),
-  json: z.string().nullish(),
-  code: z.string().nullish(),
-  testCaseId: z.string().nullish(),
-  userStoryId: z.string().nullish(),
+  type: z.nativeEnum(ArtifactType),
+  identifier: z
+    .string({
+      description:
+        "Identifier for the test case to update playwright code for, ex. `US004:TC006`, should be provided only for `PLAYWRIGHT_CODE` artifact type",
+    })
+    .nullish(),
+  content: z.string({
+    description: "Content of the artifact to update",
+  }),
 });
 
 export type GenerateAIDataHandlerInput = z.infer<
   typeof GenerateAIDataHandlerInputSchema
 >;
 export type GenerateAIDataInput = z.infer<typeof GenerateAIDataInputSchema>;
-export type FetchFileHandlerInput = z.infer<typeof FetchFileHandlerInputSchema>;
-export type FetchFileInput = z.infer<typeof FetchFileInputSchema>;
-export type FetchFileFactoryInput = z.infer<typeof FetchFileFactoryInputSchema>;
-export type UpdateFileHandlerInput = z.infer<
-  typeof UpdateFileHandlerInputSchema
+export type FetchArtifactHandlerInput = z.infer<
+  typeof FetchArtifactHandlerInputSchema
 >;
-export type UpdateFileFactoryInput = z.infer<
-  typeof UpdateFileFactoryInputSchema
+export type FetchArtifactInput = z.infer<typeof FetchArtifactInputSchema>;
+export type FetchArtifactFactoryInput = z.infer<
+  typeof FetchArtifactFactoryInputSchema
 >;
-export type UpdateFileInput = z.infer<typeof UpdateFileInputSchema>;
+export type UpdateArtifactHandlerInput = z.infer<
+  typeof UpdateArtifactHandlerInputSchema
+>;
+export type UpdateArtifactFactoryInput = z.infer<
+  typeof UpdateArtifactFactoryInputSchema
+>;
+export type UpdateArtifactInput = z.infer<typeof UpdateArtifactInputSchema>;

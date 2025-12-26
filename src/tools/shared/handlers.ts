@@ -1,163 +1,50 @@
-import { z } from "zod";
 import {
-  FetchFileInputSchema,
-  FetchFileHandlerInput,
-  UpdateFileInputSchema,
-  UpdateFileHandlerInput,
+  FetchArtifactInputSchema,
+  FetchArtifactHandlerInput,
+  UpdateArtifactInputSchema,
+  UpdateArtifactHandlerInput,
   GenerateAIDataInputSchema,
   GenerateAIDataHandlerInput,
 } from "./schemas.js";
+import { FetchArtifact, UpdateArtifact } from "./gql-queries.js";
 import {
-  FetchFile,
-  UpdateFile,
-  GenerateAppContext,
-  GenerateGeneralUserStories,
-  GenerateUserStoriesWithTestCases,
-  GenerateTestCases,
-  GenerateReusableTestCases,
-  GenerateReusableTestCaseSteps,
-  GenerateTestCaseSteps,
-} from "./gql-queries.js";
-import {
-  createFetchFileInput,
-  createUpdateFileInput,
+  createFetchArtifactInput,
+  createUpdateArtifactInput,
   createGenerateAIDataInput,
 } from "./factories.js";
-import { Bucket, FileType } from "./types.js";
 import { requestClient } from "../../utils/requestClient.js";
+import {
+  _convertToArtifactType,
+  _parseError,
+  _parseGenerateArtifactType,
+} from "./helpers.js";
 
-export function parseError(error: unknown) {
-  console.error(error instanceof z.ZodError ? error.issues : error);
-  return {
-    content: [
-      {
-        type: "text" as const,
-        text: `Failed to parse input: ${
-          error instanceof z.ZodError
-            ? error.issues
-                .map(
-                  (issue) => `${issue.path[0] ?? "Unknown"}: ${issue.message}`
-                )
-                .join("\n")
-            : error instanceof Error
-            ? error.message
-            : "Unknown zod validation error"
-        }`,
-      },
-    ],
-  };
-}
-
-function parseFileType(type: FileType) {
-  switch (type) {
-    case FileType.APP_CONTEXT:
-      return {
-        query: GenerateAppContext,
-        dataKey: "generateAppContext",
-        bucket: Bucket.APP_CONTEXT,
-        outputType: "markdown" as const,
-        description: "application's context markdown file for selected suite",
-      };
-    case FileType.GENERAL_USER_STORIES:
-      return {
-        query: GenerateGeneralUserStories,
-        dataKey: "generateGeneralUserStories",
-        bucket: Bucket.GENERAL_USER_STORIES,
-        outputType: "markdown" as const,
-        description: "general user stories markdown file for selected suite",
-      };
-    case FileType.USER_STORIES_WITH_TEST_CASES:
-      return {
-        query: GenerateUserStoriesWithTestCases,
-        dataKey: "generateUserStoriesWithTestCases",
-        bucket: Bucket.USER_STORIES,
-        outputType: "json" as const,
-        description:
-          "generate user stories with test cases without test case steps JSON file for selected suite",
-      };
-    case FileType.TEST_CASES:
-      return {
-        query: GenerateTestCases,
-        dataKey: "generateTestCases",
-        bucket: Bucket.USER_STORIES,
-        outputType: "json" as const,
-        description:
-          "generate test cases without test case steps in user stories for selected suite",
-      };
-    case FileType.REUSABLE_TEST_CASES:
-      return {
-        query: GenerateReusableTestCases,
-        dataKey: "generateReusableTestCases",
-        bucket: Bucket.USER_STORIES,
-        outputType: "json" as const,
-        description:
-          "generate reusable blocks without test case steps in user stories for selected suite",
-      };
-    case FileType.REUSABLE_TEST_CASE_STEPS:
-      return {
-        query: GenerateReusableTestCaseSteps,
-        dataKey: "generateReusableTestCaseSteps",
-        bucket: Bucket.USER_STORIES,
-        outputType: "json" as const,
-        description:
-          "generate steps for reusable blocks in user stories for selected suite",
-      };
-    case FileType.TEST_CASE_STEPS:
-      return {
-        query: GenerateTestCaseSteps,
-        dataKey: "generateTestCaseSteps",
-        bucket: Bucket.USER_STORIES,
-        outputType: "json" as const,
-        description:
-          "generate test case steps for test cases in user stories for selected suite",
-      };
-    case FileType.PLAYWRIGHT_CODE:
-      return {
-        query: null,
-        dataKey: null,
-        bucket: Bucket.PLAYWRIGHT_CODE,
-        outputType: "typescript" as const,
-        description: "fetch playwright code for selected test case",
-      };
-    default:
-      return {
-        query: null,
-        dataKey: null,
-        bucket: null,
-        outputType: null,
-        description: null,
-      };
-  }
-}
-
-export async function fetchFile(input: FetchFileHandlerInput): Promise<{
+export async function fetchArtifact(input: FetchArtifactHandlerInput): Promise<{
   content: {
     type: "text";
     text: string;
   }[];
 }> {
   try {
-    const { bucket, description } = parseFileType(input.fileType);
-    if (!bucket || !description)
-      return {
-        content: [
-          {
-            type: "text" as const,
-            text: "Failed to parse file type",
-          },
-        ],
-      };
-    const fetchFileInput = createFetchFileInput({
-      bucket,
-      suiteUuid: input.suiteUuid,
-      identifier: input.identifier,
+    const { type, suiteUuid, identifier } = input;
+
+    const fetchArtifactInput = createFetchArtifactInput({
+      type,
+      suiteUuid,
+      ...(identifier ? { identifier } : {}),
     });
-    const parsedInput = FetchFileInputSchema.parse(fetchFileInput);
-    const result: { fetchFile: string } | null = await requestClient(
-      FetchFile,
-      parsedInput
-    );
-    if (!result || !result.fetchFile)
+    const parsedInput = FetchArtifactInputSchema.parse(fetchArtifactInput);
+    const result: {
+      fetchArtifact: {
+        content: string | null;
+        blobSha: string | null;
+        commitSha: string | null;
+        commitDate: string | null;
+      };
+    } | null = await requestClient(FetchArtifact, {
+      input: parsedInput,
+    });
+    if (!result || !result?.fetchArtifact || !result?.fetchArtifact?.content)
       return {
         content: [
           {
@@ -166,16 +53,17 @@ export async function fetchFile(input: FetchFileHandlerInput): Promise<{
           },
         ],
       };
+
     return {
       content: [
         {
           type: "text" as const,
-          text: result.fetchFile,
+          text: result.fetchArtifact.content,
         },
       ],
     };
   } catch (error) {
-    return parseError(error);
+    return _parseError(error);
   }
 }
 
@@ -187,8 +75,10 @@ export async function generateAIDataFile(
     text: string;
   }[];
 }> {
-  const { query, dataKey, bucket, description } = parseFileType(input.fileType);
-  if (!query || !dataKey || !description || !bucket)
+  const { query, dataKey, description } = _parseGenerateArtifactType(
+    input.type
+  );
+  if (!query || !dataKey || !description)
     return {
       content: [
         {
@@ -217,42 +107,34 @@ export async function generateAIDataFile(
         ],
       };
 
-    return await fetchFile({
+    const convertedType = _convertToArtifactType(input.type);
+
+    return await fetchArtifact({
       suiteUuid: parsedInput.suiteUuid,
-      fileType: input.fileType,
+      type: convertedType,
     });
   } catch (error) {
-    return parseError(error);
+    return _parseError(error);
   }
 }
 
-export async function updateFile(input: UpdateFileHandlerInput) {
+export async function updateArtifact(input: UpdateArtifactHandlerInput) {
   try {
-    const { bucket, outputType } = parseFileType(input.fileType);
-    if (!bucket || !outputType)
-      return {
-        content: [
-          {
-            type: "text" as const,
-            text: "Failed to parse file type",
-          },
-        ],
-      };
+    const { type, suiteUuid, content, identifier } = input;
 
-    const updateFileInput = createUpdateFileInput({
-      bucket,
-      outputType,
-      suiteUuid: input.suiteUuid,
-      fileContent: input.fileContent,
-      identifier: input.identifier,
+    const updateArtifactInput = createUpdateArtifactInput({
+      type,
+      content,
+      suiteUuid,
+      ...(identifier ? { identifier } : {}),
     });
 
-    const parsedInput = UpdateFileInputSchema.parse(updateFileInput);
-    const updateFileResult: { updateFile: boolean } | null =
-      await requestClient(UpdateFile, {
+    const parsedInput = UpdateArtifactInputSchema.parse(updateArtifactInput);
+    const updateFileResult: { updateArtifact: boolean } | null =
+      await requestClient(UpdateArtifact, {
         input: parsedInput,
       });
-    if (!updateFileResult || !updateFileResult.updateFile)
+    if (!updateFileResult || !updateFileResult.updateArtifact)
       return {
         content: [
           {
@@ -271,6 +153,6 @@ export async function updateFile(input: UpdateFileHandlerInput) {
       ],
     };
   } catch (error) {
-    return parseError(error);
+    return _parseError(error);
   }
 }

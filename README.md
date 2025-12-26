@@ -92,15 +92,15 @@ Dispatch a new analysis suite
 
 ### Generation Tools
 
-These tools generate various artifacts for a specific suite. All require a `suiteUuid` and `fileType` to generate.
+These tools generate various artifacts for a specific suite. All require a `suiteUuid` and `type` to generate.
 
-#### `wopee_generate_file`
+#### `wopee_generate_artifact`
 
 Generates a specific file(artifact) for the selected suite.
 
 - **Parameters:**
   - `suiteUuid` - The UUID of the suite
-  - `fileType` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES_WITH_TEST_CASES" | "TEST_CASES" | "TEST_CASE_STEPS" | "REUSABLE_TEST_CASES" | "REUSABLE_TEST_CASE_STEPS"`
+  - `type` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES_WITH_TEST_CASES" | "TEST_CASES" | "TEST_CASE_STEPS" | "REUSABLE_TEST_CASES" | "REUSABLE_TEST_CASE_STEPS"`
 - **Returns:** Generated output in case of successful generation.
 
 **Example Usage:**
@@ -111,15 +111,16 @@ Generate app context for my most recent analysis suite
 
 ### Fetch Tools
 
-These tools retrieve generated artifacts for a specific suite. All require a `suiteUuid` and `fileType`.
+These tools retrieve generated artifacts for a specific suite. All require a `suiteUuid` and `type`.
 
-#### `wopee_fetch_file`
+#### `wopee_fetch_artifact`
 
 Fetches the enquired file(artifact) from the selected suite.
 
 - **Parameters:**
   - `suiteUuid` - The UUID of the suite
-  - `fileType` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES" | "TEST_CASES"`
+  - `type` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES" | "PLAYWRIGHT_CODE" | "PROJECT_CONTEXT"`
+  - `identifier` - Identifier of the test case to fetch Playwright code for, ex. `US003:TC004`
 - **Returns:** The file contents in case of successful fetch.
 
 **Example Usage:**
@@ -130,16 +131,17 @@ Fetch user stories for the latest suite
 
 ### Update Tools
 
-These tools are used to update or set certain files(artifacts) for a specific suite. `suiteUuid`, `fileType` and `fileContent` is required.
+These tools are used to update or set certain files(artifacts) for a specific suite. `suiteUuid`, `type` and `content` is required.
 
-#### `wopee_update_file`
+#### `wopee_update_artifact`
 
 Updates/replaces existing file(artifact) for a specific suite
 
 - **Parameters:**
   - `suiteUuid` - The UUID of the suite
-  - `fileType` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES" | "TEST_CASES"`
-  - `fileContent` - Markdown content for `app context` and `general user stories`, structured JSON for `user stories` and `test cases`
+  - `type` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES" | "PLAYWRIGHT_CODE" | "PROJECT_CONTEXT"`
+  - `content` - Markdown content for `app context`, `general user stories` and `project context`, structured JSON for `user stories`
+  - `identifier` - Identifier of the test case to fetch Playwright code for, ex. `US003:TC004`
 - **Returns:** Boolean based of success status of the tool call
 
 **Example Usage:**
@@ -177,10 +179,12 @@ Dispatch agent for my latest suite's user story US001 and test case TC003
 
 2. **Generate artifacts:**
 
-   - Generate app context: `wopee_generate_file` with `APP_CONTEXT` and specific `suiteUuid`
-   - Generate general user stories: `wopee_generate_file` with `GENERAL_USER_STORIES` and specific `suiteUuid`
-   - Generate user stories: `wopee_generate_file` with `USER_STORIES` and specific `suiteUuid`
-   - Generate test cases: `wopee_generate_file` with `TEST_CASES` and specific `suiteUuid`
+   - Generate app context: `wopee_generate_artifact` with `APP_CONTEXT` and specific `suiteUuid`
+   - Generate general user stories: `wopee_generate_artifact` with `GENERAL_USER_STORIES` and specific `suiteUuid`
+   - Generate user stories with test cases: `wopee_generate_artifact` with `USER_STORIES_WITH_TEST_CASES` and specific `suiteUuid`
+   - Generate reusable test cases: `wopee_generate_artifact` with `REUSABLE_TEST_CASES` and specific `suiteUuid`
+   - Generate reusable test case steps: `wopee_generate_artifact` with `REUSABLE_TEST_CASE_STEPS` and specific `suiteUuid`
+   - Generate test case steps: `wopee_generate_artifact` with `TEST_CASE_STEPS` and specific `suiteUuid`
 
 3. **Fetch generated content:**
 

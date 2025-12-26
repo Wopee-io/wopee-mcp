@@ -4,7 +4,7 @@ import {
   WopeeDispatchAgentInputSchema,
 } from "./schema.js";
 import { ToolName } from "../shared/types.js";
-import { parseError } from "../shared/handlers.js";
+import { _parseError } from "../shared/helpers.js";
 import { createDispatchAgentInput } from "./factory.js";
 import { DispatchAgent } from "../shared/gql-queries.js";
 import { requestClient } from "../../utils/requestClient.js";
@@ -46,7 +46,7 @@ export const wopeeDispatchAgent = {
         ],
       };
     } catch (error) {
-      return parseError(error);
+      return _parseError(error);
     }
   },
 };
