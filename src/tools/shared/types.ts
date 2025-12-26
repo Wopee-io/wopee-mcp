@@ -4,22 +4,12 @@ export enum ToolName {
   WOPEE_DISPATCH_ANALYSIS = "wopee_dispatch_analysis",
   WOPEE_DISPATCH_AGENT = "wopee_dispatch_agent",
 
-  WOPEE_FETCH_FILE = "wopee_fetch_file",
-  WOPEE_UPDATE_FILE = "wopee_update_file",
-  WOPEE_GENERATE_FILE = "wopee_generate_file",
+  WOPEE_FETCH_ARTIFACT = "wopee_fetch_artifact",
+  WOPEE_UPDATE_ARTIFACT = "wopee_update_artifact",
+  WOPEE_GENERATE_ARTIFACT = "wopee_generate_artifact",
 }
 
-export const Bucket = {
-  APP_CONTEXT: "project-suite-app-context",
-  GENERAL_USER_STORIES: "project-suite-general-user-stories",
-  USER_STORIES: "project-suite-user-stories",
-  PAGE_CONTENT: "screen-instance-page-content",
-  PROMPTS: "project-prompts",
-  PLAYWRIGHT_CODE: "project-suite-playwright-code",
-  UPLOADED_PAGE_DATA: "project-uploaded-page-data",
-} as const;
-
-export enum FileType {
+export enum GenerateArtifactType {
   APP_CONTEXT = "APP_CONTEXT",
   GENERAL_USER_STORIES = "GENERAL_USER_STORIES",
   USER_STORIES_WITH_TEST_CASES = "USER_STORIES_WITH_TEST_CASES",
@@ -27,7 +17,14 @@ export enum FileType {
   TEST_CASE_STEPS = "TEST_CASE_STEPS",
   REUSABLE_TEST_CASES = "REUSABLE_TEST_CASES",
   REUSABLE_TEST_CASE_STEPS = "REUSABLE_TEST_CASE_STEPS",
+}
+
+export enum ArtifactType {
+  APP_CONTEXT = "APP_CONTEXT",
+  GENERAL_USER_STORIES = "GENERAL_USER_STORIES",
+  USER_STORIES = "USER_STORIES",
   PLAYWRIGHT_CODE = "PLAYWRIGHT_CODE",
+  PROJECT_CONTEXT = "PROJECT_CONTEXT",
 }
 
 export enum SuiteType {

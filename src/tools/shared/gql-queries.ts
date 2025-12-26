@@ -1,6 +1,17 @@
-export const FetchFile = `
-  query FetchFile($projectUuid: ID!, $suiteUuid: ID!, $bucket: String!, $testCaseId: String) {
-    fetchFile(projectUuid: $projectUuid, suiteUuid: $suiteUuid, bucket: $bucket, testCaseId: $testCaseId)
+export const FetchArtifact = `
+  query FetchArtifact($input: FetchArtifactInput!) {
+    fetchArtifact(input: $input) {
+      content
+      blobSha
+      commitSha
+      commitDate
+    }
+  }
+`;
+
+export const UpdateArtifact = `
+  mutation Mutation($input: UpdateArtifactInput!) {
+    updateArtifact(input: $input)
   }
 `;
 
@@ -138,11 +149,5 @@ export const GenerateReusableTestCases = `
 export const GenerateReusableTestCaseSteps = `
   mutation GenerateReusableTestCaseSteps($input: GenerateAIDataInput!) {
     generateReusableTestCaseSteps(input: $input)
-  }
-`;
-
-export const UpdateFile = `
-  mutation UpdateFile($input: UpdateFileInput!) {
-    updateFile(input: $input)
   }
 `;

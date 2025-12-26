@@ -1,30 +1,26 @@
 import {
-  FetchFileInput,
-  FetchFileFactoryInput,
-  UpdateFileFactoryInput,
-  UpdateFileInput,
+  FetchArtifactInput,
+  FetchArtifactFactoryInput,
+  UpdateArtifactFactoryInput,
+  UpdateArtifactInput,
   GenerateAIDataInput,
   GenerateAIDataHandlerInput,
 } from "./schemas.js";
 import { getConfig } from "../../utils/getConfig.js";
 
-export const createFetchFileInput = (
-  input: FetchFileFactoryInput
-): FetchFileInput => {
+export const createFetchArtifactInput = (
+  input: FetchArtifactFactoryInput
+): FetchArtifactInput => {
   const { WOPEE_PROJECT_UUID } = getConfig();
   if (!WOPEE_PROJECT_UUID) throw new Error("WOPEE_PROJECT_UUID is not set");
-  let testCaseId;
-  if (input.identifier) {
-    // Temporary solution for fetching playwright code for a specific test case TODO: replace with proper identifier later
-    const [usId, tcId] = input.identifier.split(":");
-    testCaseId = `${usId}/${tcId}`;
-  }
+
+  const { type, suiteUuid, identifier } = input;
 
   return {
+    type,
+    suiteUuid,
     projectUuid: WOPEE_PROJECT_UUID,
-    suiteUuid: input.suiteUuid,
-    bucket: input.bucket,
-    ...(testCaseId ? { testCaseId } : {}),
+    ...(identifier ? { identifier } : {}),
   };
 };
 
@@ -53,24 +49,19 @@ export const createGenerateAIDataInput = (
   };
 };
 
-export const createUpdateFileInput = (
-  input: UpdateFileFactoryInput
-): UpdateFileInput => {
+export const createUpdateArtifactInput = (
+  input: UpdateArtifactFactoryInput
+): UpdateArtifactInput => {
   const { WOPEE_PROJECT_UUID } = getConfig();
   if (!WOPEE_PROJECT_UUID) throw new Error("WOPEE_PROJECT_UUID is not set");
-  let userStoryId;
-  let testCaseId;
-  if (input.identifier) {
-    [userStoryId, testCaseId] = input.identifier.split(":");
-  }
+
+  const { type, suiteUuid, content, identifier } = input;
 
   return {
-    bucket: input.bucket,
+    type,
+    content,
+    suiteUuid,
     projectUuid: WOPEE_PROJECT_UUID,
-    suiteUuid: input.suiteUuid,
-    [input.outputType === "markdown" || input.outputType === "typescript"
-      ? "code"
-      : "json"]: input.fileContent,
-    ...(userStoryId && testCaseId ? { testCaseId, userStoryId } : {}),
+    ...(identifier ? { identifier } : {}),
   };
 };
