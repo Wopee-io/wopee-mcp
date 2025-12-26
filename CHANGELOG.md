@@ -1,3 +1,15 @@
+# [1.9.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.8.1...v1.9.0) (2025-12-26)
+
+
+### Features
+
+update tools with updated endpoint signature([3d5c3ab](https://github.com/autonomous-testing/wopee-mcp/commit/3d5c3ab7b1c61268bb596851d6a37de0fd66b0c8))
+- fetch file -> fetch artifact
+- update file -> update artifact
+- endpoints using unified interface for S3/REPOSITORY storage types
+- update schemas, handlers, factories
+- update README
+
 ## [1.8.1](https://github.com/autonomous-testing/wopee-mcp/compare/v1.8.0...v1.8.1) (2025-12-19)
 
 
