@@ -38,6 +38,38 @@ Add this server to your MCP configuration.
 
 - **`WOPEE_API_URL`** - The Wopee API endpoint URL. Should be specified only for testing/development purposes.
 
+### Corporate Proxy Configuration
+
+If you're behind a corporate proxy/VPN and experiencing connection timeouts, you can configure proxy settings using standard environment variables:
+
+```json
+{
+  "mcpServers": {
+    "wopee": {
+      "command": "npx wopee-mcp",
+      "env": {
+        "WOPEE_PROJECT_UUID": "your-project-uuid-here",
+        "WOPEE_API_KEY": "your-api-key-here",
+        "HTTPS_PROXY": "http://your-proxy-server:8080"
+      }
+    }
+  }
+}
+```
+
+#### Supported Proxy Environment Variables
+
+- **`HTTPS_PROXY`** or **`https_proxy`** - Proxy server URL for HTTPS connections (recommended)
+- **`HTTP_PROXY`** or **`http_proxy`** - Fallback proxy server URL
+
+#### Finding Your Proxy Settings
+
+If you're unsure about your proxy settings, check your VS Code settings (`settings.json`) for `http.proxy` value, or consult your IT department. Common corporate proxy formats:
+
+- `http://proxy.company.com:8080`
+- `http://10.x.x.x:8080`
+- `http://username:password@proxy.company.com:8080` (if authentication is required)
+
 ## Getting Started
 
 Most tools in this MCP server require a `suiteUuid` to operate. You have two options to get started:
