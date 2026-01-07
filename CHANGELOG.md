@@ -1,3 +1,12 @@
+# [1.10.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.9.0...v1.10.0) (2026-01-07)
+
+
+### Features
+
+add corporate proxy support([277e1f5](https://github.com/autonomous-testing/wopee-mcp/commit/277e1f50deb5e08113975565683a0c8b57ee1709))
+- Add `HTTPS_PROXY` environment variable to manage proxy settings
+- Update README with proxy configuration instructions.
+
 # [1.9.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.8.1...v1.9.0) (2025-12-26)
 
 
