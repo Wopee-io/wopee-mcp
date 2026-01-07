@@ -1,9 +1,21 @@
 #!/usr/bin/env node
+import { setGlobalDispatcher, ProxyAgent } from "undici";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 import { TOOLS } from "./tools/index.js";
 import { PROMPTS } from "./prompts/index.js";
+
+const proxyUrl =
+  process.env.HTTPS_PROXY ||
+  process.env.https_proxy ||
+  process.env.HTTP_PROXY ||
+  process.env.http_proxy;
+
+if (proxyUrl) {
+  setGlobalDispatcher(new ProxyAgent(proxyUrl));
+  console.error(`[WOPEE]: Using proxy ${proxyUrl}`);
+}
 
 const server = new McpServer({
   name: "wopee-mcp",
