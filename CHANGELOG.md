@@ -1,3 +1,12 @@
+# [1.11.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.10.0...v1.11.0) (2026-01-08)
+
+
+### Features
+
+update DispatchAgent mutation response([2e1ce0a](https://github.com/autonomous-testing/wopee-mcp/commit/2e1ce0a0010eb0b612fbd16db671f22fe5d5d5a7))
+- sync with changes on API:
+  - return ExecutedTestCase array for DispatchAgent mutation
+
 # [1.10.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.9.0...v1.10.0) (2026-01-07)
 
 
