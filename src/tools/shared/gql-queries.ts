@@ -19,7 +19,22 @@ export const DispatchAgent = `
   mutation DispatchAgent(
     $input: TestCasesInput!
   ) {
-    dispatchAgent(input: $input)
+    dispatchAgent(input: $input) {
+      uuid
+      projectUuid
+      suiteUuid
+      analysisSuiteUuid
+      analysisIdentifier
+      userStoryId
+      testCaseId
+      executionStatus
+      agentReport
+      agentReportStatus
+      codeReport
+      codeReportStatus
+      createdAt
+      updatedAt
+    }
   }
 `;
 

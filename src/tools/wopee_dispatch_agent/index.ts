@@ -21,13 +21,11 @@ export const wopeeDispatchAgent = {
       const dispatchAgentInput = createDispatchAgentInput(input);
       const parsedInput = DispatchAgentInputSchema.parse(dispatchAgentInput);
 
-      const result: { dispatchAgent: boolean } | null = await requestClient(
-        DispatchAgent,
-        {
+      const result: { dispatchAgent: { uuid: string }[] } | null =
+        await requestClient(DispatchAgent, {
           input: parsedInput,
-        }
-      );
-      if (!result || !result.dispatchAgent)
+        });
+      if (!result || result?.dispatchAgent?.length === 0)
         return {
           content: [
             {
