@@ -1,3 +1,11 @@
+## [1.11.1](https://github.com/autonomous-testing/wopee-mcp/compare/v1.11.0...v1.11.1) (2026-01-19)
+
+
+### Bug Fixes
+
+update tool name inside fetch_project_summary prompt([dccf769](https://github.com/autonomous-testing/wopee-mcp/commit/dccf7692ef876236849017a972ff26ec69730c44))
+- wopee_fetch_file -> wopee_fetch_artifact
+
 # [1.11.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.10.0...v1.11.0) (2026-01-08)
 
 
