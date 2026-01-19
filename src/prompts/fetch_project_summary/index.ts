@@ -12,7 +12,7 @@ export const fetchProjectSummary = {
         role: "user",
         content: {
           type: "text",
-          text: `Please, fetch my analysis suites using 'wopee_fetch_analysis_suites' tool and if there are more than 5 suites, ask the user to specify how many suites he wishes to use for further processing. Then for each suite in the list, fetch its user stories/test cases using 'wopee_fetch_file' tool with the file type 'USER_STORIES' OR 'TEST_CASES' (no need to specify both arguments as they both return the same output).
+          text: `Please, fetch my analysis suites using 'wopee_fetch_analysis_suites' tool and if there are more than 5 suites, ask the user to specify how many suites he wishes to use for further processing. Then for each suite in the list, fetch its user stories/test cases using 'wopee_fetch_artifact' tool with the type 'USER_STORIES'.
           
           After fetching all of the necessary data, summarize and display two readable markdown tables as an output in the same chat conversation. Do NOT create, write, or save any files to disk - only display the formatted tables in your response:
 
