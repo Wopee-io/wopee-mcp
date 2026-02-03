@@ -166,3 +166,42 @@ export const GenerateReusableTestCaseSteps = `
     generateReusableTestCaseSteps(input: $input)
   }
 `;
+
+export const CreateBlankAnalysisSuite = `
+  mutation CreateBlankAnalysisSuite($projectUuid: ID!) {
+    createBlankAnalysisSuite(projectUuid: $projectUuid) {
+      uuid
+      name
+      suiteType
+      executionStatus
+      createdAt
+      updatedAt
+      analysisIdentifier
+      suiteRunningStatus
+      generatedAnalysisDataState {
+        suiteUuid
+        appContext {
+          isGenerated
+          status
+        }
+        generalUserStories {
+          isGenerated
+          status
+        }
+        userStories {
+          isGenerated
+          status
+        }
+        testCases {
+          isGenerated
+          status
+        }
+        reusableTestCases {
+          isGenerated
+          status
+        }
+        testCaseSteps
+      }
+    }
+  }
+`;

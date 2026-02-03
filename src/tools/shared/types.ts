@@ -1,4 +1,5 @@
 export enum ToolName {
+  WOPEE_CREATE_BLANK_SUITE = "wopee_create_blank_suite",
   WOPEE_FETCH_ANALYSIS_SUITES = "wopee_fetch_analysis_suites",
 
   WOPEE_DISPATCH_ANALYSIS = "wopee_dispatch_analysis",
