@@ -86,13 +86,21 @@ This will return a list of all analysis suites with their UUIDs, which you can t
 
 ### Option 2: Create a New Suite
 
-If you don't have any suites yet, create a fresh analysis suite:
+If you don't have any suites yet, you have two options:
+
+**Automatic Analysis:** Create and dispatch a full analysis/crawling suite:
 
 ```
 Use the wopee_dispatch_analysis tool to create and dispatch a new analysis/crawling suite.
 ```
 
-This will create a new suite and return its UUID, which you can use for subsequent operations.
+**Blank Suite:** Create an empty suite for manual configuration:
+
+```
+Use the wopee_create_blank_suite tool to create a blank analysis suite.
+```
+
+Both options will return a suite UUID, which you can use for subsequent operations.
 
 ## Available Tools
 
@@ -120,6 +128,18 @@ Creates and dispatches a new analysis/crawling suite for your project. Use this 
 
 ```
 Dispatch a new analysis suite
+```
+
+#### `wopee_create_blank_suite`
+
+Creates a blank analysis suite for your project. Use this when you want to manually configure and populate a suite rather than having it automatically analyzed.
+
+- **Returns:** The created suite information including its UUID
+
+**Example Usage:**
+
+```
+Create a blank analysis suite for my project
 ```
 
 ### Generation Tools
