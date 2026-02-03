@@ -1,3 +1,11 @@
+# [1.12.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.11.1...v1.12.0) (2026-02-03)
+
+
+### Features
+
+add a tool to create a blank analysis suite([9573c76](https://github.com/autonomous-testing/wopee-mcp/commit/9573c76adb54cac9366197c64c5e3c7fc1cd1bc8))
+- Update README to include instructions for creating a blank analysis suite
+
 ## [1.11.1](https://github.com/autonomous-testing/wopee-mcp/compare/v1.11.0...v1.11.1) (2026-01-19)
 
 
