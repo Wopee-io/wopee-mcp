@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.12.0...v1.13.0) (2026-02-09)
+
+
+### Features
+
+update README with TLS and certificate troubleshooting guidance([194d058](https://github.com/autonomous-testing/wopee-mcp/commit/194d0581a4c9db8aca5fe4cd2623e89587e777aa))
+
 # [1.12.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.11.1...v1.12.0) (2026-02-03)
 
 
