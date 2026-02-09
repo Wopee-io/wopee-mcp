@@ -70,6 +70,59 @@ If you're unsure about your proxy settings, check your VS Code settings (`settin
 - `http://10.x.x.x:8080`
 - `http://username:password@proxy.company.com:8080` (if authentication is required)
 
+### TLS / Certificate Issues
+
+**This is not required for MCP to work.** If you see HTTPS or certificate-related errors, that indicates a TLS or certificate trust issue in your environment.
+
+If the server fails with errors such as **`UNABLE_TO_VERIFY_LEAF_SIGNATURE`** or **`certificate has expired`**, it may be due to:
+
+- **Self-signed certificates** (e.g. when `WOPEE_API_URL` points to an internal or dev server)
+- **Corporate proxy / SSL inspection** (traffic re-encrypted with a corporate CA your machine doesn’t trust)
+- **Missing CA certificates** in Node’s trust store
+
+#### Preferred solutions (secure)
+
+1. **Use a valid TLS certificate** – e.g. Let’s Encrypt, or an internal CA – and ensure the **full certificate chain** is served.
+2. **Install the corporate or internal CA** so Node trusts it:
+
+   Example:
+
+   ```bash
+   export NODE_EXTRA_CA_CERTS=/etc/ssl/certs/internal-ca.pem
+   ```
+
+   In MCP config `env`:
+
+   ```json
+   "env": {
+     "WOPEE_PROJECT_UUID": "your-project-uuid-here",
+     "WOPEE_API_KEY": "your-api-key-here",
+     "NODE_EXTRA_CA_CERTS": "/path/to/ca.pem"
+   }
+   ```
+
+#### Insecure workaround (not recommended)
+
+For **local debugging only**, you may disable TLS verification in Node. This should **never** be used in production, as it disables HTTPS security and exposes traffic to interception.
+
+```bash
+export NODE_TLS_REJECT_UNAUTHORIZED=0
+```
+
+Or in MCP config `env`:
+
+```json
+"env": {
+  "WOPEE_PROJECT_UUID": "your-project-uuid-here",
+  "WOPEE_API_KEY": "your-api-key-here",
+  "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+}
+```
+
+Treat this as a **debug-only escape hatch**, not a normal setup step.
+
+**Note:** Some users have reported setting `PYTHONHTTPSVERIFY=0` as well. This MCP server does not use Python; that variable has no effect on it. It would only apply if you run a Python-based MCP host or other tooling that also performs HTTPS in the same environment—outside the scope of this server.
+
 ## Getting Started
 
 Most tools in this MCP server require a `suiteUuid` to operate. You have two options to get started:
