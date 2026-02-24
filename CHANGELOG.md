@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.13.0...v1.14.0) (2026-02-24)
+
+
+### Features
+
+update wopee_dispatch_analysis tool with additional instructions prop([c002f89](https://github.com/autonomous-testing/wopee-mcp/commit/c002f89baef55504f377925d95a02a868d11565c))
+
 # [1.13.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.12.0...v1.13.0) (2026-02-09)
 
 
