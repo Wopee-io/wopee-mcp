@@ -175,12 +175,18 @@ Fetch all existing analysis suites for my project
 
 Creates and dispatches a new analysis/crawling suite for your project. Use this to start a fresh analysis session.
 
+- **Parameters:**
+  - `additionalInstructions` *(optional)* - Additional instructions to guide the agent during the analysis/crawling phase (e.g. focus areas, things to ignore, login steps, etc.)
 - **Returns:** Success message with the created suite information
 
 **Example Usage:**
 
 ```
 Dispatch a new analysis suite
+```
+
+```
+Dispatch a new analysis suite and focus on the checkout flow
 ```
 
 #### `wopee_create_blank_suite`

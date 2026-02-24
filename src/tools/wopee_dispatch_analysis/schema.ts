@@ -18,4 +18,13 @@ export const DispatchAnalysisInputSchema = z.object({
   rerun: RerunOptionsSchema.nullable().default(null),
 });
 
+export const WopeeDispatchAnalysisInputSchema = z.object({
+  additionalInstructions: z
+    .string({ description: "Additional instructions for the agent" })
+    .nullish(),
+});
+
 export type DispatchAnalysisInput = z.infer<typeof DispatchAnalysisInputSchema>;
+export type WopeeDispatchAnalysisInput = z.infer<
+  typeof WopeeDispatchAnalysisInputSchema
+>;

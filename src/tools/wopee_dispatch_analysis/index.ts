@@ -1,5 +1,9 @@
 import { _parseError } from "../shared/helpers.js";
-import { DispatchAnalysisInputSchema } from "./schema.js";
+import {
+  DispatchAnalysisInputSchema,
+  WopeeDispatchAnalysisInput,
+  WopeeDispatchAnalysisInputSchema,
+} from "./schema.js";
 import { createDispatchAnalysisInput } from "./factory.js";
 import { DispatchAnalysis } from "../shared/gql-queries.js";
 import { requestClient } from "../../utils/requestClient.js";
@@ -10,11 +14,13 @@ export const wopeeDispatchAnalysis = {
   config: {
     title: "Dispatch analysis",
     description: "Create and dispatch analysis/crawling suite for a project",
+    inputSchema: WopeeDispatchAnalysisInputSchema.shape,
   },
-  handler: async () => {
+
+  handler: async (input: WopeeDispatchAnalysisInput) => {
     try {
-      const input = createDispatchAnalysisInput();
-      const parsedInput = DispatchAnalysisInputSchema.parse(input);
+      const rawInput = createDispatchAnalysisInput(input);
+      const parsedInput = DispatchAnalysisInputSchema.parse(rawInput);
 
       const result: { dispatchAnalysis: AnalysisSuite } | null =
         await requestClient(DispatchAnalysis, {

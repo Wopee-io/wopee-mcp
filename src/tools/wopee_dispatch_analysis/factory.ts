@@ -1,7 +1,12 @@
 import { getConfig } from "../../utils/getConfig.js";
-import type { DispatchAnalysisInput } from "./schema.js";
+import type {
+  DispatchAnalysisInput,
+  WopeeDispatchAnalysisInput,
+} from "./schema.js";
 
-export const createDispatchAnalysisInput = (): DispatchAnalysisInput => {
+export const createDispatchAnalysisInput = (
+  input: WopeeDispatchAnalysisInput,
+): DispatchAnalysisInput => {
   const { WOPEE_PROJECT_UUID } = getConfig();
   if (!WOPEE_PROJECT_UUID) throw new Error("WOPEE_PROJECT_UUID is not set");
 
@@ -12,7 +17,7 @@ export const createDispatchAnalysisInput = (): DispatchAnalysisInput => {
       username: null,
       password: null,
       cookiesPreference: null,
-      additionalInstructions: null,
+      additionalInstructions: input.additionalInstructions ?? null,
       additionalVariables: null,
     },
     rerun: null,
