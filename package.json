@@ -5,7 +5,8 @@
     "wopee-mcp": "./build/index.js"
   },
   "version": "1.14.0",
-  "description": "Wopee.io MCP server",
+  "mcpName": "io.github.autonomous-testing/wopee-mcp",
+  "description": "Wopee.io MCP server for autonomous testing platform",
   "main": "./build/index.js",
   "scripts": {
     "build": "tsc && chmod 755 build/index.js",
