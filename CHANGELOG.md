@@ -1,3 +1,12 @@
+# [1.16.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.15.0...v1.16.0) (2026-03-18)
+
+
+### Features
+
+add mcpName and server.json for Official MCP Registry listing([57b6ec9](https://github.com/autonomous-testing/wopee-mcp/commit/57b6ec996717b76ba7c909a1b7839fde15ef202d))
+Add mcpName field to package.json and corrected server.json metadata
+to enable publishing to the Official MCP Registry.
+
 # [1.15.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.14.0...v1.15.0) (2026-03-18)
 
 
