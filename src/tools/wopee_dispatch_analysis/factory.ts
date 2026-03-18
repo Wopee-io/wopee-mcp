@@ -18,7 +18,9 @@ export const createDispatchAnalysisInput = (
       password: null,
       cookiesPreference: null,
       additionalInstructions: input.additionalInstructions ?? null,
-      additionalVariables: null,
+      additionalVariables: input.additionalVariables?.length
+        ? JSON.stringify(input.additionalVariables)
+        : null,
     },
     rerun: null,
   };
