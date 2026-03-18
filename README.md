@@ -176,7 +176,10 @@ Fetch all existing analysis suites for my project
 Creates and dispatches a new analysis/crawling suite for your project. Use this to start a fresh analysis session.
 
 - **Parameters:**
-  - `additionalInstructions` *(optional)* - Additional instructions to guide the agent during the analysis/crawling phase (e.g. focus areas, things to ignore, login steps, etc.)
+  - `additionalInstructions` _(optional)_ - Additional instructions to guide the agent during the analysis/crawling phase (e.g. focus areas, things to ignore, login steps, etc.)
+  - `additionalVariables` _(optional)_ - Additional environment variables to pass to the analysis. Array of objects, each with:
+    - `key` - Variable name, must be uppercase with underscores only (e.g. `MY_VAR`, `BASE_URL`)
+    - `value` - Variable value (non-empty string)
 - **Returns:** Success message with the created suite information
 
 **Example Usage:**
@@ -187,6 +190,10 @@ Dispatch a new analysis suite
 
 ```
 Dispatch a new analysis suite and focus on the checkout flow
+```
+
+```
+Dispatch a new analysis suite with additional variables CARD_FILAMENT=123321123 and AUTH_TOKEN=abc123
 ```
 
 #### `wopee_create_blank_suite`
@@ -284,12 +291,10 @@ Dispatch agent for my latest suite's user story US001 and test case TC003
 ## Typical Workflow
 
 1. **Start with a suite:**
-
    - Use `wopee_fetch_analysis_suites` to see existing suites, OR
    - Use `wopee_dispatch_analysis` to create a new suite
 
 2. **Generate artifacts:**
-
    - Generate app context: `wopee_generate_artifact` with `APP_CONTEXT` and specific `suiteUuid`
    - Generate general user stories: `wopee_generate_artifact` with `GENERAL_USER_STORIES` and specific `suiteUuid`
    - Generate user stories with test cases: `wopee_generate_artifact` with `USER_STORIES_WITH_TEST_CASES` and specific `suiteUuid`
@@ -298,7 +303,6 @@ Dispatch agent for my latest suite's user story US001 and test case TC003
    - Generate test case steps: `wopee_generate_artifact` with `TEST_CASE_STEPS` and specific `suiteUuid`
 
 3. **Fetch generated content:**
-
    - Use the fetch tools to retrieve generated markdown/JSON files
 
 4. **Run tests:**
