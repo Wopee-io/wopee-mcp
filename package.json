@@ -4,7 +4,7 @@
   "bin": {
     "wopee-mcp": "./build/index.js"
   },
-  "version": "1.14.0",
+  "version": "1.15.0",
   "mcpName": "io.github.autonomous-testing/wopee-mcp",
   "description": "Wopee.io MCP server for autonomous testing platform",
   "main": "./build/index.js",

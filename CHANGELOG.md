@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.14.0...v1.15.0) (2026-03-18)
+
+
+### Features
+
+enable additional variables in dispatch analysis([e9eed2f](https://github.com/autonomous-testing/wopee-mcp/commit/e9eed2ff4f44df21042463d82f51556c9d06829d))
+
 # [1.14.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.13.0...v1.14.0) (2026-02-24)
 
 
