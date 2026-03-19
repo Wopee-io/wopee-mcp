@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.autonomous-testing/wopee-mcp",
-  "description": "Wopee.io MCP server for autonomous testing platform — dispatch test runs, analysis crawls, and AI agent tests, fetch artifacts and project status",
+  "description": "AI testing agents for web apps — dispatch test runs, crawls, fetch artifacts and status.",
   "repository": {
     "url": "https://github.com/autonomous-testing/wopee-mcp",
     "source": "github"
   },
-  "version": "1.14.0",
+  "version": "1.16.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "wopee-mcp",
-      "version": "1.14.0",
+      "version": "1.16.0",
       "transport": {
         "type": "stdio"
       },
