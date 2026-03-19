@@ -1,3 +1,16 @@
+# [1.17.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.16.0...v1.17.0) (2026-03-19)
+
+
+### Features
+
+auto-publish to MCP Registry after NPM publish([616cb79](https://github.com/autonomous-testing/wopee-mcp/commit/616cb7934375a8ea767f94155a27cc2e05351af3))
+Add workflow that automatically syncs server.json version from
+package.json and publishes to MCP Registry via GitHub OIDC after
+the Publish to NPM workflow completes successfully.
+
+Also fix server.json: bump version 1.14.0 → 1.16.0, shorten
+description to fit 100-char registry limit.
+
 # [1.16.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.15.0...v1.16.0) (2026-03-18)
 
 
