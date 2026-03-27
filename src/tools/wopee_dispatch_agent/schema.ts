@@ -34,7 +34,6 @@ export const DispatchAgentInputSchema = z.object({
   suiteUuid: z.string().min(1, "Suite UUID is required"),
   analysisIdentifier: z.string().min(1, "Analysis identifier is required"),
   testCases: z.array(SelectedTestCasesSchema),
-  skipRateLimitCheck: z.boolean().nullable().default(true),
 });
 
 export type DispatchAgentInput = z.infer<typeof DispatchAgentInputSchema>;

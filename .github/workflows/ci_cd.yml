@@ -14,8 +14,14 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Npm install and cache
-        uses: autonomous-testing/npm-install-action@v2.3.1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
 
   test-build:
     needs: [setup-npm]
@@ -26,8 +32,14 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Setup Node/NPM/Cache
-        uses: autonomous-testing/npm-install-action@v2.3.1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Build
         run: npm run build:clean
@@ -48,11 +60,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node/NPM/Cache
-        uses: autonomous-testing/npm-install-action@v2.3.1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
 
       - name: Install dependencies
-        run: npm clean-install
+        run: npm ci
 
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: npm audit signatures
