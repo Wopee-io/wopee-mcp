@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.17.0...v1.18.0) (2026-03-27)
+
+
+### Features
+
+prepare for open source([18fba30](https://github.com/autonomous-testing/wopee-mcp/commit/18fba302da43a13fce63c78782a2daf42ad06c1a))
+
 # [1.17.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.16.0...v1.17.0) (2026-03-19)
 
 
