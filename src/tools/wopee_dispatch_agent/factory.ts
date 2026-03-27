@@ -12,6 +12,5 @@ export const createDispatchAgentInput = (
     suiteUuid: input.suiteUuid,
     analysisIdentifier: input.analysisIdentifier,
     testCases: input.testCases,
-    skipRateLimitCheck: true,
   };
 };
