@@ -1,3 +1,14 @@
+## [1.18.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.18.0...v1.18.1) (2026-03-30)
+
+
+### Bug Fixes
+
+update MCP registry namespace to match new GitHub org([e7d565a](https://github.com/Wopee-io/wopee-mcp/commit/e7d565a493878c3670e4a723603392888cb69572))
+The repo moved from autonomous-testing/wopee-mcp to Wopee-io/wopee-mcp
+but server.json and package.json still referenced the old org. This broke
+the Official MCP Registry listing and blocks all downstream auto-sync
+(PulseMCP, VS Code, Cursor, Claude.ai).
+
 # [1.18.0](https://github.com/autonomous-testing/wopee-mcp/compare/v1.17.0...v1.18.0) (2026-03-27)
 
 
