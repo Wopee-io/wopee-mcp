@@ -28,7 +28,7 @@
     "model context protocol"
   ],
   "author": "Sota Giorgadze <sota.giorgadze@wopee.io>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.21.0",
     "undici": "^7.18.2",
