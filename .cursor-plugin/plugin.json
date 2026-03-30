@@ -1,0 +1,12 @@
+{
+  "name": "wopee-mcp",
+  "displayName": "Wopee MCP",
+  "version": "0.1.0",
+  "description": "MCP server for autonomous end-to-end testing with Wopee.io. Analyzes web applications, generates and executes Playwright-based functional tests, and validates results.",
+  "author": {
+    "name": "Wopee.io",
+    "url": "https://wopee.io"
+  },
+  "license": "MIT",
+  "keywords": ["cursor", "plugin", "mcp", "testing", "e2e", "playwright", "wopee", "autonomous-testing"]
+}
