@@ -1,3 +1,13 @@
+## [1.18.2](https://github.com/Wopee-io/wopee-mcp/compare/v1.18.1...v1.18.2) (2026-03-30)
+
+
+### Bug Fixes
+
+use ubuntu-latest runner for npm publish workflow([f82218d](https://github.com/Wopee-io/wopee-mcp/commit/f82218dad97dfba20dec3b6b8bf279685aabda25))
+The `builder` self-hosted runner is unavailable, causing the publish
+workflow to hang indefinitely. Switch to `ubuntu-latest` to match
+ci_cd.yml. Also bump Node from 20 to 22 for consistency.
+
 ## [1.18.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.18.0...v1.18.1) (2026-03-30)
 
 
