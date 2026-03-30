@@ -1,3 +1,12 @@
+# [1.19.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.18.2...v1.19.0) (2026-03-30)
+
+
+### Features
+
+add Cursor Directory plugin config([532c168](https://github.com/Wopee-io/wopee-mcp/commit/532c168b1b6c4a2a59483d9020cbe6f9b06d3d52))
+Adds mcp.json and .cursor-plugin/plugin.json for Open Plugins
+compatibility, enabling submission to Cursor Directory marketplace.
+
 ## [1.18.2](https://github.com/Wopee-io/wopee-mcp/compare/v1.18.1...v1.18.2) (2026-03-30)
 
 
