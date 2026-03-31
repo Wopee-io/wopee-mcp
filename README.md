@@ -1,6 +1,12 @@
 # Wopee MCP Server
 
-A Model Context Protocol (MCP) server for interacting with Wopee.io's autonomous testing platform. This server provides tools for managing analysis suites, generating test cases, user stories, and dispatching autonomous testing agents.
+AI-powered autonomous testing for your apps -- connect Claude, Cursor, or any MCP-compatible AI agent to [Wopee.io](https://wopee.io) and generate test cases, user stories, and run autonomous tests in seconds.
+
+```bash
+npx wopee-mcp
+```
+
+> **[Documentation](https://docs.wopee.io/guides/wopee-mcp/)** | **[Landing Page](https://wopee.io/mcp/)** | **[Dashboard](https://cmd.wopee.io)**
 
 ## Setup
 

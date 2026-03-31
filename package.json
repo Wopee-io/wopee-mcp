@@ -16,16 +16,27 @@
     "build",
     "README.md"
   ],
+  "homepage": "https://wopee.io/mcp/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wopee-io/wopee-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/Wopee-io/wopee-mcp/issues"
+  },
   "keywords": [
     "wopee",
-    "ai",
+    "wopee.io",
     "mcp",
-    "server",
-    "testing",
-    "automation",
-    "autonomous",
-    "quality assurance",
-    "model context protocol"
+    "model context protocol",
+    "ai testing",
+    "autonomous testing",
+    "test automation",
+    "claude",
+    "cursor",
+    "ai agent",
+    "visual testing",
+    "playwright"
   ],
   "author": "Sota Giorgadze <sota.giorgadze@wopee.io>",
   "license": "MIT",
