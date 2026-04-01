@@ -179,14 +179,18 @@ Fetch all existing analysis suites for my project
 
 #### `wopee_dispatch_analysis`
 
-Creates and dispatches a new analysis/crawling suite for your project. Use this to start a fresh analysis session.
+Creates and dispatches a new analysis/crawling suite for your project, or reruns an existing one. Use this to start a fresh analysis session or to re-trigger a previous analysis.
 
 - **Parameters:**
   - `additionalInstructions` _(optional)_ - Additional instructions to guide the agent during the analysis/crawling phase (e.g. focus areas, things to ignore, login steps, etc.)
   - `additionalVariables` _(optional)_ - Additional environment variables to pass to the analysis. Array of objects, each with:
     - `key` - Variable name, must be uppercase with underscores only (e.g. `MY_VAR`, `BASE_URL`)
     - `value` - Variable value (non-empty string)
-- **Returns:** Success message with the created suite information
+  - `rerun` _(optional)_ - If provided, reruns an existing analysis suite instead of creating a new one. Object with:
+    - `suiteUuid` - UUID of the existing suite to rerun
+    - `analysisIdentifier` - Analysis identifier of the existing suite
+    - `mode` - Rerun mode: `FULL` (reruns the entire analysis including crawling and generation) or `CRAWLING` (reruns only the crawling phase)
+- **Returns:** Success message with the created/rerun suite information
 
 **Example Usage:**
 
@@ -200,6 +204,14 @@ Dispatch a new analysis suite and focus on the checkout flow
 
 ```
 Dispatch a new analysis suite with additional variables CARD_FILAMENT=123321123 and AUTH_TOKEN=abc123
+```
+
+```
+Rerun the full analysis for suite <suiteUuid> with analysis identifier <analysisIdentifier>
+```
+
+```
+Rerun only the crawling phase for suite <suiteUuid> with analysis identifier <analysisIdentifier>
 ```
 
 #### `wopee_create_blank_suite`
