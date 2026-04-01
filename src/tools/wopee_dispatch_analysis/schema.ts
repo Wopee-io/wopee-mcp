@@ -33,6 +33,23 @@ const AdditionalVariableSchema = z.object({
     .min(1, "Value must be a non-empty string"),
 });
 
+const WopeeRerunOptionsSchema = z.object({
+  suiteUuid: z
+    .string({
+      description: "UUID of the existing suite to rerun.",
+    })
+    .min(1, "Suite UUID is required"),
+  analysisIdentifier: z
+    .string({
+      description: "Analysis identifier of the existing suite to rerun.",
+    })
+    .min(1, "Analysis identifier is required"),
+  mode: z.nativeEnum(RerunMode, {
+    description:
+      "Rerun mode: FULL reruns the entire analysis (crawling + analysis), CRAWLING reruns only the crawling phase.",
+  }),
+});
+
 export const WopeeDispatchAnalysisInputSchema = z.object({
   additionalInstructions: z
     .string({ description: "Additional instructions for the agent" })
@@ -43,6 +60,9 @@ export const WopeeDispatchAnalysisInputSchema = z.object({
         "Additional environment variables for the analysis. Each variable needs a key (uppercase, e.g. BASE_URL) and a non-empty value.",
     })
     .nullish(),
+  rerun: WopeeRerunOptionsSchema.nullish().describe(
+    "If provided, reruns an existing analysis suite instead of creating a new one. Requires suiteUuid, analysisIdentifier, and mode.",
+  ),
 });
 
 export type DispatchAnalysisInput = z.infer<typeof DispatchAnalysisInputSchema>;

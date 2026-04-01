@@ -22,6 +22,6 @@ export const createDispatchAnalysisInput = (
         ? JSON.stringify(input.additionalVariables)
         : null,
     },
-    rerun: null,
+    rerun: input.rerun ?? null,
   };
 };
