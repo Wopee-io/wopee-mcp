@@ -1,3 +1,10 @@
+# [1.20.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.19.0...v1.20.0) (2026-04-01)
+
+
+### Features
+
+enable re-triggering of existing analysis in dispatch analysis input([b276c89](https://github.com/Wopee-io/wopee-mcp/commit/b276c8993b4dc9609378882d5fc71e6ed86781aa))
+
 # [1.19.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.18.2...v1.19.0) (2026-03-30)
 
 
