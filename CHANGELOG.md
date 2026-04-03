@@ -1,3 +1,10 @@
+# [1.21.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.20.0...v1.21.0) (2026-04-03)
+
+
+### Features
+
+enhance error messages for better clarity and agent efficiency([e9827e0](https://github.com/Wopee-io/wopee-mcp/commit/e9827e0eb99cc3165e2c5ac722a1c2eab29b0f33))
+
 # [1.20.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.19.0...v1.20.0) (2026-04-01)
 
 
