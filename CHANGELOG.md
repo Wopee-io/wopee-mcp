@@ -1,3 +1,10 @@
+# [1.23.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.22.0...v1.23.0) (2026-04-03)
+
+
+### Features
+
+update README with test results fetching, examples([59b6ed0](https://github.com/Wopee-io/wopee-mcp/commit/59b6ed02580310b4f11719933f317e51e5625331))
+
 # [1.22.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.21.0...v1.22.0) (2026-04-03)
 
 
