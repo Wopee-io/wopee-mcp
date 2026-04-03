@@ -7,13 +7,15 @@ import {
 import { createDispatchAnalysisInput } from "./factory.js";
 import { DispatchAnalysis } from "../shared/gql-queries.js";
 import { requestClient } from "../../utils/requestClient.js";
+import { withRetry } from "../../utils/withRetry.js";
 import { AnalysisSuite, ToolName } from "../shared/types.js";
 
 export const wopeeDispatchAnalysis = {
   name: ToolName.WOPEE_DISPATCH_ANALYSIS,
   config: {
     title: "Dispatch analysis",
-    description: "Create and dispatch analysis/crawling suite for a project",
+    description:
+      "Create and dispatch analysis/crawling suite for a project. Note: there is a 10-second per-project rate limit between dispatches; concurrent calls will auto-retry with backoff.",
     inputSchema: WopeeDispatchAnalysisInputSchema.shape,
   },
 
@@ -22,16 +24,18 @@ export const wopeeDispatchAnalysis = {
       const rawInput = createDispatchAnalysisInput(input);
       const parsedInput = DispatchAnalysisInputSchema.parse(rawInput);
 
-      const result: { dispatchAnalysis: AnalysisSuite } | null =
-        await requestClient(DispatchAnalysis, {
+      const result = await withRetry(() =>
+        requestClient<{ dispatchAnalysis: AnalysisSuite }>(DispatchAnalysis, {
           input: parsedInput,
-        });
-      if (!result || !result.dispatchAnalysis)
+        }),
+      );
+
+      if (!result?.dispatchAnalysis)
         return {
           content: [
             {
               type: "text" as const,
-              text: "Failed to dispatch agent",
+              text: "Failed to dispatch agent: no analysis suite returned",
             },
           ],
         };
