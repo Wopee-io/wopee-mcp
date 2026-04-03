@@ -298,12 +298,33 @@ Dispatches an autonomous testing agent to execute test cases for a selected suit
   - `testCases` - Array of test case objects to execute, each containing:
     - `testCaseId` - The ID of the test case
     - `userStoryId` - The ID of the associated user story
-- **Returns:** Success message indicating the agent has been dispatched
+- **Returns:** Array of executed test case objects with their initial execution state (uuid, executionStatus, agentReportStatus, codeReportStatus, etc.)
 
 **Example Usage:**
 
 ```
 Dispatch agent for my latest suite's user story US001 and test case TC003
+```
+
+### Test Results
+
+#### `wopee_fetch_executed_test_cases`
+
+Fetches executed test cases and their results for a given analysis suite. Use this to check the status and reports of dispatched agent runs.
+
+- **Parameters:**
+  - `suiteUuid` - The UUID of the analysis suite to fetch results for
+  - `analysisIdentifier` _(optional)_ - Analysis identifier to narrow results (e.g. `A068`)
+- **Returns:** Array of results grouped by user story, each containing executed test cases with execution status, agent report, agent report status, code report, and code report status
+
+**Example Usage:**
+
+```
+Fetch test results for suite <suiteUuid>
+```
+
+```
+Show me the executed test cases for my latest analysis suite
 ```
 
 ## Typical Workflow
@@ -325,6 +346,20 @@ Dispatch agent for my latest suite's user story US001 and test case TC003
 
 4. **Run tests:**
    - Use `wopee_dispatch_agent` to execute test cases with the autonomous testing agent
+
+5. **Check results:**
+   - Use `wopee_fetch_executed_test_cases` to check the status and reports of dispatched agent runs
+   - Or use the `fetch-test-results` prompt for a formatted summary of all test results
+
+## Available Prompts
+
+### `fetch-project-summary`
+
+Fetches analysis suites and their user stories/test cases, then displays a formatted summary with two markdown tables: a suite overview and a detailed test case breakdown.
+
+### `fetch-test-results`
+
+Fetches analysis suites and their executed test case results, then displays formatted markdown tables showing execution status, agent report status, and code report status for each test case. Also surfaces failed report details.
 
 ## Notes
 
