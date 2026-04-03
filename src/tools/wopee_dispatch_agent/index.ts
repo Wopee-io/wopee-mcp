@@ -3,7 +3,7 @@ import {
   DispatchAgentInputSchema,
   WopeeDispatchAgentInputSchema,
 } from "./schema.js";
-import { ToolName } from "../shared/types.js";
+import { ExecutedTestCase, ToolName } from "../shared/types.js";
 import { _parseError } from "../shared/helpers.js";
 import { createDispatchAgentInput } from "./factory.js";
 import { DispatchAgent } from "../shared/gql-queries.js";
@@ -24,7 +24,7 @@ export const wopeeDispatchAgent = {
       const parsedInput = DispatchAgentInputSchema.parse(dispatchAgentInput);
 
       const result = await withRetry(() =>
-        requestClient<{ dispatchAgent: { uuid: string }[] }>(DispatchAgent, {
+        requestClient<{ dispatchAgent: ExecutedTestCase[] }>(DispatchAgent, {
           input: parsedInput,
         }),
       );
@@ -43,7 +43,7 @@ export const wopeeDispatchAgent = {
         content: [
           {
             type: "text" as const,
-            text: "Agent dispatched successfully",
+            text: JSON.stringify(result.dispatchAgent, null, 2),
           },
         ],
       };
