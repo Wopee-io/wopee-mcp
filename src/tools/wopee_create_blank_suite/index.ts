@@ -1,5 +1,6 @@
 import { getConfig } from "../../utils/getConfig.js";
 import { requestClient } from "../../utils/requestClient.js";
+import { _parseError } from "../shared/helpers.js";
 import { AnalysisSuite, ToolName } from "../shared/types.js";
 import { CreateBlankAnalysisSuite } from "../shared/gql-queries.js";
 
@@ -10,40 +11,45 @@ export const wopeeCreateBlankSuite = {
     description: "Create a blank analysis suite for a project",
   },
   handler: async () => {
-    const { WOPEE_PROJECT_UUID } = getConfig();
+    try {
+      const { WOPEE_PROJECT_UUID } = getConfig();
 
-    if (!WOPEE_PROJECT_UUID)
-      return {
-        content: [
-          {
-            type: "text" as const,
-            text: "WOPEE_PROJECT_UUID is not set",
-          },
-        ],
-      };
+      if (!WOPEE_PROJECT_UUID)
+        return {
+          content: [
+            {
+              type: "text" as const,
+              text: "WOPEE_PROJECT_UUID is not set",
+            },
+          ],
+        };
 
-    const result: { createBlankAnalysisSuite: AnalysisSuite } | null =
-      await requestClient(CreateBlankAnalysisSuite, {
+      const result = await requestClient<{
+        createBlankAnalysisSuite: AnalysisSuite;
+      }>(CreateBlankAnalysisSuite, {
         projectUuid: WOPEE_PROJECT_UUID,
       });
 
-    if (!result || !result.createBlankAnalysisSuite)
+      if (!result?.createBlankAnalysisSuite)
+        return {
+          content: [
+            {
+              type: "text" as const,
+              text: "Failed to create blank suite: no data returned",
+            },
+          ],
+        };
+
       return {
         content: [
           {
             type: "text" as const,
-            text: "Failed to fetch analysis suites",
+            text: JSON.stringify(result.createBlankAnalysisSuite, null, 2),
           },
         ],
       };
-
-    return {
-      content: [
-        {
-          type: "text" as const,
-          text: JSON.stringify(result.createBlankAnalysisSuite, null, 2),
-        },
-      ],
-    };
+    } catch (error) {
+      return _parseError(error);
+    }
   },
 };

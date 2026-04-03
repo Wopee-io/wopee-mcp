@@ -9,9 +9,10 @@ import {
   GenerateUserStoriesWithTestCases,
 } from "./gql-queries.js";
 import { ArtifactType, GenerateArtifactType } from "./types.js";
+import { RequestError } from "../../utils/requestClient.js";
 
 export function _convertToArtifactType(
-  type: GenerateArtifactType
+  type: GenerateArtifactType,
 ): ArtifactType {
   switch (type) {
     case GenerateArtifactType.APP_CONTEXT:
@@ -88,6 +89,18 @@ export function _parseGenerateArtifactType(type: GenerateArtifactType) {
 
 export function _parseError(error: unknown) {
   console.error(error instanceof z.ZodError ? error.issues : error);
+
+  if (error instanceof RequestError) {
+    return {
+      content: [
+        {
+          type: "text" as const,
+          text: `[${error.code}] ${error.message}${error.retryable ? " (retryable)" : ""}`,
+        },
+      ],
+    };
+  }
+
   return {
     content: [
       {
@@ -96,12 +109,12 @@ export function _parseError(error: unknown) {
           error instanceof z.ZodError
             ? error.issues
                 .map(
-                  (issue) => `${issue.path[0] ?? "Unknown"}: ${issue.message}`
+                  (issue) => `${issue.path[0] ?? "Unknown"}: ${issue.message}`,
                 )
                 .join("\n")
             : error instanceof Error
-            ? error.message
-            : "Unknown zod validation error"
+              ? error.message
+              : "Unknown zod validation error"
         }`,
       },
     ],

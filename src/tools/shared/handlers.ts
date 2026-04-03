@@ -34,22 +34,22 @@ export async function fetchArtifact(input: FetchArtifactHandlerInput): Promise<{
       ...(identifier ? { identifier } : {}),
     });
     const parsedInput = FetchArtifactInputSchema.parse(fetchArtifactInput);
-    const result: {
+    const result = await requestClient<{
       fetchArtifact: {
         content: string | null;
         blobSha: string | null;
         commitSha: string | null;
         commitDate: string | null;
       };
-    } | null = await requestClient(FetchArtifact, {
+    }>(FetchArtifact, {
       input: parsedInput,
     });
-    if (!result || !result?.fetchArtifact || !result?.fetchArtifact?.content)
+    if (!result?.fetchArtifact?.content)
       return {
         content: [
           {
             type: "text" as const,
-            text: "Failed to fetch file",
+            text: "Failed to fetch file: no content returned",
           },
         ],
       };
@@ -68,7 +68,7 @@ export async function fetchArtifact(input: FetchArtifactHandlerInput): Promise<{
 }
 
 export async function generateAIDataFile(
-  input: GenerateAIDataHandlerInput
+  input: GenerateAIDataHandlerInput,
 ): Promise<{
   content: {
     type: "text";
@@ -76,7 +76,7 @@ export async function generateAIDataFile(
   }[];
 }> {
   const { query, dataKey, description } = _parseGenerateArtifactType(
-    input.type
+    input.type,
   );
   if (!query || !dataKey || !description)
     return {
@@ -91,18 +91,18 @@ export async function generateAIDataFile(
   try {
     const generateAIDataInput = createGenerateAIDataInput(input);
     const parsedInput = GenerateAIDataInputSchema.parse(generateAIDataInput);
-    const generationResult: { [dataKey]: boolean } | null = await requestClient(
+    const generationResult = await requestClient<{ [key: string]: boolean }>(
       query,
       {
         input: parsedInput,
-      }
+      },
     );
-    if (!generationResult || !generationResult[dataKey])
+    if (!generationResult?.[dataKey])
       return {
         content: [
           {
             type: "text" as const,
-            text: `Failed to generate ${description}`,
+            text: `Failed to generate ${description}: no result returned`,
           },
         ],
       };
@@ -130,16 +130,17 @@ export async function updateArtifact(input: UpdateArtifactHandlerInput) {
     });
 
     const parsedInput = UpdateArtifactInputSchema.parse(updateArtifactInput);
-    const updateFileResult: { updateArtifact: boolean } | null =
-      await requestClient(UpdateArtifact, {
-        input: parsedInput,
-      });
-    if (!updateFileResult || !updateFileResult.updateArtifact)
+    const updateFileResult = await requestClient<{
+      updateArtifact: boolean;
+    }>(UpdateArtifact, {
+      input: parsedInput,
+    });
+    if (!updateFileResult?.updateArtifact)
       return {
         content: [
           {
             type: "text" as const,
-            text: "Failed to update file",
+            text: "Failed to update file: operation returned false",
           },
         ],
       };
