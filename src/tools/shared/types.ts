@@ -1,6 +1,7 @@
 export enum ToolName {
   WOPEE_CREATE_BLANK_SUITE = "wopee_create_blank_suite",
   WOPEE_FETCH_ANALYSIS_SUITES = "wopee_fetch_analysis_suites",
+  WOPEE_FETCH_EXECUTED_TEST_CASES = "wopee_fetch_executed_test_cases",
 
   WOPEE_DISPATCH_ANALYSIS = "wopee_dispatch_analysis",
   WOPEE_DISPATCH_AGENT = "wopee_dispatch_agent",
@@ -85,4 +86,31 @@ export type AnalysisSuite = {
   createdAt: string;
   updatedAt: string;
   generatedAnalysisDataState: GeneratedAnalysisDataState | null;
+};
+
+export enum ReportStatus {
+  PASSED = "PASSED",
+  FAILED = "FAILED",
+}
+
+export type ExecutedTestCase = {
+  uuid: string;
+  projectUuid: string;
+  suiteUuid: string;
+  analysisSuiteUuid: string;
+  analysisIdentifier: string;
+  userStoryId: string;
+  testCaseId: string;
+  executionStatus: ExecutionStatus;
+  agentReport: string | null;
+  agentReportStatus: ReportStatus | null;
+  codeReport: string | null;
+  codeReportStatus: ReportStatus | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type FetchExecutedTestCasesResponse = {
+  userStoryId: string;
+  executedTestCases: ExecutedTestCase[];
 };

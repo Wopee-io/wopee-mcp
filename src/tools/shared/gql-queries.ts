@@ -167,6 +167,29 @@ export const GenerateReusableTestCaseSteps = `
   }
 `;
 
+export const FetchExecutedTestCases = `
+  query FetchExecutedTestCases($input: FetchExecutedTestCasesInput!) {
+    fetchExecutedTestCases(input: $input) {
+      userStoryId
+      executedTestCases {
+        uuid
+        suiteUuid
+        analysisSuiteUuid
+        analysisIdentifier
+        userStoryId
+        testCaseId
+        executionStatus
+        agentReport
+        agentReportStatus
+        codeReport
+        codeReportStatus
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+
 export const CreateBlankAnalysisSuite = `
   mutation CreateBlankAnalysisSuite($projectUuid: ID!) {
     createBlankAnalysisSuite(projectUuid: $projectUuid) {
