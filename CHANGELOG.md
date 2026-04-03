@@ -1,3 +1,10 @@
+# [1.22.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.21.0...v1.22.0) (2026-04-03)
+
+
+### Features
+
+implement tool to fetch executed test cases and integrate with prompts([e20a544](https://github.com/Wopee-io/wopee-mcp/commit/e20a544220417770f1e76f115c634ca72dc35aa8))
+
 # [1.21.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.20.0...v1.21.0) (2026-04-03)
 
 
