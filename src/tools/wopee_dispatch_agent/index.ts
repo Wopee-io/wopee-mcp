@@ -13,9 +13,9 @@ import { withRetry } from "../../utils/withRetry.js";
 export const wopeeDispatchAgent = {
   name: ToolName.WOPEE_DISPATCH_AGENT,
   config: {
-    title: "Dispatch agent",
+    title: "Dispatch autonomous testing agent",
     description:
-      "Dispatch agent testing for selected suite's test cases. Note: there is a 10-second per-project rate limit between dispatches; concurrent calls will auto-retry with backoff.",
+      "Run an autonomous AI testing agent on specific test cases within a suite. The agent navigates the web app, executes test steps, captures screenshots, and reports pass/fail results. Requires a suite UUID and test case ID (e.g. TC001) with its parent user story ID (e.g. US001). Use wopee_generate_artifact first to create test cases, then this tool to execute them. Rate limit: 10 seconds between dispatches per project; concurrent calls auto-retry with backoff. Returns executed test case results including status and agent report.",
     inputSchema: WopeeDispatchAgentInputSchema.shape,
   },
   handler: async (input: WopeeDispatchAgentInput) => {
