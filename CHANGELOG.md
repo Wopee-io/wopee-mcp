@@ -1,3 +1,13 @@
+## [1.23.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.23.0...v1.23.1) (2026-04-04)
+
+
+### Bug Fixes
+
+improve tool descriptions for better Glama TDQS score([e9f7115](https://github.com/Wopee-io/wopee-mcp/commit/e9f71154e203a1f790c25e1cf0559460a73e7d1a))
+Each tool now includes: purpose clarity, usage guidelines,
+behavioral transparency, parameter semantics, and workflow context.
+Fixes typo 'Woopee' in wopee_fetch_analysis_suites.
+
 # [1.23.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.22.0...v1.23.0) (2026-04-03)
 
 
