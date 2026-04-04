@@ -12,9 +12,9 @@ import { requestClient } from "../../utils/requestClient.js";
 export const wopeeFetchExecutedTestCases = {
   name: ToolName.WOPEE_FETCH_EXECUTED_TEST_CASES,
   config: {
-    title: "Fetch executed test cases",
+    title: "Fetch test execution results",
     description:
-      "Fetch executed test cases and their results (agent report, code report, execution status) for a given analysis suite.",
+      "Retrieve the results of test cases that have been executed by the autonomous agent. Returns each test case with its execution status (IN_PROGRESS, FINISHED, FAILED), agent report, and code report. Use this after wopee_dispatch_agent to check whether tests passed or failed and to review detailed findings. Requires the suite UUID; optionally accepts an analysis identifier (e.g. A068) to filter results.",
     inputSchema: WopeeFetchExecutedTestCasesInputSchema.shape,
   },
   handler: async (input: WopeeFetchExecutedTestCasesInput) => {

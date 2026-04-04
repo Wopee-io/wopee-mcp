@@ -7,8 +7,9 @@ import { FetchAnalysisSuites } from "../shared/gql-queries.js";
 export const wopeeFetchAnalysisSuites = {
   name: ToolName.WOPEE_FETCH_ANALYSIS_SUITES,
   config: {
-    title: "Fetch Analysis Suites",
-    description: "Fetch project's analysis suites from Woopee",
+    title: "List analysis suites",
+    description:
+      "List all analysis suites in the current project. Returns an array of suites with their UUIDs, names, types, and statuses. Use this to find existing suites before generating content or dispatching agents. Takes no input parameters; uses the project configured via WOPEE_PROJECT_UUID. Each suite UUID can be passed to other tools like wopee_generate_artifact, wopee_fetch_artifact, or wopee_dispatch_agent.",
   },
   handler: async () => {
     try {

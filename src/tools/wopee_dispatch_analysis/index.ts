@@ -13,9 +13,9 @@ import { AnalysisSuite, ToolName } from "../shared/types.js";
 export const wopeeDispatchAnalysis = {
   name: ToolName.WOPEE_DISPATCH_ANALYSIS,
   config: {
-    title: "Dispatch analysis",
+    title: "Dispatch analysis crawl",
     description:
-      "Create and dispatch analysis/crawling suite for a project. Note: there is a 10-second per-project rate limit between dispatches; concurrent calls will auto-retry with backoff.",
+      "Create a new analysis suite and dispatch an AI crawling agent to explore and analyze a web application. The agent autonomously navigates the app starting from a given URL, discovers pages, and builds a sitemap. Optionally accepts login credentials, cookie preferences, custom variables, and additional instructions to guide the crawl. Use this instead of wopee_create_blank_suite when you want to auto-analyze a web app in one step. Rate limit: 10 seconds between dispatches per project; concurrent calls auto-retry with backoff. Returns the created analysis suite.",
     inputSchema: WopeeDispatchAnalysisInputSchema.shape,
   },
 
