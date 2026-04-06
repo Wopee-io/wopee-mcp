@@ -10,7 +10,7 @@ export const wopeeFetchArtifact = {
   config: {
     title: "Fetch test artifacts",
     description:
-      "Retrieve test artifacts from a suite. Supported types: APP_CONTEXT (application description), GENERAL_USER_STORIES (user stories without test cases), USER_STORIES (user stories with test cases), PLAYWRIGHT_CODE (Playwright test code for a specific test case — requires identifier like 'US004:TC006'), PROJECT_CONTEXT (project-level context). Use after wopee_generate_artifact to review test artifacts, or to retrieve existing artifacts for editing with wopee_update_artifact.",
+      "Retrieve a specific test artifact from a suite. Returns the artifact content as text. Use this to review what wopee_generate_artifact created, or to retrieve existing artifacts before editing with wopee_update_artifact. Does NOT modify any data — this is a read-only operation. If the requested artifact type has not been generated yet for this suite, returns an empty result. For PLAYWRIGHT_CODE, you must provide the test case identifier (e.g. 'US004:TC006'); omitting it returns an error. For all other types, the identifier parameter is ignored.",
     inputSchema: FetchArtifactHandlerInputSchema.shape,
   },
   handler: async (input: FetchArtifactHandlerInput) =>

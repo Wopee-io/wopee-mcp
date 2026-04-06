@@ -10,7 +10,7 @@ export const wopeeUpdateArtifact = {
   config: {
     title: "Update test artifacts",
     description:
-      "Update previously generated content in a suite. Use this to refine user stories, test cases, app context, or Playwright code after reviewing them with wopee_fetch_artifact. Requires the content type (APP_CONTEXT, GENERAL_USER_STORIES, USER_STORIES, PLAYWRIGHT_CODE, or PROJECT_CONTEXT), the suite UUID, and the new content as a string. For PLAYWRIGHT_CODE, also provide the test case identifier (e.g. 'US004:TC006'). This enables an iterative workflow: generate → review → update → dispatch.",
+      "Replace the content of a previously generated test artifact in a suite. This is a destructive overwrite — the full content is replaced, not patched. Use this after reviewing artifacts with wopee_fetch_artifact to fix incorrect user stories, refine test case steps, or edit generated Playwright code. Do NOT use this to create new artifacts — use wopee_generate_artifact instead. Prerequisite: the artifact must already exist (generated via wopee_generate_artifact). On success, returns confirmation. On failure (e.g. invalid suite UUID, missing artifact), returns an error message. Idempotent: calling with the same content multiple times produces the same result.",
     inputSchema: UpdateArtifactHandlerInputSchema.shape,
   },
   handler: async (input: UpdateArtifactHandlerInput) =>

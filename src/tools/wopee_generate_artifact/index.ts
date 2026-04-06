@@ -10,7 +10,7 @@ export const wopeeGenerateArtifact = {
   config: {
     title: "Generate test artifacts",
     description:
-      "Generate AI-powered test artifacts for a suite. Supported types: APP_CONTEXT (analyze the application and create a description), GENERAL_USER_STORIES (generate user stories from app context), USER_STORIES_WITH_TEST_CASES (generate user stories with detailed test cases), TEST_CASES (generate test cases for existing user stories), TEST_CASE_STEPS (generate step-by-step instructions for test cases), REUSABLE_TEST_CASES (generate reusable/shared test cases), REUSABLE_TEST_CASE_STEPS (generate steps for reusable test cases). Typical workflow: generate APP_CONTEXT first, then USER_STORIES_WITH_TEST_CASES, then use wopee_dispatch_agent to execute them.",
+      "Generate AI-powered test artifacts for a suite using the Wopee.io AI engine. Each call creates one artifact type — call multiple times for different types. Generation order matters: APP_CONTEXT must be generated before user stories, and user stories before test cases. If called out of order, the AI may produce lower quality results. On success, returns confirmation that generation started. Use wopee_fetch_artifact to retrieve the generated content once ready. Do NOT use this to update existing artifacts — use wopee_update_artifact instead. Generating the same type again overwrites the previous version.",
     inputSchema: GenerateAIDataHandlerInputSchema.shape,
   },
   handler: async (input: GenerateAIDataHandlerInput) =>

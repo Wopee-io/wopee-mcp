@@ -18,10 +18,14 @@ export const SuiteAnalysisConfigSchema = z.object({
 
 export const GenerateAIDataHandlerInputSchema = z.object({
   type: z.nativeEnum(GenerateArtifactType, {
-    description: "Chosen type of file(artifact) to generate",
+    description:
+      "Type of test artifact to generate. One of: APP_CONTEXT, GENERAL_USER_STORIES, USER_STORIES_WITH_TEST_CASES, TEST_CASES, TEST_CASE_STEPS, REUSABLE_TEST_CASES, REUSABLE_TEST_CASE_STEPS. Start with APP_CONTEXT, then generate stories and test cases from it.",
   }),
   suiteUuid: z
-    .string({ description: "UUID of the suite to generate file(artifact) for" })
+    .string({
+      description:
+        "UUID of the analysis suite to generate artifacts for. Get this from wopee_create_blank_suite or wopee_fetch_analysis_suites.",
+    })
     .min(1, "Suite UUID is required"),
 });
 
@@ -38,15 +42,19 @@ export const GenerateAIDataInputSchema = z.object({
 
 export const FetchArtifactHandlerInputSchema = z.object({
   type: z.nativeEnum(ArtifactType, {
-    description: "Chosen file(artifact) to fetch",
+    description:
+      "Type of test artifact to retrieve. One of: APP_CONTEXT (application description), GENERAL_USER_STORIES (stories without test cases), USER_STORIES (stories with test cases), PLAYWRIGHT_CODE (generated test code — requires identifier), PROJECT_CONTEXT (project-level context).",
   }),
   suiteUuid: z
-    .string({ description: "UUID of the suite to fetch the file from" })
+    .string({
+      description:
+        "UUID of the analysis suite to fetch artifacts from. Get this from wopee_fetch_analysis_suites.",
+    })
     .min(1, "Suite UUID is required"),
   identifier: z
     .string({
       description:
-        "Identifier for the test case to fetch playwright code for, ex. `US004:TC006`, should be provided only for `PLAYWRIGHT_CODE` artifact type",
+        "Test case identifier in format 'US004:TC006'. Required only when type is PLAYWRIGHT_CODE. Ignored for all other artifact types.",
     })
     .optional(),
 });
@@ -77,18 +85,23 @@ export const FetchArtifactInputSchema = z.object({
 
 export const UpdateArtifactHandlerInputSchema = z.object({
   type: z.nativeEnum(ArtifactType, {
-    description: "Chosen file(artifact) to update",
+    description:
+      "Type of test artifact to update. One of: APP_CONTEXT, GENERAL_USER_STORIES, USER_STORIES, PLAYWRIGHT_CODE (requires identifier), PROJECT_CONTEXT. Must match the type used when the artifact was generated.",
   }),
   content: z.string({
-    description: "Content of the file(artifact) to update",
+    description:
+      "The complete new content to replace the existing artifact. This is a destructive overwrite — the entire previous content is replaced. Pass the full updated content, not a partial diff.",
   }),
   suiteUuid: z
-    .string({ description: "UUID of the suite to update the file for" })
+    .string({
+      description:
+        "UUID of the analysis suite containing the artifact to update. Get this from wopee_fetch_analysis_suites.",
+    })
     .min(1, "Suite UUID is required"),
   identifier: z
     .string({
       description:
-        "Identifier for the test case to update playwright code for, ex. `US004:TC006`, should be provided only for `PLAYWRIGHT_CODE` artifact type",
+        "Test case identifier in format 'US004:TC006'. Required only when type is PLAYWRIGHT_CODE. Ignored for all other artifact types.",
     })
     .optional(),
 });
