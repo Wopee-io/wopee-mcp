@@ -15,7 +15,7 @@ export const wopeeDispatchAgent = {
   config: {
     title: "Dispatch autonomous testing agent",
     description:
-      "Run an autonomous AI testing agent on specific test cases within a suite. The agent navigates the web app, executes test steps, captures screenshots, and reports pass/fail results. Requires a suite UUID and test case ID (e.g. TC001) with its parent user story ID (e.g. US001). Use wopee_generate_artifact first to create test cases, then this tool to execute them. Rate limit: 10 seconds between dispatches per project; concurrent calls auto-retry with backoff. Returns executed test case results including status and agent report.",
+      "Execute a specific test case by dispatching an autonomous AI agent. The agent opens a real browser, navigates the web app, follows the test case steps, captures screenshots at each step, and reports pass/fail with detailed findings. Prerequisite: test cases must exist in the suite — generate them first with wopee_generate_artifact (type USER_STORIES_WITH_TEST_CASES). Do NOT use this to analyze or crawl an app — use wopee_dispatch_analysis for that. Side effects: creates execution records and screenshots on the Wopee.io platform. Rate limit: 10 seconds between dispatches per project; concurrent calls auto-retry with exponential backoff. On success, returns executed test case results. On failure (invalid suite/test case ID), returns an error message. Use wopee_fetch_executed_test_cases afterward to get full results.",
     inputSchema: WopeeDispatchAgentInputSchema.shape,
   },
   handler: async (input: WopeeDispatchAgentInput) => {

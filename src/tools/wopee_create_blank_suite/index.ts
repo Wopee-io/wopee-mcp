@@ -9,7 +9,7 @@ export const wopeeCreateBlankSuite = {
   config: {
     title: "Create blank analysis suite",
     description:
-      "Create a new empty analysis suite in the current project. Use this as the first step when starting a new testing workflow — the returned suite UUID is required by generate, fetch, update, and dispatch tools. Takes no input parameters; uses the project configured via WOPEE_PROJECT_UUID. Returns the created suite object including its UUID and metadata.",
+      "Create a new empty analysis suite in the current project. Use this as the first step when you want to manually build a test suite — the returned suite UUID is needed by wopee_generate_artifact, wopee_fetch_artifact, wopee_update_artifact, and wopee_dispatch_agent. If you want to auto-analyze a web app instead, use wopee_dispatch_analysis which creates and populates a suite in one step. Takes no input parameters; uses WOPEE_PROJECT_UUID from environment. Not idempotent: each call creates a new suite. Returns the suite object with UUID, name, type, and status. Fails if WOPEE_PROJECT_UUID is not configured.",
   },
   handler: async () => {
     try {

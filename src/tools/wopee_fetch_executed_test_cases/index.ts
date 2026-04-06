@@ -14,7 +14,7 @@ export const wopeeFetchExecutedTestCases = {
   config: {
     title: "Fetch test execution results",
     description:
-      "Retrieve the results of test cases that have been executed by the autonomous agent. Returns each test case with its execution status (IN_PROGRESS, FINISHED, FAILED), agent report, and code report. Use this after wopee_dispatch_agent to check whether tests passed or failed and to review detailed findings. Requires the suite UUID; optionally accepts an analysis identifier (e.g. A068) to filter results.",
+      "Retrieve results of test cases executed by the autonomous agent. Returns each test case with its execution status (IN_PROGRESS, FINISHED, FAILED), agent report (natural language findings), and code report (technical details). Read-only: does not trigger any execution. Use this after wopee_dispatch_agent to check results — if status is IN_PROGRESS, wait and call again. Requires suite UUID. Optionally accepts an analysis identifier (e.g. A068, found in suite data) to filter to a specific analysis run. Returns an empty array if no test cases have been executed in this suite. Do NOT use this to fetch test artifacts like user stories or code — use wopee_fetch_artifact for that.",
     inputSchema: WopeeFetchExecutedTestCasesInputSchema.shape,
   },
   handler: async (input: WopeeFetchExecutedTestCasesInput) => {
