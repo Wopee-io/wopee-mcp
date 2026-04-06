@@ -1,3 +1,17 @@
+## [1.23.2](https://github.com/Wopee-io/wopee-mcp/compare/v1.23.1...v1.23.2) (2026-04-06)
+
+
+### Bug Fixes
+
+improve tool and parameter descriptions for Glama TDQS score([b3f477c](https://github.com/Wopee-io/wopee-mcp/commit/b3f477cda6a845c248eecd5a9447b3729678f14d))
+Address all 6 TDQS dimensions across all 8 tools:
+- Behavior: side effects, idempotency, destructive vs read-only
+- Purpose: specific use cases, not generic CRUD
+- Usage Guidelines: when to use, when NOT to use, prerequisites
+- Completeness: error scenarios, edge cases, empty results
+- Parameters: artifact types listed, cross-references to related tools
+- Conciseness: structured as what → when → side effects → returns
+
 ## [1.23.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.23.0...v1.23.1) (2026-04-04)
 
 
