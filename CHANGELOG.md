@@ -1,3 +1,10 @@
+# [1.24.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.23.2...v1.24.0) (2026-04-15)
+
+
+### Features
+
+implement chat tools and GitHub issue creation functionality([a4ad90c](https://github.com/Wopee-io/wopee-mcp/commit/a4ad90c78b661f6a48d36676acad4aa79d3913e7))
+
 ## [1.23.2](https://github.com/Wopee-io/wopee-mcp/compare/v1.23.1...v1.23.2) (2026-04-06)
 
 
