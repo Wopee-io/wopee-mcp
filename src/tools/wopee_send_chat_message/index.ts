@@ -53,8 +53,8 @@ export const wopeeSendChatMessage = {
           ],
         };
 
-      await requestClient<{
-        sendChatMessage: { uuid: string; content: string; createdAt: string };
+      const result = await requestClient<{
+        sendChatMessage: { uuid: string; content: string; createdAt: string } | null;
       }>(SendChatMessage, {
         input: {
           roomUuid: roomResult.fetchChatRoom.uuid,
@@ -64,6 +64,16 @@ export const wopeeSendChatMessage = {
           authorType: "SYSTEM",
         },
       });
+
+      if (!result?.sendChatMessage)
+        return {
+          content: [
+            {
+              type: "text" as const,
+              text: "Failed to send message to chat room",
+            },
+          ],
+        };
 
       return {
         content: [
