@@ -9,6 +9,10 @@ export enum ToolName {
   WOPEE_FETCH_ARTIFACT = "wopee_fetch_artifact",
   WOPEE_UPDATE_ARTIFACT = "wopee_update_artifact",
   WOPEE_GENERATE_ARTIFACT = "wopee_generate_artifact",
+
+  WOPEE_SEND_CHAT_MESSAGE = "wopee_send_chat_message",
+  WOPEE_READ_CHAT_HISTORY = "wopee_read_chat_history",
+  WOPEE_CREATE_GITHUB_ISSUE = "wopee_create_github_issue",
 }
 
 export enum GenerateArtifactType {

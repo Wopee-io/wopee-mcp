@@ -228,3 +228,50 @@ export const CreateBlankAnalysisSuite = `
     }
   }
 `;
+
+// Chat tools
+export const SendChatMessage = `
+  mutation SendChatMessage($input: SendChatMessageInput!) {
+    sendChatMessage(input: $input) {
+      uuid
+      content
+      contentType
+      authorType
+      createdAt
+    }
+  }
+`;
+
+export const FetchChatMessages = `
+  query FetchChatMessages($roomUuid: ID!, $limit: Int) {
+    fetchChatMessages(roomUuid: $roomUuid, limit: $limit) {
+      uuid
+      authorType
+      authorName
+      content
+      contentType
+      sourcePlatform
+      createdAt
+    }
+  }
+`;
+
+export const FetchChatRoom = `
+  query FetchChatRoom($projectUuid: ID!) {
+    fetchChatRoom(projectUuid: $projectUuid) {
+      uuid
+      contextSummary
+      createdAt
+    }
+  }
+`;
+
+export const CreateGitHubIssue = `
+  mutation CreateGitHubIssue($projectUuid: ID!, $title: String!, $body: String!, $labels: [String!]) {
+    createGitHubIssue(projectUuid: $projectUuid, title: $title, body: $body, labels: $labels) {
+      url
+      number
+      title
+    }
+  }
+`;

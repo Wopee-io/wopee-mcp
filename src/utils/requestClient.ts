@@ -45,16 +45,24 @@ export const requestClient = async <T>(
   query: string,
   variables: Record<string, any>,
 ): Promise<T> => {
-  const { WOPEE_API_URL, WOPEE_API_KEY } = getConfig();
+  const { WOPEE_API_URL, WOPEE_API_KEY, WOPEE_AUTH_TOKEN } = getConfig();
 
-  if (!WOPEE_API_KEY) {
-    throw new RequestError("WOPEE_API_KEY is not set", "AUTH_ERROR");
+  if (!WOPEE_API_KEY && !WOPEE_AUTH_TOKEN) {
+    throw new RequestError(
+      "WOPEE_API_KEY or WOPEE_AUTH_TOKEN must be set",
+      "AUTH_ERROR",
+    );
   }
 
-  const headers = {
-    api_key: WOPEE_API_KEY,
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
-  } as Record<string, string>;
+  };
+
+  if (WOPEE_AUTH_TOKEN) {
+    headers.authorization = `Bearer ${WOPEE_AUTH_TOKEN}`;
+  } else if (WOPEE_API_KEY) {
+    headers.api_key = WOPEE_API_KEY;
+  }
 
   let response: Response;
   try {
@@ -62,6 +70,7 @@ export const requestClient = async <T>(
       method: "POST",
       headers,
       body: JSON.stringify({ query, variables }),
+      signal: AbortSignal.timeout(30000),
     });
   } catch (error) {
     throw new RequestError(
