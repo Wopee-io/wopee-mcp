@@ -1,3 +1,10 @@
+## [1.24.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.24.0...v1.24.1) (2026-04-15)
+
+
+### Bug Fixes
+
+handle failure case for sending chat messages([fd2bd9f](https://github.com/Wopee-io/wopee-mcp/commit/fd2bd9fa3f285145265261af47971d9f2ab55bcc))
+
 # [1.24.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.23.2...v1.24.0) (2026-04-15)
 
 
