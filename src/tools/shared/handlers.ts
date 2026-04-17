@@ -96,6 +96,7 @@ export async function generateAIDataFile(
       {
         input: parsedInput,
       },
+      { timeoutMs: 5 * 60 * 1000 },
     );
     if (!generationResult?.[dataKey])
       return {

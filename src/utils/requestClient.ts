@@ -41,9 +41,16 @@ function classifyGraphQLErrors(
   return new RequestError(combined, "GRAPHQL_ERROR");
 }
 
+export interface RequestClientOptions {
+  timeoutMs?: number;
+}
+
+const DEFAULT_TIMEOUT_MS = 30000;
+
 export const requestClient = async <T>(
   query: string,
   variables: Record<string, any>,
+  options?: RequestClientOptions,
 ): Promise<T> => {
   const { WOPEE_API_URL, WOPEE_API_KEY, WOPEE_AUTH_TOKEN } = getConfig();
 
@@ -70,7 +77,7 @@ export const requestClient = async <T>(
       method: "POST",
       headers,
       body: JSON.stringify({ query, variables }),
-      signal: AbortSignal.timeout(30000),
+      signal: AbortSignal.timeout(options?.timeoutMs ?? DEFAULT_TIMEOUT_MS),
     });
   } catch (error) {
     throw new RequestError(
