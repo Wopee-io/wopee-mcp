@@ -1,3 +1,10 @@
+# [1.25.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.24.1...v1.25.0) (2026-04-17)
+
+
+### Features
+
+add customizable timeout option for request client([f600906](https://github.com/Wopee-io/wopee-mcp/commit/f600906ed2dea841d9de7b50dc3373d5cacb22af))
+
 ## [1.24.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.24.0...v1.24.1) (2026-04-15)
 
 
