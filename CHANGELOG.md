@@ -1,3 +1,10 @@
+# [1.26.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.25.0...v1.26.0) (2026-04-23)
+
+
+### Features
+
+implement run test workflow with prompts and handler([33528d5](https://github.com/Wopee-io/wopee-mcp/commit/33528d5b33275ab367fd2ff3aa1ec50e8761fe94))
+
 # [1.25.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.24.1...v1.25.0) (2026-04-17)
 
 
