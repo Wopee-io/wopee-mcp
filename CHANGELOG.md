@@ -1,3 +1,20 @@
+## [1.26.2](https://github.com/Wopee-io/wopee-mcp/compare/v1.26.1...v1.26.2) (2026-05-06)
+
+
+### Bug Fixes
+
+  **gql:**GenerateUserStoriesWithTestCases selects correct field name([1b828d7](https://github.com/Wopee-io/wopee-mcp/commit/1b828d724539fe26f8424ca84025b91a82b18292)), closes[autonomous-testing/backlog#3987](https://github.com/autonomous-testing/backlog/issues/3987)
+The mutation operation name is GenerateUserStoriesWithTestCases but the
+field selected was generateUserStories — which doesn't exist on the API
+(api/src/typeDefs/userStories.js:7 only exposes generateUserStoriesWithTestCases).
+Any call to wopee_generate_artifact with type: USER_STORIES_WITH_TEST_CASES
+fails with GRAPHQL_VALIDATION_FAILED.
+
+Sibling Generate* mutations in the same file (App, GeneralUserStories,
+TestCases, TestCaseSteps, ReusableTestCases, ReusableTestCaseSteps) were
+verified — operation name and field name match in every other case.
+Isolated copy-paste error.
+
 ## [1.26.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.26.0...v1.26.1) (2026-05-06)
 
 
