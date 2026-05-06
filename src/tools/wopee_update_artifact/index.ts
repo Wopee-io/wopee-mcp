@@ -10,7 +10,7 @@ export const wopeeUpdateArtifact = {
   config: {
     title: "Update test artifacts",
     description:
-      "Replace the content of a previously generated test artifact in a suite. This is a destructive overwrite — the full content is replaced, not patched. Use this after reviewing artifacts with wopee_fetch_artifact to fix incorrect user stories, refine test case steps, or edit generated Playwright code. Do NOT use this to create new artifacts — use wopee_generate_artifact instead. Prerequisite: the artifact must already exist (generated via wopee_generate_artifact). On success, returns confirmation. On failure (e.g. invalid suite UUID, missing artifact), returns an error message. Idempotent: calling with the same content multiple times produces the same result.",
+      "Create or overwrite a test artifact in a suite with caller-supplied content. The full content is replaced, not patched. Use this to upload your own APP_CONTEXT (e.g. built from JIRA / Confluence), user stories, project context, or Playwright code, or to fix / refine an artifact previously authored by wopee_generate_artifact. Works on any suite, including freshly-created blank suites with no prior generation — the artifact does not need to exist beforehand. Use wopee_generate_artifact instead when you want the Wopee.io AI engine to author the content from scratch. On success, returns confirmation. On failure (e.g. invalid suite UUID, storage misconfiguration), returns an error message. Idempotent: calling with the same content multiple times produces the same result.",
     inputSchema: UpdateArtifactHandlerInputSchema.shape,
   },
   handler: async (input: UpdateArtifactHandlerInput) =>
