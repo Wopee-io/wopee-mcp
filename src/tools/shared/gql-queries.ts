@@ -139,7 +139,7 @@ export const GenerateGeneralUserStories = `
 
 export const GenerateUserStoriesWithTestCases = `
   mutation GenerateUserStoriesWithTestCases($input: GenerateAIDataInput!) {
-    generateUserStories(input: $input)
+    generateUserStoriesWithTestCases(input: $input)
   }
 `;
 
