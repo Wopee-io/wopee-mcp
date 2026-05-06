@@ -1,3 +1,25 @@
+## [1.26.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.26.0...v1.26.1) (2026-05-06)
+
+
+### Bug Fixes
+
+  **wopee_update_artifact:**drop false "artifact must exist" prerequisite([a47f4e9](https://github.com/Wopee-io/wopee-mcp/commit/a47f4e9ae5b3960043fa6a4f58eb0130782b2af6)), closes[autonomous-testing/backlog#3986](https://github.com/autonomous-testing/backlog/issues/3986)
+The tool description claimed the target artifact had to be pre-generated via
+wopee_generate_artifact, which forced callers to insert a wasteful
+generateArtifact call before any "bring-your-own-content" upload.
+
+The server-side updateArtifact resolver in wopee-repos/api has no existence
+check — it routes by ArtifactType to S3 or GitHub storage and writes content
+directly. Artifacts are blob storage, not Neo4j nodes, so there is no
+existence relationship to enforce. The resolver is already a
+create-or-overwrite. The MCP description was simply wrong.
+
+Reword the description to:
+- frame the tool as create-or-overwrite for caller-supplied content;
+- explicitly state it works on freshly-created blank suites;
+- clarify the split with wopee_generate_artifact (AI-authored vs caller-supplied);
+- replace "missing artifact" failure mode with "storage misconfiguration".
+
 # [1.26.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.25.0...v1.26.0) (2026-04-23)
 
 
