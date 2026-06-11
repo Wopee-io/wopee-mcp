@@ -290,7 +290,7 @@ Update app context file for the most recent suite with this content: <YourMarkdo
 
 #### `wopee_dispatch_agent`
 
-Dispatches an autonomous testing agent to execute test cases for a selected suite.
+Dispatches an autonomous testing agent to execute test cases for a selected suite. Tests run **asynchronously** (typically 1-3 minutes). This tool confirms dispatch and returns tracking info — not final results.
 
 - **Parameters:**
   - `suiteUuid` - The UUID of the suite containing the test cases
@@ -298,7 +298,7 @@ Dispatches an autonomous testing agent to execute test cases for a selected suit
   - `testCases` - Array of test case objects to execute, each containing:
     - `testCaseId` - The ID of the test case
     - `userStoryId` - The ID of the associated user story
-- **Returns:** Array of executed test case objects with their initial execution state (uuid, executionStatus, agentReportStatus, codeReportStatus, etc.)
+- **Returns:** Dispatch confirmation with tracking info (suite UUID, analysis identifier, per-test-case execution status). Does NOT return pass/fail results — use `wopee_fetch_recent_executions` or `wopee_fetch_executed_test_cases` to check results later.
 
 **Example Usage:**
 
@@ -307,6 +307,23 @@ Dispatch agent for my latest suite's user story US001 and test case TC003
 ```
 
 ### Test Results
+
+#### `wopee_fetch_recent_executions`
+
+Fetches the most recent test case executions for the current project (up to 20, newest first). Use this to quickly check the status of recently dispatched tests without needing to remember specific suite UUIDs.
+
+- **Parameters:** None (uses `WOPEE_PROJECT_UUID` from environment)
+- **Returns:** List of recent executions with execution status (IN_PROGRESS, IN_QUEUE, FINISHED, FAILED), agent reports, and pass/fail results
+
+**Example Usage:**
+
+```
+What's the status of my recent test runs?
+```
+
+```
+How did my tests go?
+```
 
 #### `wopee_fetch_executed_test_cases`
 
@@ -348,7 +365,8 @@ Show me the executed test cases for my latest analysis suite
    - Use `wopee_dispatch_agent` to execute test cases with the autonomous testing agent
 
 5. **Check results:**
-   - Use `wopee_fetch_executed_test_cases` to check the status and reports of dispatched agent runs
+   - Use `wopee_fetch_recent_executions` to quickly check status of recent test runs
+   - Use `wopee_fetch_executed_test_cases` to check detailed status and reports for a specific suite
    - Or use the `fetch-test-results` prompt for a formatted summary of all test results
 
 ## Available Prompts

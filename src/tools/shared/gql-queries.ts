@@ -266,6 +266,26 @@ export const FetchChatRoom = `
   }
 `;
 
+export const FetchRecentExecutedTestCases = `
+  query FetchRecentExecutedTestCases($projectUuid: ID!) {
+    fetchRecentExecutedTestCases(projectUuid: $projectUuid) {
+      uuid
+      suiteUuid
+      analysisSuiteUuid
+      analysisIdentifier
+      userStoryId
+      testCaseId
+      executionStatus
+      agentReport
+      agentReportStatus
+      codeReport
+      codeReportStatus
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const CreateGitHubIssue = `
   mutation CreateGitHubIssue($projectUuid: ID!, $title: String!, $body: String!, $labels: [String!]) {
     createGitHubIssue(projectUuid: $projectUuid, title: $title, body: $body, labels: $labels) {
