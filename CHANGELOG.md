@@ -1,3 +1,10 @@
+# [1.27.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.26.2...v1.27.0) (2026-06-11)
+
+
+### Features
+
+add tool to fetch recent test executions([5910e8a](https://github.com/Wopee-io/wopee-mcp/commit/5910e8a4c82bbd9eee8a40d01b66d2d0f10b8d69))
+
 ## [1.26.2](https://github.com/Wopee-io/wopee-mcp/compare/v1.26.1...v1.26.2) (2026-05-06)
 
 
