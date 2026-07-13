@@ -10,12 +10,14 @@ import { wopeeFetchRecentExecutions } from "./wopee_fetch_recent_executions/inde
 import { wopeeSendChatMessage } from "./wopee_send_chat_message/index.js";
 import { wopeeReadChatHistory } from "./wopee_read_chat_history/index.js";
 import { wopeeCreateGithubIssue } from "./wopee_create_github_issue/index.js";
+import { wopeeFetchVariables } from "./wopee_fetch_variables/index.js";
 
 export const TOOLS = [
   wopeeCreateBlankSuite,
   wopeeFetchAnalysisSuites,
   wopeeFetchExecutedTestCases,
   wopeeFetchRecentExecutions,
+  wopeeFetchVariables,
 
   wopeeDispatchAnalysis,
   wopeeDispatchAgent,

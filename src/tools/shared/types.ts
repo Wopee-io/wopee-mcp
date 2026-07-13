@@ -14,6 +14,13 @@ export enum ToolName {
   WOPEE_SEND_CHAT_MESSAGE = "wopee_send_chat_message",
   WOPEE_READ_CHAT_HISTORY = "wopee_read_chat_history",
   WOPEE_CREATE_GITHUB_ISSUE = "wopee_create_github_issue",
+
+  WOPEE_FETCH_VARIABLES = "wopee_fetch_variables",
+}
+
+export enum VariableLevel {
+  PROJECT = "PROJECT",
+  ANALYSIS = "ANALYSIS",
 }
 
 export enum GenerateArtifactType {

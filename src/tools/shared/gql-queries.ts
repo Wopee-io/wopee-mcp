@@ -15,6 +15,18 @@ export const UpdateArtifact = `
   }
 `;
 
+export const FetchProjectVariables = `
+  query FetchProjectVariables($projectUuid: ID!) {
+    fetchProjectVariables(projectUuid: $projectUuid)
+  }
+`;
+
+export const FetchSuiteVariables = `
+  query FetchSuiteVariables($suiteUuid: ID!) {
+    fetchSuiteVariables(suiteUuid: $suiteUuid)
+  }
+`;
+
 export const DispatchAgent = `
   mutation DispatchAgent(
     $input: TestCasesInput!
