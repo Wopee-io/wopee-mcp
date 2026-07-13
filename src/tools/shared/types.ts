@@ -16,6 +16,7 @@ export enum ToolName {
   WOPEE_CREATE_GITHUB_ISSUE = "wopee_create_github_issue",
 
   WOPEE_FETCH_VARIABLES = "wopee_fetch_variables",
+  WOPEE_UPDATE_VARIABLES = "wopee_update_variables",
 }
 
 export enum VariableLevel {

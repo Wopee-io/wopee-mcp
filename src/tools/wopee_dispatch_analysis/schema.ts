@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { SuiteAnalysisConfigSchema } from "../shared/schemas.js";
+import {
+  SuiteAnalysisConfigSchema,
+  AdditionalVariableSchema,
+} from "../shared/schemas.js";
 
 enum RerunMode {
   FULL = "FULL",
@@ -16,21 +19,6 @@ export const DispatchAnalysisInputSchema = z.object({
   projectUuid: z.string().min(1, "Project UUID is required"),
   suiteAnalysisConfig: SuiteAnalysisConfigSchema,
   rerun: RerunOptionsSchema.nullable().default(null),
-});
-
-const AdditionalVariableSchema = z.object({
-  key: z
-    .string({
-      description:
-        "Variable name. Must be uppercase with underscores only (e.g. MY_VAR, BASE_URL).",
-    })
-    .regex(
-      /^[A-Z_][A-Z0-9_]*$/,
-      "Key must be uppercase alphanumeric with underscores, starting with a letter or underscore",
-    ),
-  value: z
-    .string({ description: "Variable value. Must be a non-empty string." })
-    .min(1, "Value must be a non-empty string"),
 });
 
 const WopeeRerunOptionsSchema = z.object({

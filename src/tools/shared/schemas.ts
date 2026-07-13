@@ -16,6 +16,23 @@ export const SuiteAnalysisConfigSchema = z.object({
   additionalVariables: z.string().nullable().default(null),
 });
 
+// Shared by wopee_dispatch_analysis and wopee_update_variables. Keys must be
+// uppercase (server enforces the same EnvVarKeyRegex on write).
+export const AdditionalVariableSchema = z.object({
+  key: z
+    .string({
+      description:
+        "Variable name. Must be uppercase with underscores only (e.g. MY_VAR, BASE_URL).",
+    })
+    .regex(
+      /^[A-Z_][A-Z0-9_]*$/,
+      "Key must be uppercase alphanumeric with underscores, starting with a letter or underscore",
+    ),
+  value: z
+    .string({ description: "Variable value. Must be a non-empty string." })
+    .min(1, "Value must be a non-empty string"),
+});
+
 export const GenerateAIDataHandlerInputSchema = z.object({
   type: z.nativeEnum(GenerateArtifactType, {
     description:
