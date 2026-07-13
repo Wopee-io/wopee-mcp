@@ -27,6 +27,18 @@ export const FetchSuiteVariables = `
   }
 `;
 
+export const UpdateProjectVariables = `
+  mutation UpdateProjectVariables($input: UpdateProjectVariablesInput!) {
+    updateProjectVariables(input: $input)
+  }
+`;
+
+export const UpdateSuiteVariables = `
+  mutation UpdateSuiteVariables($suiteUuid: ID!, $additionalVariables: String!) {
+    updateSuiteVariables(suiteUuid: $suiteUuid, additionalVariables: $additionalVariables)
+  }
+`;
+
 export const DispatchAgent = `
   mutation DispatchAgent(
     $input: TestCasesInput!
