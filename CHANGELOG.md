@@ -1,3 +1,38 @@
+# [1.28.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.27.0...v1.28.0) (2026-07-13)
+
+
+### Features
+
+add wopee_fetch_variables tool([341a98e](https://github.com/Wopee-io/wopee-mcp/commit/341a98e05f49217b1f2bef0a9b8a2735eda24a0b))
+New MCP tool to read run-time variables (additionalVariables) at either
+level via the new api-key read paths:
+
+- level: PROJECT reads project-level variables using WOPEE_PROJECT_UUID.
+- level: ANALYSIS reads a suite's variables (requires suiteUuid).
+
+Adds the VariableLevel enum, the FetchProjectVariables / FetchSuiteVariables
+GraphQL queries, and registers the tool. Returns the raw JSON string array
+(or [] when unset).
+
+Part of epic #4148. Closes #4151.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+add wopee_update_variables tool([6ffce68](https://github.com/Wopee-io/wopee-mcp/commit/6ffce6844fecbcdff42401a9bb337c5c1dd86b40))
+New MCP tool to upsert run-time variables (additionalVariables) at either
+level via the new api-key write paths:
+
+- level: PROJECT writes project-level variables using WOPEE_PROJECT_UUID.
+- level: ANALYSIS writes a suite's variables (requires suiteUuid).
+
+Merge semantics are enforced server-side: keys in variables[] are added or
+overwritten, existing keys are preserved. Lifts AdditionalVariableSchema into
+shared/schemas.ts (reused by wopee_dispatch_analysis), adds the
+UpdateProjectVariables / UpdateSuiteVariables mutations, and registers the tool.
+
+Part of epic #4148. Closes #4152.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+
 # [1.27.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.26.2...v1.27.0) (2026-06-11)
 
 
