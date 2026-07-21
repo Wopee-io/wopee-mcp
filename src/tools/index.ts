@@ -7,6 +7,7 @@ import { wopeeCreateBlankSuite } from "./wopee_create_blank_suite/index.js";
 import { wopeeFetchAnalysisSuites } from "./wopee_fetch_analysis_suites/index.js";
 import { wopeeFetchExecutedTestCases } from "./wopee_fetch_executed_test_cases/index.js";
 import { wopeeFetchRecentExecutions } from "./wopee_fetch_recent_executions/index.js";
+import { wopeeFetchTestInventory } from "./wopee_fetch_test_inventory/index.js";
 import { wopeeSendChatMessage } from "./wopee_send_chat_message/index.js";
 import { wopeeReadChatHistory } from "./wopee_read_chat_history/index.js";
 import { wopeeCreateGithubIssue } from "./wopee_create_github_issue/index.js";
@@ -18,6 +19,7 @@ export const TOOLS = [
   wopeeFetchAnalysisSuites,
   wopeeFetchExecutedTestCases,
   wopeeFetchRecentExecutions,
+  wopeeFetchTestInventory,
   wopeeFetchVariables,
   wopeeUpdateVariables,
 

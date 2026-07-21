@@ -3,6 +3,7 @@ export enum ToolName {
   WOPEE_FETCH_ANALYSIS_SUITES = "wopee_fetch_analysis_suites",
   WOPEE_FETCH_EXECUTED_TEST_CASES = "wopee_fetch_executed_test_cases",
   WOPEE_FETCH_RECENT_EXECUTIONS = "wopee_fetch_recent_executions",
+  WOPEE_FETCH_TEST_INVENTORY = "wopee_fetch_test_inventory",
 
   WOPEE_DISPATCH_ANALYSIS = "wopee_dispatch_analysis",
   WOPEE_DISPATCH_AGENT = "wopee_dispatch_agent",
