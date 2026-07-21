@@ -1,3 +1,16 @@
+# [1.29.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.28.0...v1.29.0) (2026-07-21)
+
+
+### Features
+
+add wopee_fetch_test_inventory tool for chat test counts and statuses([20514a1](https://github.com/Wopee-io/wopee-mcp/commit/20514a102da9ebc9ca99eaada4403793570234c7)), closes[autonomous-testing/backlog#4290](https://github.com/autonomous-testing/backlog/issues/4290)[autonomous-testing/backlog#4125](https://github.com/autonomous-testing/backlog/issues/4125)
+Composes fetchAnalysisSuites + fetchArtifact(USER_STORIES) +
+fetchExecutedTestCases and left-joins each authored test case to its latest
+execution (never-run => NOT_RUN), with regular vs reusable (R001) counts.
+Pure join logic lives in logic.ts and is unit-tested via node:test. Gives the
+chat a deterministic answer for "how many tests", "list scenarios", and
+"executed + not-run in one list".
+
 # [1.28.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.27.0...v1.28.0) (2026-07-13)
 
 
