@@ -1,3 +1,12 @@
+## [1.29.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.29.0...v1.29.1) (2026-08-19)
+
+
+### Bug Fixes
+
+  **artifact:**compact tests.json before it reaches the model([005a298](https://github.com/Wopee-io/wopee-mcp/commit/005a298012f98d2acfbfae089c5a364eb4281d80)), closes[autonomous-testing/backlog#4252](https://github.com/autonomous-testing/backlog/issues/4252)[api#904](https://github.com/api/issues/904)[autonomous-testing/backlog#4252](https://github.com/autonomous-testing/backlog/issues/4252)
+The api now commits the USER_STORIES artifact pretty-printed so a
+test-case edit is reviewable as a GitHub PR diff
+
 # [1.29.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.28.0...v1.29.0) (2026-07-21)
 
 
