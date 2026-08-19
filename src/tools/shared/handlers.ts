@@ -14,6 +14,7 @@ import {
 } from "./factories.js";
 import { requestClient } from "../../utils/requestClient.js";
 import {
+  _compactArtifactContentForModel,
   _convertToArtifactType,
   _parseError,
   _parseGenerateArtifactType,
@@ -58,7 +59,10 @@ export async function fetchArtifact(input: FetchArtifactHandlerInput): Promise<{
       content: [
         {
           type: "text" as const,
-          text: result.fetchArtifact.content,
+          text: _compactArtifactContentForModel(
+            type,
+            result.fetchArtifact.content,
+          ),
         },
       ],
     };
