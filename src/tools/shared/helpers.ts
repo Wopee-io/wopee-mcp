@@ -10,6 +10,7 @@ import {
 } from "./gql-queries.js";
 import { ArtifactType, GenerateArtifactType } from "./types.js";
 import { RequestError } from "../../utils/requestClient.js";
+import { compactUserStoriesContent } from "./artifactContent.js";
 
 export function _convertToArtifactType(
   type: GenerateArtifactType,
@@ -119,4 +120,17 @@ export function _parseError(error: unknown) {
       },
     ],
   };
+}
+
+/**
+ * Only USER_STORIES is JSON: APP_CONTEXT / GENERAL_USER_STORIES are markdown and
+ * PLAYWRIGHT_CODE is TypeScript, where collapsing whitespace would corrupt the
+ * file. See `compactUserStoriesContent` for why the artifact is compacted at all.
+ */
+export function _compactArtifactContentForModel(
+  type: ArtifactType,
+  content: string,
+): string {
+  if (type !== ArtifactType.USER_STORIES) return content;
+  return compactUserStoriesContent(content);
 }
