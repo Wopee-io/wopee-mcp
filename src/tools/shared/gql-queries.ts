@@ -51,6 +51,7 @@ export const DispatchAgent = `
       analysisIdentifier
       userStoryId
       testCaseId
+      runName
       executionStatus
       agentReport
       agentReportStatus
