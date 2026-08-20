@@ -115,6 +115,8 @@ export type ExecutedTestCase = {
   analysisIdentifier: string;
   userStoryId: string;
   testCaseId: string;
+  /** Exact GitHub Actions run title for this execution, stored at dispatch (backlog#4382). */
+  runName: string | null;
   executionStatus: ExecutionStatus;
   agentReport: string | null;
   agentReportStatus: ReportStatus | null;

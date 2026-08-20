@@ -7,39 +7,9 @@ import { ExecutedTestCase, ToolName } from "../shared/types.js";
 import { _parseError } from "../shared/helpers.js";
 import { createDispatchAgentInput } from "./factory.js";
 import { DispatchAgent } from "../shared/gql-queries.js";
+import { formatDispatchSuccess } from "./format.js";
 import { requestClient } from "../../utils/requestClient.js";
 import { withRetry } from "../../utils/withRetry.js";
-
-function formatDispatchSuccess(
-  testCases: ExecutedTestCase[],
-  input: WopeeDispatchAgentInput,
-): string {
-  const lines: string[] = [
-    "DISPATCH SUCCESSFUL — tests are now RUNNING (not yet completed).",
-    "",
-    "Tracking:",
-    `- Suite UUID: ${testCases[0]?.suiteUuid ?? input.suiteUuid}`,
-    `- Analysis Suite UUID: ${testCases[0]?.analysisSuiteUuid ?? "N/A"}`,
-    `- Analysis Identifier: ${testCases[0]?.analysisIdentifier ?? input.analysisIdentifier}`,
-    "",
-    "Test cases dispatched:",
-  ];
-
-  for (const tc of testCases) {
-    lines.push(
-      `- ${tc.userStoryId}:${tc.testCaseId} → executionStatus: ${tc.executionStatus}`,
-    );
-  }
-
-  lines.push(
-    "",
-    "IMPORTANT: These tests are RUNNING asynchronously. Do NOT report them as passed or failed.",
-    "Tell the user their tests are running and results will be available shortly (typically 1-3 minutes).",
-    "You will receive a follow-up notification in chat when tests complete with full results.",
-  );
-
-  return lines.join("\n");
-}
 
 export const wopeeDispatchAgent = {
   name: ToolName.WOPEE_DISPATCH_AGENT,
