@@ -1,3 +1,20 @@
+# [1.30.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.29.1...v1.30.0) (2026-08-20)
+
+
+### Features
+
+  **dispatch:**report the run handles a caller needs to track its dispatch([7fe216f](https://github.com/Wopee-io/wopee-mcp/commit/7fe216f42b2a59340d628db9c86b1ede0293df9e))
+backlog#4382. The dispatch result told a caller its suite and analysis uuids
+but not which row or which GitHub Actions run belonged to it, so orchestrators
+guessed from a gh run list poll and raced each other under parallel dispatch.
+
+Print each row's executedTestCaseUuid and its runName, which the api now
+stores verbatim and makes unique per dispatch. formatDispatchSuccess moves to
+its own type-only module so node --test can load it without the enums in
+shared/types.ts.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+
 ## [1.29.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.29.0...v1.29.1) (2026-08-19)
 
 
