@@ -9,7 +9,7 @@ export const wopeeFetchRecentExecutions = {
   config: {
     title: "Fetch recent test executions",
     description:
-      "Fetch the most recent test case executions for the current project (up to 20, newest first). Use this to check the status of recently dispatched tests without needing to remember specific suite UUIDs. Returns execution status (IN_PROGRESS, IN_QUEUE, FINISHED, FAILED), agent reports, and pass/fail results. Takes no input; uses WOPEE_PROJECT_UUID from environment. Prefer this tool when the user asks 'what's the status?' or 'how did the tests go?' and you don't have the specific suite UUID handy.",
+      "Fetch the most recent test case executions for the current project (up to 20, newest first). Use this to check the status of recently dispatched tests without needing to remember specific suite UUIDs. Returns each run's verdict (PASSED, FAILED, or INCOMPLETE — the run never established a result, e.g. an infrastructure error, and says nothing about the application) or, for a run with no verdict yet, its execution status (IN_QUEUE, IN_PROGRESS, FINISHED, FAILED, STOPPED), plus agent reports. Takes no input; uses WOPEE_PROJECT_UUID from environment. Prefer this tool when the user asks 'what's the status?' or 'how did the tests go?' and you don't have the specific suite UUID handy.",
   },
   handler: async () => {
     try {
@@ -59,18 +59,17 @@ export const wopeeFetchRecentExecutions = {
       ];
 
       for (const tc of executions) {
-        let status: string;
-        if (tc.executionStatus === "FINISHED") {
-          status = tc.agentReportStatus ?? "FINISHED";
-        } else {
-          status = tc.executionStatus;
-        }
+        // The verdict first (backlog#4453). A run whose agent threw is FAILED underneath but
+        // INCOMPLETE on top, and reporting it as FAILED tells the user their app is broken.
+        const status = tc.agentReportStatus ?? tc.executionStatus;
 
         lines.push(
           `- ${tc.userStoryId}:${tc.testCaseId} [${tc.analysisIdentifier}] → ${status} (${tc.updatedAt})`,
         );
 
-        if (tc.executionStatus === "FINISHED" && tc.agentReport) {
+        // Any report, not only a FINISHED run's: an incomplete run's report is what names the
+        // infrastructure error behind it.
+        if (tc.agentReport) {
           const shortReport = tc.agentReport.slice(0, 200);
           lines.push(
             `  Report: ${shortReport}${tc.agentReport.length > 200 ? "..." : ""}`,
