@@ -1,3 +1,17 @@
+## [1.30.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.30.0...v1.30.1) (2026-09-11)
+
+
+### Bug Fixes
+
+  **executions:**report a run's verdict before its execution status([82d1991](https://github.com/Wopee-io/wopee-mcp/commit/82d19914386e78a8679d03e16bc5000decb2713c)), closes[autonomous-testing/backlog#4453](https://github.com/autonomous-testing/backlog/issues/4453)
+wopee_fetch_recent_executions showed the execution status for every run that
+was not FINISHED. A run whose agent threw before a verdict is FAILED
+underneath but INCOMPLETE on top, so the tool told the model the app had failed
+for what was an infrastructure error, and hid the report that named it.
+
+The status is now the report status when there is one, else the execution
+status; any report is shown, and the description names INCOMPLETE.
+
 # [1.30.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.29.1...v1.30.0) (2026-08-20)
 
 
