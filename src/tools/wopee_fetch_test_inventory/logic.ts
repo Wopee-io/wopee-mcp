@@ -22,6 +22,11 @@ export const REUSABLE_USER_STORY_ID = "R001";
 
 export const NOT_RUN = "NOT_RUN";
 
+// The execution history could not be read (e.g. the credential is not allowed to
+// read executions), so whether a test ran is unknown. Never collapsed into
+// NOT_RUN: "never ran" and "could not ask" must not look the same.
+export const UNKNOWN = "UNKNOWN";
+
 type AuthoredTestCase = {
   testCaseId: string;
   name?: string;
@@ -43,9 +48,16 @@ export type InventoryTestCase = {
   testCaseId: string;
   name: string;
   kind: "REGULAR" | "REUSABLE";
-  // PASSED | FAILED | INCOMPLETE | IN_QUEUE | IN_PROGRESS | FINISHED | STOPPED | NOT_RUN
+  // PASSED | FAILED | INCOMPLETE | IN_QUEUE | IN_PROGRESS | FINISHED | STOPPED | NOT_RUN | UNKNOWN
   status: string;
   executedAt: string | null;
+  /** uuid of the latest run — the same uuid wopee_dispatch_agent returns. */
+  executedTestCaseUuid: string | null;
+  /**
+   * A verdict gate disagreed with a PASSED verdict (CMD: "Test passed · verdict
+   * gate disagreed"). The status stays PASSED; this is a mark, not a verdict.
+   */
+  verdictGateDisagreed: boolean;
 };
 
 export type AnalysisInventory = {
@@ -56,6 +68,8 @@ export type AnalysisInventory = {
   regularTestCount: number;
   reusableBlockCount: number;
   statusSummary: Record<string, number>; // over REGULAR (runnable) test cases only
+  /** Why execution history could not be read; statuses are then UNKNOWN. */
+  executionHistoryError: string | null;
   testCases: InventoryTestCase[];
 };
 
@@ -74,6 +88,8 @@ export type AnalysisInput = {
   artifactContent: string | null;
   /** Grouped execution history for the suite, or [] when none. */
   execGroups: FetchExecutedTestCasesResponse[];
+  /** Set when the execution history request failed; execGroups is then meaningless. */
+  execError?: string | null;
 };
 
 /** Parse the USER_STORIES artifact JSON; tolerant of null/empty/malformed. */
@@ -122,10 +138,19 @@ export function resolveStatus(exec: ExecutedTestCase | undefined): string {
   return exec.executionStatus ?? NOT_RUN;
 }
 
+/** Mirrors CMD rowVerdict: only a pass is split, a flagged fail is already red. */
+export function verdictGateDisagreed(
+  exec: ExecutedTestCase | undefined,
+  status: string,
+): boolean {
+  return !!exec?.integrityFlagged && status.toUpperCase() === "PASSED";
+}
+
 function buildAnalysisInventory({
   suite,
   artifactContent,
   execGroups,
+  execError = null,
 }: AnalysisInput): AnalysisInventory {
   const userStories = parseUserStories(artifactContent);
   const execIndex = indexExecutions(execGroups);
@@ -146,7 +171,7 @@ function buildAnalysisInventory({
       const exec = isReusable
         ? undefined
         : execIndex.get(`${story.userStoryId}::${tc.testCaseId}`)?.[0];
-      const status = resolveStatus(exec);
+      const status = execError && !isReusable ? UNKNOWN : resolveStatus(exec);
 
       if (!isReusable)
         statusSummary[status] = (statusSummary[status] ?? 0) + 1;
@@ -161,6 +186,8 @@ function buildAnalysisInventory({
         kind: isReusable ? "REUSABLE" : "REGULAR",
         status,
         executedAt: exec?.updatedAt ?? exec?.createdAt ?? null,
+        executedTestCaseUuid: exec?.uuid ?? null,
+        verdictGateDisagreed: verdictGateDisagreed(exec, status),
       });
     }
   }
@@ -173,6 +200,7 @@ function buildAnalysisInventory({
     regularTestCount,
     reusableBlockCount,
     statusSummary,
+    executionHistoryError: execError,
     testCases,
   };
 }
