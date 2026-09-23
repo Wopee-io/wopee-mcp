@@ -1,3 +1,27 @@
+## [1.30.2](https://github.com/Wopee-io/wopee-mcp/compare/v1.30.1...v1.30.2) (2026-09-23)
+
+
+### Bug Fixes
+
+  **inventory:**never report NOT_RUN when execution history could not be read([1b02767](https://github.com/Wopee-io/wopee-mcp/commit/1b02767b9d64f57d3eece62cf810fb1e9c7c3ce0))
+wopee_fetch_test_inventory turned a rejected fetchExecutedTestCases into an
+empty history, so every authored test case came back NOT_RUN. When the
+credential was not allowed to read executions (Not Authorised!), the tool
+answered "nothing has run" for scenarios that had already executed.
+
+An analysis with no runs returns [], never an error, so a rejection is now
+carried through: regular test cases get status UNKNOWN and the analysis
+carries executionHistoryError. A missing USER_STORIES artifact still degrades
+to an empty list as before. The error text comes from a new shared
+_describeError, which _parseError now uses too.
+
+Each test case also gains verdictGateDisagreed (a PASSED run a verdict gate
+disagreed with) and executedTestCaseUuid (the latest run, the same uuid
+wopee_dispatch_agent returns) so a polling agent can match its dispatch. The
+execution queries select integrityFlagged, verdictIntegrity and finishedAt.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>
+
 ## [1.30.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.30.0...v1.30.1) (2026-09-11)
 
 
