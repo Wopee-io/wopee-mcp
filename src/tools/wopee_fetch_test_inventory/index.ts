@@ -1,6 +1,6 @@
 import { getConfig } from "../../utils/getConfig.js";
 import { requestClient } from "../../utils/requestClient.js";
-import { _parseError } from "../shared/helpers.js";
+import { _describeError, _parseError } from "../shared/helpers.js";
 import {
   AnalysisSuite,
   ArtifactType,
@@ -23,7 +23,7 @@ export const wopeeFetchTestInventory = {
   config: {
     title: "Fetch test inventory (counts + statuses)",
     description:
-      "The authoritative tool for how many tests exist and their latest status. Returns, per analysis, the FULL list of authored test cases joined with their latest execution status — including never-run ones as NOT_RUN. Use this for questions like 'how many tests do I have', 'list the scenarios/test cases in A001', or 'show executed and not-run tests in one table'. Terminology: a 'scenario' is a test case; test cases are grouped under user stories (US001) and identified as US001:TC001. Reusable blocks (user story R001) are counted separately (reusableBlockCount) and are building blocks, not runnable, so they never carry an execution status. Regular tests are all non-R001 test cases. Read-only. Takes an optional analysisIdentifier (e.g. A001) to scope to one analysis; omit to cover every analysis in the project. Prefer this over wopee_fetch_recent_executions / wopee_fetch_executed_test_cases when the user asks about totals or the complete list — those return only test cases that have already run.",
+      "The authoritative tool for how many tests exist and their latest status. Returns, per analysis, the FULL list of authored test cases joined with their latest execution status — including never-run ones as NOT_RUN. Use this for questions like 'how many tests do I have', 'list the scenarios/test cases in A001', or 'show executed and not-run tests in one table'. Terminology: a 'scenario' is a test case; test cases are grouped under user stories (US001) and identified as US001:TC001. Reusable blocks (user story R001) are counted separately (reusableBlockCount) and are building blocks, not runnable, so they never carry an execution status. Regular tests are all non-R001 test cases. Read-only. Takes an optional analysisIdentifier (e.g. A001) to scope to one analysis; omit to cover every analysis in the project. Prefer this over wopee_fetch_recent_executions / wopee_fetch_executed_test_cases when the user asks about totals or the complete list — those return only test cases that have already run. Each test case carries executedTestCaseUuid (the latest run's uuid, the same one wopee_dispatch_agent returns) and verdictGateDisagreed (true when a verdict gate disagreed with a PASSED verdict — report it alongside the pass). Status UNKNOWN means the execution history could not be read (the reason is in the analysis's executionHistoryError); do not report such tests as not run.",
     inputSchema: WopeeFetchTestInventoryInputSchema.shape,
   },
   handler: async (input: WopeeFetchTestInventoryInput) => {
@@ -62,9 +62,11 @@ export const wopeeFetchTestInventory = {
         };
 
       // Fetch the authored test cases (USER_STORIES artifact) and execution
-      // history for every analysis in parallel. A failure on one suite (e.g. an
-      // analysis with no generated tests yet) degrades to an empty result for
-      // that suite rather than failing the whole inventory.
+      // history for every analysis in parallel. A missing artifact (an analysis
+      // with no generated tests yet) degrades to an empty list rather than
+      // failing the whole inventory. A failed execution fetch does NOT degrade to
+      // "no runs": an analysis with no runs returns [], so a rejection is a real
+      // error (e.g. Not Authorised!) and is reported as UNKNOWN.
       const inputs: AnalysisInput[] = await Promise.all(
         suites.map(async (suite): Promise<AnalysisInput> => {
           const [artifactRes, execRes] = await Promise.allSettled([
@@ -89,6 +91,7 @@ export const wopeeFetchTestInventory = {
               },
             }),
           ]);
+          if (execRes.status === "rejected") console.error(execRes.reason);
 
           return {
             suite,
@@ -100,6 +103,10 @@ export const wopeeFetchTestInventory = {
               execRes.status === "fulfilled"
                 ? (execRes.value?.fetchExecutedTestCases ?? [])
                 : [],
+            execError:
+              execRes.status === "rejected"
+                ? _describeError(execRes.reason)
+                : null,
           };
         }),
       );

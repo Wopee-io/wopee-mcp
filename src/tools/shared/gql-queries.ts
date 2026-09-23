@@ -208,6 +208,9 @@ export const FetchExecutedTestCases = `
         agentReportStatus
         codeReport
         codeReportStatus
+        verdictIntegrity
+        integrityFlagged
+        finishedAt
         createdAt
         updatedAt
       }
@@ -305,6 +308,8 @@ export const FetchRecentExecutedTestCases = `
       agentReportStatus
       codeReport
       codeReportStatus
+      verdictIntegrity
+      integrityFlagged
       createdAt
       updatedAt
     }

@@ -9,6 +9,7 @@ import {
   parseUserStories,
   indexExecutions,
   NOT_RUN,
+  UNKNOWN,
   type AnalysisInput,
 } from "./logic.ts";
 
@@ -55,6 +56,7 @@ function exec(over: Partial<any>): any {
     executionStatus: over.executionStatus ?? "FINISHED",
     agentReportStatus: over.agentReportStatus ?? null,
     codeReportStatus: over.codeReportStatus ?? null,
+    integrityFlagged: over.integrityFlagged ?? null,
     createdAt: over.createdAt ?? "2026-01-01T00:00:00Z",
     updatedAt: over.updatedAt ?? "2026-01-01T00:00:00Z",
   };
@@ -199,4 +201,94 @@ test("empty analysis contributes zero counts (issue #1: 'one empty')", () => {
   assert.equal(inv.analyses[0].testCases.length, 0);
   assert.equal(inv.totals.regularTests, 18);
   assert.equal(inv.totals.reusableBlocks, 5);
+});
+
+// --- execution history: unreadable vs. empty; verdict-gate mark -------------
+
+const A001 = {
+  uuid: "s1",
+  name: "Analysis - A001",
+  analysisIdentifier: "A001",
+  suiteRunningStatus: "FINISHED",
+} as any;
+
+test("a failed execution fetch reports UNKNOWN, never NOT_RUN", () => {
+  const inv = buildTestInventory([
+    {
+      suite: A001,
+      artifactContent: artifact({ reusable: 1, stories: [{ us: "US001", count: 1 }, { us: "US006", count: 1 }] }),
+      execGroups: [],
+      execError: "[GRAPHQL_ERROR] Not Authorised!",
+    },
+  ]);
+  const a = inv.analyses[0];
+
+  assert.equal(a.executionHistoryError, "[GRAPHQL_ERROR] Not Authorised!");
+  assert.deepEqual(a.statusSummary, { [UNKNOWN]: 2 });
+  const regular = a.testCases.filter((t) => t.kind === "REGULAR");
+  assert.ok(regular.every((t) => t.status === UNKNOWN && t.executedAt === null));
+  // Reusable blocks are never runnable, so their NOT_RUN is still true.
+  assert.equal(a.testCases.find((t) => t.kind === "REUSABLE")?.status, NOT_RUN);
+});
+
+test("a readable history has no executionHistoryError", () => {
+  const inv = buildTestInventory([
+    { suite: A001, artifactContent: artifact({ reusable: 0, stories: [{ us: "US001", count: 1 }] }), execGroups: [] },
+  ]);
+  assert.equal(inv.analyses[0].executionHistoryError, null);
+  assert.deepEqual(inv.analyses[0].statusSummary, { [NOT_RUN]: 1 });
+});
+
+test("crawl-run scenario: PASSED with the verdict-gate disagreement and run uuid", () => {
+  const inv = buildTestInventory([
+    {
+      suite: A001,
+      artifactContent: artifact({ reusable: 0, stories: [{ us: "US001", count: 1 }] }),
+      execGroups: [
+        {
+          userStoryId: "US001",
+          executedTestCases: [
+            exec({
+              uuid: "run-1",
+              userStoryId: "US001",
+              testCaseId: "TC001",
+              agentReportStatus: "PASSED",
+              integrityFlagged: true,
+              updatedAt: "2026-09-22T18:39:00Z",
+            }),
+          ],
+        },
+      ],
+    },
+  ]);
+  const tc = inv.analyses[0].testCases[0];
+
+  assert.equal(tc.status, "PASSED");
+  assert.equal(tc.executedAt, "2026-09-22T18:39:00Z");
+  assert.equal(tc.executedTestCaseUuid, "run-1");
+  assert.equal(tc.verdictGateDisagreed, true);
+});
+
+test("verdictGateDisagreed only splits a pass, like CMD rowVerdict", () => {
+  const inv = buildTestInventory([
+    {
+      suite: A001,
+      artifactContent: artifact({ reusable: 0, stories: [{ us: "US001", count: 3 }] }),
+      execGroups: [
+        {
+          userStoryId: "US001",
+          executedTestCases: [
+            exec({ userStoryId: "US001", testCaseId: "TC001", agentReportStatus: "FAILED", integrityFlagged: true }),
+            exec({ userStoryId: "US001", testCaseId: "TC002", agentReportStatus: "PASSED", integrityFlagged: false }),
+          ],
+        },
+      ],
+    },
+  ]);
+  const byId = Object.fromEntries(inv.analyses[0].testCases.map((t) => [t.id, t]));
+
+  assert.equal(byId["US001:TC001"].verdictGateDisagreed, false);
+  assert.equal(byId["US001:TC002"].verdictGateDisagreed, false);
+  assert.equal(byId["US001:TC003"].verdictGateDisagreed, false);
+  assert.equal(byId["US001:TC003"].executedTestCaseUuid, null);
 });

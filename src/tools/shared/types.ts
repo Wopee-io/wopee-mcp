@@ -122,6 +122,11 @@ export type ExecutedTestCase = {
   agentReportStatus: ReportStatus | null;
   codeReport: string | null;
   codeReportStatus: ReportStatus | null;
+  /** Verdict-gate result JSON. A mark, never a verdict. */
+  verdictIntegrity?: string | null;
+  /** True when a verdict gate disagreed with agentReportStatus. Null on older rows. */
+  integrityFlagged?: boolean | null;
+  finishedAt?: string | null;
   createdAt: string;
   updatedAt: string;
 };

@@ -88,17 +88,19 @@ export function _parseGenerateArtifactType(type: GenerateArtifactType) {
   }
 }
 
+/** One-line description of a failed request, e.g. "[GRAPHQL_ERROR] Not Authorised!". */
+export function _describeError(error: unknown): string {
+  if (error instanceof RequestError)
+    return `[${error.code}] ${error.message}${error.retryable ? " (retryable)" : ""}`;
+  return error instanceof Error ? error.message : String(error);
+}
+
 export function _parseError(error: unknown) {
   console.error(error instanceof z.ZodError ? error.issues : error);
 
   if (error instanceof RequestError) {
     return {
-      content: [
-        {
-          type: "text" as const,
-          text: `[${error.code}] ${error.message}${error.retryable ? " (retryable)" : ""}`,
-        },
-      ],
+      content: [{ type: "text" as const, text: _describeError(error) }],
     };
   }
 
