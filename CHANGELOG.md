@@ -1,3 +1,20 @@
+# [1.31.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.30.2...v1.31.0) (2026-10-14)
+
+
+### Features
+
+  **github-issue:**attach a failed run's evidence to the filed issue([9d1a4b1](https://github.com/Wopee-io/wopee-mcp/commit/9d1a4b1c95dfc1e1afc889fa3e5f2269d28647a8))
+wopee_create_github_issue takes an optional executedTestCaseUuid. With it,
+Wopee.io adds the failing step, expected vs actual, the failing step's
+screenshot and a link to the run in Commander below the body. The result
+lists the labels applied and anything left out, such as a screenshot the
+GitHub App could not upload. body is now optional.
+
+wopee_fetch_recent_executions prints each run's executedTestCaseUuid so an
+agent has the handle to pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 ## [1.30.2](https://github.com/Wopee-io/wopee-mcp/compare/v1.30.1...v1.30.2) (2026-09-23)
 
 
