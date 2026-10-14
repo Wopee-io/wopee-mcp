@@ -317,11 +317,26 @@ export const FetchRecentExecutedTestCases = `
 `;
 
 export const CreateGitHubIssue = `
-  mutation CreateGitHubIssue($projectUuid: ID!, $title: String!, $body: String!, $labels: [String!]) {
-    createGitHubIssue(projectUuid: $projectUuid, title: $title, body: $body, labels: $labels) {
+  mutation CreateGitHubIssue(
+    $projectUuid: ID!
+    $title: String!
+    $body: String!
+    $labels: [String!]
+    $executedTestCaseUuid: ID
+  ) {
+    createGitHubIssue(
+      projectUuid: $projectUuid
+      title: $title
+      body: $body
+      labels: $labels
+      executedTestCaseUuid: $executedTestCaseUuid
+    ) {
       url
       number
       title
+      screenshotAttached
+      labelsApplied
+      warnings
     }
   }
 `;

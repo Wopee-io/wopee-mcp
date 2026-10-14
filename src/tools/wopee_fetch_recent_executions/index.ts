@@ -66,6 +66,8 @@ export const wopeeFetchRecentExecutions = {
         lines.push(
           `- ${tc.userStoryId}:${tc.testCaseId} [${tc.analysisIdentifier}] → ${status} (${tc.updatedAt})`,
         );
+        // The handle wopee_create_github_issue takes to attach this run's evidence.
+        lines.push(`  executedTestCaseUuid: ${tc.uuid}`);
 
         // Any report, not only a FINISHED run's: an incomplete run's report is what names the
         // infrastructure error behind it.

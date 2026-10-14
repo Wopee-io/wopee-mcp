@@ -344,6 +344,26 @@ Fetch test results for suite <suiteUuid>
 Show me the executed test cases for my latest analysis suite
 ```
 
+### Reporting
+
+#### `wopee_create_github_issue`
+
+Files a GitHub issue into the repository linked to the current project. Given a failed run's `executedTestCaseUuid`, Wopee.io adds what it knows about that run below your text: the failing step, expected vs actual, the failing step's screenshot and a link to the run in Commander.
+
+- **Parameters:**
+  - `title` - The issue title
+  - `body` _(optional)_ - Markdown, kept verbatim above the run evidence
+  - `labels` _(optional)_ - Labels to apply, e.g. `["bug"]`. GitHub may skip labels the repository doesn't have; the result says which were applied
+  - `executedTestCaseUuid` _(optional)_ - The run to attach evidence from, as shown by `wopee_fetch_recent_executions` or `wopee_dispatch_agent`
+- **Returns:** The issue number and URL, plus notes on anything left out (e.g. a screenshot that could not be uploaded)
+- **Requirements:** The issue is created by the Wopee.io GitHub App and names you in its body. The App's installation needs the **Issues: Read & write** repository permission, and **Contents: Read & write** for the screenshot, which is committed to a separate `wopee-issue-assets` branch. That branch has no shared history with your code and is safe to delete; deleting it only breaks the images in existing issues.
+
+**Example Usage:**
+
+```
+File the failed checkout test as a GitHub issue
+```
+
 ## Typical Workflow
 
 1. **Start with a suite:**
@@ -368,6 +388,9 @@ Show me the executed test cases for my latest analysis suite
    - Use `wopee_fetch_recent_executions` to quickly check status of recent test runs
    - Use `wopee_fetch_executed_test_cases` to check detailed status and reports for a specific suite
    - Or use the `fetch-test-results` prompt for a formatted summary of all test results
+
+6. **Report failures:**
+   - Use `wopee_create_github_issue` with the failed run's `executedTestCaseUuid` to file it into your repository
 
 ## Available Prompts
 
