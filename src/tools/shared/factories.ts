@@ -7,6 +7,7 @@ import {
   GenerateAIDataHandlerInput,
 } from "./schemas.js";
 import { getConfig } from "../../utils/getConfig.js";
+import { generationOptions } from "../wopee_generate_artifact/request.js";
 
 export const createFetchArtifactInput = (
   input: FetchArtifactFactoryInput
@@ -42,10 +43,8 @@ export const createGenerateAIDataInput = (
       additionalVariables: null,
     },
     continueGeneration: false,
-    extraPrompt: null,
-    selectedUserStories: null,
-    selectedTestCases: null,
     sourceSuiteUuid: null,
+    ...generationOptions(input),
   };
 };
 

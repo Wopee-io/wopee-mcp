@@ -35,6 +35,11 @@ export enum GenerateArtifactType {
   REUSABLE_TEST_CASE_STEPS = "REUSABLE_TEST_CASE_STEPS",
 }
 
+export enum TestCaseGenerationMode {
+  UPDATE = "UPDATE",
+  CREATE = "CREATE",
+}
+
 export enum ArtifactType {
   APP_CONTEXT = "APP_CONTEXT",
   GENERAL_USER_STORIES = "GENERAL_USER_STORIES",

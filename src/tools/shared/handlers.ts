@@ -12,6 +12,7 @@ import {
   createUpdateArtifactInput,
   createGenerateAIDataInput,
 } from "./factories.js";
+import { isQueuedGeneration } from "../wopee_generate_artifact/request.js";
 import { requestClient } from "../../utils/requestClient.js";
 import {
   _compactArtifactContentForModel,
@@ -108,6 +109,16 @@ export async function generateAIDataFile(
           {
             type: "text" as const,
             text: `Failed to generate ${description}: no result returned`,
+          },
+        ],
+      };
+
+    if (isQueuedGeneration(input))
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: `Queued: ${description}. It runs in the background and can take several minutes; read the result with wopee_fetch_artifact once it has finished.`,
           },
         ],
       };
