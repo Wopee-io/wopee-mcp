@@ -1,3 +1,23 @@
+# [1.32.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.31.0...v1.32.0) (2026-10-26)
+
+
+### Features
+
+  **generate:**take mode, scope, instructions and async; test cases default to UPDATE([1eb0553](https://github.com/Wopee-io/wopee-mcp/commit/1eb0553aa644497309b904403829d22b9ea72f46))
+wopee_generate_artifact only took a type and a suite, and sent no mode. The
+api read the missing mode as CREATE, which replaces every test case in the
+suite and deletes their steps, run history and code.
+
+- mode (TEST_CASES only): UPDATE by default, CREATE only when asked for. It is
+  always sent, so an api that still defaults to CREATE never gets one by
+  accident.
+- selectedUserStories / selectedTestCases scope the run; empty means all.
+- instructions are passed as the change request.
+- async returns once the api has queued the run, for the two generations the
+  api can queue; the artifact is read later with wopee_fetch_artifact.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 # [1.31.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.30.2...v1.31.0) (2026-10-14)
 
 
