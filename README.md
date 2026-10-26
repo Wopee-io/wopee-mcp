@@ -237,6 +237,11 @@ Generates a specific file(artifact) for the selected suite.
 - **Parameters:**
   - `suiteUuid` - The UUID of the suite
   - `type` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES_WITH_TEST_CASES" | "TEST_CASES" | "TEST_CASE_STEPS" | "REUSABLE_TEST_CASES" | "REUSABLE_TEST_CASE_STEPS"`
+  - `mode` _(optional, `TEST_CASES` only)_ - `"UPDATE"` (default) keeps existing test cases with their steps and run history; `"CREATE"` replaces the test cases in scope and deletes their steps, runs and code
+  - `selectedUserStories` _(optional)_ - user story ids to limit `TEST_CASES` / `TEST_CASE_STEPS` to, e.g. `["US001"]`; empty means every story
+  - `selectedTestCases` _(optional)_ - test case identifiers to limit `TEST_CASE_STEPS` to, e.g. `["US001:TC002"]`
+  - `instructions` _(optional)_ - the change request passed to the AI engine
+  - `async` _(optional, `TEST_CASES` / `USER_STORIES_WITH_TEST_CASES`)_ - return as soon as the run is queued instead of waiting for the artifact
 - **Returns:** Generated output in case of successful generation.
 
 **Example Usage:**

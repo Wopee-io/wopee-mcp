@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { ArtifactType, GenerateArtifactType } from "./types.js";
+import {
+  ArtifactType,
+  GenerateArtifactType,
+  TestCaseGenerationMode,
+} from "./types.js";
 
 enum CookiesPreference {
   ACCEPT_ALL = "ACCEPT_ALL",
@@ -44,6 +48,36 @@ export const GenerateAIDataHandlerInputSchema = z.object({
         "UUID of the analysis suite to generate artifacts for. Get this from wopee_create_blank_suite or wopee_fetch_analysis_suites.",
     })
     .min(1, "Suite UUID is required"),
+  mode: z
+    .nativeEnum(TestCaseGenerationMode, {
+      description:
+        "TEST_CASES only. UPDATE (default) keeps every existing test case with its steps and run history, and adds or changes test cases around them. CREATE replaces the test cases of the stories in scope — of the whole suite when selectedUserStories is empty — and deletes their steps, run history and Playwright code. Use CREATE only when the user explicitly asks to start over.",
+    })
+    .default(TestCaseGenerationMode.UPDATE),
+  selectedUserStories: z
+    .array(z.string(), {
+      description:
+        "User story ids to limit the generation to, e.g. ['US001', 'US003']. Leave empty for every story in the suite. Used by TEST_CASES and TEST_CASE_STEPS.",
+    })
+    .optional(),
+  selectedTestCases: z
+    .array(z.string(), {
+      description:
+        "Test case identifiers to limit TEST_CASE_STEPS to, e.g. ['US001:TC002']. Leave empty for every test case in scope. Regenerating steps replaces the steps those test cases have.",
+    })
+    .optional(),
+  instructions: z
+    .string({
+      description:
+        "What the user asked for, in their words, e.g. 'add a negative test for an expired card'. Passed to the AI engine as the change request; without it, UPDATE removes no test case.",
+    })
+    .optional(),
+  async: z
+    .boolean({
+      description:
+        "TEST_CASES and USER_STORIES_WITH_TEST_CASES only. true returns as soon as the generation is queued instead of waiting for it (a large suite can take several minutes); the content is then read later with wopee_fetch_artifact. Default false: wait and return the generated artifact.",
+    })
+    .optional(),
 });
 
 export const GenerateAIDataInputSchema = z.object({
@@ -55,6 +89,8 @@ export const GenerateAIDataInputSchema = z.object({
   selectedTestCases: z.array(z.string()).nullish(), // ["US001:TC001", "US003:TC002", "US015:TC033"]
   suiteAnalysisConfig: SuiteAnalysisConfigSchema,
   continueGeneration: z.boolean().nullish().default(false),
+  mode: z.nativeEnum(TestCaseGenerationMode).nullish(),
+  async: z.boolean().nullish(),
 });
 
 export const FetchArtifactHandlerInputSchema = z.object({
