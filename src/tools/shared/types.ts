@@ -18,6 +18,8 @@ export enum ToolName {
 
   WOPEE_FETCH_VARIABLES = "wopee_fetch_variables",
   WOPEE_UPDATE_VARIABLES = "wopee_update_variables",
+
+  WOPEE_SEARCH_DOCS = "wopee_search_docs",
 }
 
 export enum VariableLevel {
