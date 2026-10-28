@@ -1,3 +1,26 @@
+## [1.32.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.32.0...v1.32.1) (2026-10-28)
+
+
+### Bug Fixes
+
+  **deps:**move to zod 4 and the current MCP SDK([7b18e6e](https://github.com/Wopee-io/wopee-mcp/commit/7b18e6efde232c97eb8ac4a17010da46bdf6daf9))
+zod 3 carries GHSA-mrhx-c7xc-m3w5, which has no fixed zod 3 release.
+
+- zod ^4.6.7 and @modelcontextprotocol/sdk ^1.32.2, which converts zod 4
+  tool schemas with zod's own toJSONSchema
+- zod 4 dropped the `description` param: every schema is described with
+  .describe() at the end of its chain, so .optional()/.nullable()/
+  .default() keep it; z.nativeEnum -> z.enum
+- issue paths can be symbols in zod 4: the parse-error text Strings them
+- in-range lockfile fixes for nine other runtime advisories (express,
+  hono, undici and their deps)
+
+tools/list advertises the same 15 tools with the same descriptions and
+types; objects no longer carry additionalProperties: false, which is
+how the SDK converts zod 4 input schemas (extra keys are still stripped).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 # [1.32.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.31.0...v1.32.0) (2026-10-26)
 
 
