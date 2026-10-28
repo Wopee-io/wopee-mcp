@@ -2,16 +2,15 @@ import { z } from "zod";
 
 export const WopeeFetchExecutedTestCasesInputSchema = z.object({
   suiteUuid: z
-    .string({
-      description: "UUID of the analysis suite to fetch executed test cases for",
-    })
-    .min(1, "Suite UUID is required"),
+    .string()
+    .min(1, "Suite UUID is required")
+    .describe("UUID of the analysis suite to fetch executed test cases for"),
   analysisIdentifier: z
-    .string({
-      description:
-        "Analysis identifier of the suite (ex. A068). Can be found in the analysis suite data.",
-    })
-    .optional(),
+    .string()
+    .optional()
+    .describe(
+      "Analysis identifier of the suite (ex. A068). Can be found in the analysis suite data.",
+    ),
 });
 
 export const FetchExecutedTestCasesInputSchema = z.object({
