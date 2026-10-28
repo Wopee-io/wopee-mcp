@@ -42,9 +42,9 @@
   "author": "Sota Giorgadze <sota.giorgadze@wopee.io>",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.21.0",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "undici": "^7.18.2",
-    "zod": "^3.25.76"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",

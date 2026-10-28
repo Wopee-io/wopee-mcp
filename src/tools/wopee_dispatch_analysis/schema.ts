@@ -12,7 +12,7 @@ enum RerunMode {
 const RerunOptionsSchema = z.object({
   suiteUuid: z.string().min(1, "Suite UUID is required"),
   analysisIdentifier: z.string().min(1, "Analysis identifier is required"),
-  mode: z.nativeEnum(RerunMode),
+  mode: z.enum(RerunMode),
 });
 
 export const DispatchAnalysisInputSchema = z.object({
@@ -23,31 +23,31 @@ export const DispatchAnalysisInputSchema = z.object({
 
 const WopeeRerunOptionsSchema = z.object({
   suiteUuid: z
-    .string({
-      description: "UUID of the existing suite to rerun.",
-    })
-    .min(1, "Suite UUID is required"),
+    .string()
+    .min(1, "Suite UUID is required")
+    .describe("UUID of the existing suite to rerun."),
   analysisIdentifier: z
-    .string({
-      description: "Analysis identifier of the existing suite to rerun.",
-    })
-    .min(1, "Analysis identifier is required"),
-  mode: z.nativeEnum(RerunMode, {
-    description:
+    .string()
+    .min(1, "Analysis identifier is required")
+    .describe("Analysis identifier of the existing suite to rerun."),
+  mode: z
+    .enum(RerunMode)
+    .describe(
       "Rerun mode: FULL reruns the entire analysis (crawling + analysis), CRAWLING reruns only the crawling phase.",
-  }),
+    ),
 });
 
 export const WopeeDispatchAnalysisInputSchema = z.object({
   additionalInstructions: z
-    .string({ description: "Additional instructions for the agent" })
-    .nullish(),
+    .string()
+    .nullish()
+    .describe("Additional instructions for the agent"),
   additionalVariables: z
-    .array(AdditionalVariableSchema, {
-      description:
-        "Additional environment variables for the analysis. Each variable needs a key (uppercase, e.g. BASE_URL) and a non-empty value.",
-    })
-    .nullish(),
+    .array(AdditionalVariableSchema)
+    .nullish()
+    .describe(
+      "Additional environment variables for the analysis. Each variable needs a key (uppercase, e.g. BASE_URL) and a non-empty value.",
+    ),
   rerun: WopeeRerunOptionsSchema.nullish().describe(
     "If provided, reruns an existing analysis suite instead of creating a new one. Requires suiteUuid, analysisIdentifier, and mode.",
   ),

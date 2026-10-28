@@ -112,7 +112,8 @@ export function _parseError(error: unknown) {
           error instanceof z.ZodError
             ? error.issues
                 .map(
-                  (issue) => `${issue.path[0] ?? "Unknown"}: ${issue.message}`,
+                  (issue) =>
+                    `${String(issue.path[0] ?? "Unknown")}: ${issue.message}`,
                 )
                 .join("\n")
             : error instanceof Error
