@@ -369,6 +369,23 @@ Files a GitHub issue into the repository linked to the current project. Given a 
 File the failed checkout test as a GitHub issue
 ```
 
+### Documentation
+
+#### `wopee_search_docs`
+
+Searches the Wopee.io documentation at [docs.wopee.io](https://docs.wopee.io) (its `llms-full.txt`) and returns the best matching sections, each with its page URL. Needs no API key and does not touch your project. Results are cached for an hour.
+
+- **Parameters:**
+  - `query` - What to look up, in plain words or exact names (e.g. `WOPEE_PROJECT_UUID`, `cypress install plugin`)
+  - `maxResults` _(optional)_ - Number of sections to return, 1 to 10. Default 5
+- **Returns:** Markdown with one block per section: page and section title, source URL and the section text (trimmed to 1,500 characters)
+
+**Example Usage:**
+
+```
+Search the Wopee.io docs for how to pass the API key to Cursor
+```
+
 ## Typical Workflow
 
 1. **Start with a suite:**
