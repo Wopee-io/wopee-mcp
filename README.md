@@ -1,4 +1,4 @@
-# Wopee MCP Server
+# Wopee.io MCP Server
 
 AI-powered autonomous testing for your apps -- connect Claude, Cursor, or any MCP-compatible AI agent to [Wopee.io](https://wopee.io) and generate test cases, user stories, and run autonomous tests in seconds.
 
@@ -37,12 +37,12 @@ Add this server to your MCP configuration.
 
 #### Required Environment Variables
 
-- **`WOPEE_PROJECT_UUID`** - Your Wopee project UUID. This identifies which project you're working with.
-- **`WOPEE_API_KEY`** - Your Wopee API key. You can create one at [cmd.wopee.io](https://cmd.wopee.io), in your project's settings.
+- **`WOPEE_PROJECT_UUID`** - Your Wopee.io project UUID. This identifies which project you're working with.
+- **`WOPEE_API_KEY`** - Your Wopee.io API key. You can create one at [cmd.wopee.io](https://cmd.wopee.io), in your project's settings.
 
 #### Optional Environment Variables
 
-- **`WOPEE_API_URL`** - The Wopee API endpoint URL. Should be specified only for testing/development purposes.
+- **`WOPEE_API_URL`** - The Wopee.io API endpoint URL. Should be specified only for testing/development purposes.
 
 ### Corporate Proxy Configuration
 

@@ -6,7 +6,7 @@
   },
   "version": "1.32.1",
   "mcpName": "io.github.Wopee-io/wopee-mcp",
-  "description": "Wopee.io MCP server for autonomous testing platform",
+  "description": "Wopee.io MCP server: dispatch analyses and test runs, fetch artifacts and results, and chat with the Wopee.io testing assistant from your AI client.",
   "main": "./build/index.js",
   "scripts": {
     "build": "tsc && chmod 755 build/index.js",
