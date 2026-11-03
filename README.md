@@ -1,3 +1,9 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/wopee-logo-horizontal-mcp-color-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/brand/wopee-logo-horizontal-mcp-color-light.svg">
+  <img alt="Wopee.io MCP" src="assets/brand/wopee-logo-horizontal-mcp-color-light.svg" width="260">
+</picture>
+
 # Wopee.io MCP Server
 
 AI-powered autonomous testing for your apps -- connect Claude, Cursor, or any MCP-compatible AI agent to [Wopee.io](https://wopee.io) and generate test cases, user stories, and run autonomous tests in seconds.
