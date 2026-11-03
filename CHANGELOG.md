@@ -1,3 +1,17 @@
+# [1.33.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.32.1...v1.33.0) (2026-11-03)
+
+
+### Features
+
+mark runs started by the agent and analysis tools as Assistant runs([620f044](https://github.com/Wopee-io/wopee-mcp/commit/620f044760f6f601e34ba91f03be6931b5d2d093))
+wopee_dispatch_agent and wopee_dispatch_analysis send the header
+x-wopee-dispatch-source: ASSISTANT with their dispatch request. The
+Wopee api records it on the run, and only such runs get their AI
+summary in chat without being asked. Request headers are built in
+requestHeaders, where extra headers can never replace the auth.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 ## [1.32.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.32.0...v1.32.1) (2026-10-28)
 
 
