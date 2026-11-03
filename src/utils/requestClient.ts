@@ -1,4 +1,5 @@
 import { getConfig } from "./getConfig.js";
+import { requestHeaders } from "./requestHeaders.js";
 
 export type RequestErrorCode =
   | "RATE_LIMITED"
@@ -43,7 +44,11 @@ function classifyGraphQLErrors(
 
 export interface RequestClientOptions {
   timeoutMs?: number;
+  // Sent with this request on top of the auth headers.
+  headers?: Record<string, string>;
 }
+
+export { ASSISTANT_DISPATCH_HEADERS } from "./requestHeaders.js";
 
 const DEFAULT_TIMEOUT_MS = 30000;
 
@@ -61,15 +66,11 @@ export const requestClient = async <T>(
     );
   }
 
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-
-  if (WOPEE_AUTH_TOKEN) {
-    headers.authorization = `Bearer ${WOPEE_AUTH_TOKEN}`;
-  } else if (WOPEE_API_KEY) {
-    headers.api_key = WOPEE_API_KEY;
-  }
+  const headers = requestHeaders({
+    authToken: WOPEE_AUTH_TOKEN,
+    apiKey: WOPEE_API_KEY,
+    extra: options?.headers,
+  });
 
   let response: Response;
   try {

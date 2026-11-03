@@ -6,7 +6,10 @@ import {
 } from "./schema.js";
 import { createDispatchAnalysisInput } from "./factory.js";
 import { DispatchAnalysis } from "../shared/gql-queries.js";
-import { requestClient } from "../../utils/requestClient.js";
+import {
+  ASSISTANT_DISPATCH_HEADERS,
+  requestClient,
+} from "../../utils/requestClient.js";
 import { withRetry } from "../../utils/withRetry.js";
 import { AnalysisSuite, ToolName } from "../shared/types.js";
 
@@ -25,9 +28,11 @@ export const wopeeDispatchAnalysis = {
       const parsedInput = DispatchAnalysisInputSchema.parse(rawInput);
 
       const result = await withRetry(() =>
-        requestClient<{ dispatchAnalysis: AnalysisSuite }>(DispatchAnalysis, {
-          input: parsedInput,
-        }),
+        requestClient<{ dispatchAnalysis: AnalysisSuite }>(
+          DispatchAnalysis,
+          { input: parsedInput },
+          { headers: ASSISTANT_DISPATCH_HEADERS },
+        ),
       );
 
       if (!result?.dispatchAnalysis)
