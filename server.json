@@ -2,6 +2,22 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.Wopee-io/wopee-mcp",
   "description": "Wopee.io AI testing agents: dispatch analyses and test runs, fetch artifacts and results.",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/Wopee-io/wopee-mcp/main/assets/brand/wopee-symbol-mcp-color-light.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    },
+    {
+      "src": "https://raw.githubusercontent.com/Wopee-io/wopee-mcp/main/assets/brand/wopee-symbol-mcp-color-light.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "512x512"
+      ]
+    }
+  ],
   "repository": {
     "url": "https://github.com/Wopee-io/wopee-mcp",
     "source": "github"
