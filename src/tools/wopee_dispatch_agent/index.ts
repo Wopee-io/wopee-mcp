@@ -8,7 +8,10 @@ import { _parseError } from "../shared/helpers.js";
 import { createDispatchAgentInput } from "./factory.js";
 import { DispatchAgent } from "../shared/gql-queries.js";
 import { formatDispatchSuccess } from "./format.js";
-import { requestClient } from "../../utils/requestClient.js";
+import {
+  ASSISTANT_DISPATCH_HEADERS,
+  requestClient,
+} from "../../utils/requestClient.js";
 import { withRetry } from "../../utils/withRetry.js";
 
 export const wopeeDispatchAgent = {
@@ -25,9 +28,11 @@ export const wopeeDispatchAgent = {
       const parsedInput = DispatchAgentInputSchema.parse(dispatchAgentInput);
 
       const result = await withRetry(() =>
-        requestClient<{ dispatchAgent: ExecutedTestCase[] }>(DispatchAgent, {
-          input: parsedInput,
-        }),
+        requestClient<{ dispatchAgent: ExecutedTestCase[] }>(
+          DispatchAgent,
+          { input: parsedInput },
+          { headers: ASSISTANT_DISPATCH_HEADERS },
+        ),
       );
 
       if (!result?.dispatchAgent?.length)
