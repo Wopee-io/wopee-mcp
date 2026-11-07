@@ -1,8 +1,4 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/wopee-wordmark-mcp-mono-white.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/brand/wopee-wordmark-mcp-mono-ink.svg">
-  <img alt="Wopee.io MCP" src="assets/brand/wopee-wordmark-mcp-mono-ink.svg" width="260">
-</picture>
+<img alt="Wopee.io MCP" src="assets/brand/wopee-mcp-readme-on-yellow.svg" width="300">
 
 # Wopee.io MCP Server
 
