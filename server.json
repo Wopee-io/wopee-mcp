@@ -4,14 +4,14 @@
   "description": "Wopee.io AI testing agents: dispatch analyses and test runs, fetch artifacts and results.",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/Wopee-io/wopee-mcp/main/assets/brand/wopee-symbol-mcp-color-light.svg",
+      "src": "https://raw.githubusercontent.com/Wopee-io/wopee-mcp/main/assets/brand/wopee-symbol-color-light.svg",
       "mimeType": "image/svg+xml",
       "sizes": [
         "any"
       ]
     },
     {
-      "src": "https://raw.githubusercontent.com/Wopee-io/wopee-mcp/main/assets/brand/wopee-symbol-mcp-color-light.png",
+      "src": "https://raw.githubusercontent.com/Wopee-io/wopee-mcp/main/assets/brand/wopee-symbol-color-light.png",
       "mimeType": "image/png",
       "sizes": [
         "512x512"

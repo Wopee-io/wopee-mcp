@@ -1,7 +1,7 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/wopee-logo-horizontal-mcp-color-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/brand/wopee-logo-horizontal-mcp-color-light.svg">
-  <img alt="Wopee.io MCP" src="assets/brand/wopee-logo-horizontal-mcp-color-light.svg" width="260">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/wopee-wordmark-mcp-mono-white.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/brand/wopee-wordmark-mcp-mono-ink.svg">
+  <img alt="Wopee.io MCP" src="assets/brand/wopee-wordmark-mcp-mono-ink.svg" width="260">
 </picture>
 
 # Wopee.io MCP Server
