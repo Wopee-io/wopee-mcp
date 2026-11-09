@@ -44,6 +44,9 @@ jobs:
       - name: Build
         run: npm run build:clean
 
+      - name: Check skills/wopee/SKILL.md lists the current tools
+        run: npm run check:skill
+
   release:
     needs: [test-build]
     runs-on: ubuntu-latest

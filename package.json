@@ -15,7 +15,9 @@
     "build": "tsc && chmod 755 build/index.js",
     "build:clean": "rm -rf build && npm run build",
     "test": "node --test \"src/**/*.test.ts\"",
-    "version": "node scripts/sync-version.mjs"
+    "version": "node scripts/sync-version.mjs",
+    "skill": "npm run build && node scripts/skill-tools.mjs",
+    "check:skill": "npm run build && node scripts/skill-tools.mjs --check"
   },
   "files": [
     "build",
