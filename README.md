@@ -4,413 +4,143 @@
 
 AI-powered autonomous testing for your apps -- connect Claude, Cursor, or any MCP-compatible AI agent to [Wopee.io](https://wopee.io) and generate test cases, user stories, and run autonomous tests in seconds.
 
-```bash
-npx wopee-mcp
-```
-
 > **[Documentation](https://docs.wopee.io/guides/wopee-mcp/)** | **[Landing Page](https://wopee.io/mcp/)** | **[Dashboard](https://cmd.wopee.io)**
+
+## Requirements
+
+- **Node.js 20.18 or newer** (Node.js 22 recommended). The server runs with `npx`; there is nothing else to install.
+- A **Wopee.io project** with an **API key**. In [Commander](https://cmd.wopee.io), open the project and go to **More** › **Settings** › **API Keys**; the same screen shows the project UUID. See [API keys](https://docs.wopee.io/guides/api-keys/).
 
 ## Setup
 
-### Prerequisites
+Per-client guides (Claude Code, Cursor, VS Code, Codex and more): [docs.wopee.io/guides/wopee-mcp](https://docs.wopee.io/guides/wopee-mcp/).
 
-- Node.js (v18 or higher recommended)
-- An IDE that supports MCP (Model Context Protocol), such as Cursor or VSCode
-
-### MCP Server Configuration
-
-Add this server to your MCP configuration.
-
-### Configuration Example
-
-```json
-{
-  "mcpServers": {
-    "wopee": {
-      "command": "npx wopee-mcp",
-      "env": {
-        "WOPEE_PROJECT_UUID": "your-project-uuid-here",
-        "WOPEE_API_KEY": "your-api-key-here"
-      }
-    }
-  }
-}
-```
-
-#### Required Environment Variables
-
-- **`WOPEE_PROJECT_UUID`** - Your Wopee.io project UUID. This identifies which project you're working with.
-- **`WOPEE_API_KEY`** - Your Wopee.io API key. You can create one at [cmd.wopee.io](https://cmd.wopee.io), in your project's settings.
-
-#### Optional Environment Variables
-
-- **`WOPEE_API_URL`** - The Wopee.io API endpoint URL. Should be specified only for testing/development purposes.
-
-### Corporate Proxy Configuration
-
-If you're behind a corporate proxy/VPN and experiencing connection timeouts, you can configure proxy settings using standard environment variables:
-
-```json
-{
-  "mcpServers": {
-    "wopee": {
-      "command": "npx wopee-mcp",
-      "env": {
-        "WOPEE_PROJECT_UUID": "your-project-uuid-here",
-        "WOPEE_API_KEY": "your-api-key-here",
-        "HTTPS_PROXY": "http://your-proxy-server:8080"
-      }
-    }
-  }
-}
-```
-
-#### Supported Proxy Environment Variables
-
-- **`HTTPS_PROXY`** or **`https_proxy`** - Proxy server URL for HTTPS connections (recommended)
-- **`HTTP_PROXY`** or **`http_proxy`** - Fallback proxy server URL
-
-#### Finding Your Proxy Settings
-
-If you're unsure about your proxy settings, check your VS Code settings (`settings.json`) for `http.proxy` value, or consult your IT department. Common corporate proxy formats:
-
-- `http://proxy.company.com:8080`
-- `http://10.x.x.x:8080`
-- `http://username:password@proxy.company.com:8080` (if authentication is required)
-
-### TLS / Certificate Issues
-
-**This is not required for MCP to work.** If you see HTTPS or certificate-related errors, that indicates a TLS or certificate trust issue in your environment.
-
-If the server fails with errors such as **`UNABLE_TO_VERIFY_LEAF_SIGNATURE`** or **`certificate has expired`**, it may be due to:
-
-- **Self-signed certificates** (e.g. when `WOPEE_API_URL` points to an internal or dev server)
-- **Corporate proxy / SSL inspection** (traffic re-encrypted with a corporate CA your machine doesn’t trust)
-- **Missing CA certificates** in Node’s trust store
-
-#### Preferred solutions (secure)
-
-1. **Use a valid TLS certificate** – e.g. Let’s Encrypt, or an internal CA – and ensure the **full certificate chain** is served.
-2. **Install the corporate or internal CA** so Node trusts it:
-
-   Example:
-
-   ```bash
-   export NODE_EXTRA_CA_CERTS=/etc/ssl/certs/internal-ca.pem
-   ```
-
-   In MCP config `env`:
-
-   ```json
-   "env": {
-     "WOPEE_PROJECT_UUID": "your-project-uuid-here",
-     "WOPEE_API_KEY": "your-api-key-here",
-     "NODE_EXTRA_CA_CERTS": "/path/to/ca.pem"
-   }
-   ```
-
-#### Insecure workaround (not recommended)
-
-For **local debugging only**, you may disable TLS verification in Node. This should **never** be used in production, as it disables HTTPS security and exposes traffic to interception.
+### Claude Code
 
 ```bash
-export NODE_TLS_REJECT_UNAUTHORIZED=0
+export WOPEE_API_KEY="your-api-key"
+export WOPEE_PROJECT_UUID="your-project-uuid"
+claude mcp add --scope project wopee -e 'WOPEE_API_KEY=${WOPEE_API_KEY}' -e 'WOPEE_PROJECT_UUID=${WOPEE_PROJECT_UUID}' -- npx -y wopee-mcp
 ```
 
-Or in MCP config `env`:
+This writes `.mcp.json` with `${VAR}` references, so the key never lands in the file. On native Windows (not WSL), Claude Code needs `cmd /c` in front of `npx`: `... -- cmd /c npx -y wopee-mcp`.
+
+### Any MCP client
+
+```json
+{
+  "mcpServers": {
+    "wopee": {
+      "command": "npx",
+      "args": ["-y", "wopee-mcp"],
+      "env": {
+        "WOPEE_API_KEY": "your-api-key",
+        "WOPEE_PROJECT_UUID": "your-project-uuid"
+      }
+    }
+  }
+}
+```
+
+- Keep `command` and `args` as separate fields. Clients start the server without a shell, so `"command": "npx wopee-mcp"` in one string does not work everywhere.
+- Replace the values with references to environment variables in your client's syntax (for example `${WOPEE_API_KEY}` in Claude Code, `${env:WOPEE_API_KEY}` in Cursor). Never commit a real key.
+- VS Code uses `servers` instead of `mcpServers`, and OpenCode uses `mcp`.
+
+### Environment variables
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `WOPEE_API_KEY` | yes | Project API key from **More** › **Settings** › **API Keys** |
+| `WOPEE_PROJECT_UUID` | yes | The project the server works with. Every tool uses it |
+| `WOPEE_API_URL` | no | Only for a dedicated or self-hosted Wopee.io instance; copy it from the **API Keys** screen. Defaults to `https://api.wopee.io`; omit it otherwise |
+| `HTTPS_PROXY`, `HTTP_PROXY` | no | Corporate proxy, see below |
+| `NODE_EXTRA_CA_CERTS` | no | PEM file with your company's root certificate, see below |
+
+### Verify the connection
+
+Your client should list the `wopee` server with **15 tools** starting with `wopee_` (`/mcp` in Claude Code). Then ask:
+
+```
+How many tests do I have in Wopee.io, and which ones have never run?
+```
+
+The agent calls the read-only `wopee_fetch_test_inventory`. A new project returns zero tests; continue with an analysis (`wopee_dispatch_analysis`).
+
+## Tools
+
+All 15 tools work in the project set by `WOPEE_PROJECT_UUID`. **Write** tools change data in your project; let your agent ask before it calls them.
+
+| Tool | What it does | Access | Timing |
+| --- | --- | --- | --- |
+| `wopee_fetch_test_inventory` | Counts tests per analysis with the latest status of each, including never-run ones (`NOT_RUN`) | read | seconds |
+| `wopee_fetch_analysis_suites` | Lists analysis suites with their UUIDs, identifiers (`A001`) and status | read | seconds |
+| `wopee_create_blank_suite` | Creates an empty analysis suite for tests you write or generate yourself | write | seconds |
+| `wopee_dispatch_analysis` | Creates a suite and starts the crawl that explores the app and generates tests. Optional instructions, variables, rerun of an existing analysis | write | **async**, minutes |
+| `wopee_dispatch_agent` | Starts the testing agent on chosen test cases of an analysis. Returns run handles, not results | write | **async**, minutes |
+| `wopee_fetch_recent_executions` | The 20 newest runs in the project with verdict or status and a short report | read | seconds |
+| `wopee_fetch_executed_test_cases` | Full results of the runs of one analysis, with the agent's report | read | seconds |
+| `wopee_fetch_artifact` | Reads `APP_CONTEXT`, `GENERAL_USER_STORIES`, `USER_STORIES`, `PLAYWRIGHT_CODE` or `PROJECT_CONTEXT` | read | seconds |
+| `wopee_update_artifact` | Replaces one of those artifacts with content from the agent (whole file, not a patch) | write | seconds |
+| `wopee_generate_artifact` | Generates app context, user stories, test cases or steps with Wopee.io's AI | write | up to 5 min; `async: true` for large `TEST_CASES` |
+| `wopee_fetch_variables` | Reads run-time variables at project or analysis level | read | seconds |
+| `wopee_update_variables` | Adds or overwrites run-time variables (merge, no delete) | write | seconds |
+| `wopee_create_github_issue` | Files a GitHub issue in the project's connected repository, with run evidence when given a run UUID | write | seconds |
+| `wopee_send_chat_message` | Posts to the project chat. For the in-app chat only; not available with a project API key | write | seconds |
+| `wopee_read_chat_history` | Reads the project chat. For the in-app chat only; not available with a project API key | read | seconds |
+
+`wopee_generate_artifact` types: `APP_CONTEXT`, `GENERAL_USER_STORIES`, `USER_STORIES_WITH_TEST_CASES`, `TEST_CASES`, `TEST_CASE_STEPS`, `REUSABLE_TEST_CASES`, `REUSABLE_TEST_CASE_STEPS`. Generate in that order. `USER_STORIES_WITH_TEST_CASES` rebuilds every user story and test case of the suite, and `TEST_CASES` with `mode: CREATE` replaces test cases with their run history; use them on an existing suite only when you mean it.
+
+Parameters and examples for each tool: [Tools reference](https://docs.wopee.io/guides/wopee-mcp/#tools-reference).
+
+## Prompts
+
+Three MCP prompts. In Claude Code they appear as slash commands, for example `/mcp__wopee__run-test`.
+
+| Prompt | What the agent does |
+| --- | --- |
+| `fetch-project-summary` | Lists your suites, user stories and test cases as two tables |
+| `fetch-test-results` | Lists the latest results per suite, with a section for failed reports |
+| `run-test` | Finds the test case that matches your request, asks "Run this test? (yes/no)", starts it and fetches the result. If nothing matches, offers a full analysis or a quick single test |
+
+## Typical workflow
+
+1. **See what you have:** `wopee_fetch_test_inventory` (read-only), then `wopee_fetch_analysis_suites` for suite UUIDs and analysis identifiers.
+2. **No tests yet?** `wopee_dispatch_analysis` crawls the app from the project's starting URL and generates user stories and test cases. Poll `wopee_fetch_analysis_suites` until it finishes (several minutes). Or create a blank suite with `wopee_create_blank_suite` and fill it with `wopee_update_artifact` / `wopee_generate_artifact`.
+3. **Run tests:** `wopee_dispatch_agent` with the analysis suite UUID, analysis identifier and test cases. It returns at once with run handles, not the verdict.
+4. **Read the verdict:** poll `wopee_fetch_recent_executions` or `wopee_fetch_executed_test_cases` every 30-60 s until the run is finished, then read the agent report.
+5. **Report failures:** `wopee_create_github_issue` with the failed run's `executedTestCaseUuid` files it with the failing step, screenshot and a link to the run.
+
+Good to know:
+
+- **Your app must be reachable from Wopee.io.** Tests run in the cloud, so `localhost` does not work; use a public or staging URL.
+- **Usage counts.** Runs started through MCP count toward the plan of the user who created the API key. When the limit is reached, calls return `[USAGE_LIMIT_EXCEEDED]` with the time the limit resets.
+- **10 seconds between dispatches** per project; the server retries automatically after a rate-limit answer.
+- [Commander](https://cmd.wopee.io) shows the generated tests and every run visually.
+
+## Corporate proxy
+
+Behind a corporate proxy or VPN, set the standard proxy variables in the server's `env`:
 
 ```json
 "env": {
-  "WOPEE_PROJECT_UUID": "your-project-uuid-here",
-  "WOPEE_API_KEY": "your-api-key-here",
-  "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+  "WOPEE_API_KEY": "your-api-key",
+  "WOPEE_PROJECT_UUID": "your-project-uuid",
+  "HTTPS_PROXY": "http://your-proxy-server:8080"
 }
 ```
 
-Treat this as a **debug-only escape hatch**, not a normal setup step.
+`HTTPS_PROXY` (or `https_proxy`) is checked first, then `HTTP_PROXY` (or `http_proxy`). Your VS Code `http.proxy` setting or your IT department has the value, for example `http://proxy.company.com:8080` or `http://username:password@proxy.company.com:8080`.
 
-**Note:** Some users have reported setting `PYTHONHTTPSVERIFY=0` as well. This MCP server does not use Python; that variable has no effect on it. It would only apply if you run a Python-based MCP host or other tooling that also performs HTTPS in the same environment—outside the scope of this server.
+## TLS and certificates
 
-## Getting Started
+Errors such as `UNABLE_TO_VERIFY_LEAF_SIGNATURE` or `self-signed certificate in certificate chain` mean Node does not trust a certificate on the way: usually a corporate proxy that inspects TLS, or a self-hosted instance with an internal CA. Point Node at your company's root certificate:
 
-Most tools in this MCP server require a `suiteUuid` to operate. You have two options to get started:
-
-### Option 1: Use Existing Suites
-
-Start by fetching your existing analysis suites:
-
-```
-Use the wopee_fetch_analysis_suites tool to retrieve all available suites for your project.
+```json
+"env": {
+  "WOPEE_API_KEY": "your-api-key",
+  "WOPEE_PROJECT_UUID": "your-project-uuid",
+  "NODE_EXTRA_CA_CERTS": "/path/to/company-root-ca.pem"
+}
 ```
 
-This will return a list of all analysis suites with their UUIDs, which you can then use with other tools.
-
-### Option 2: Create a New Suite
-
-If you don't have any suites yet, you have two options:
-
-**Automatic Analysis:** Create and dispatch a full analysis/crawling suite:
-
-```
-Use the wopee_dispatch_analysis tool to create and dispatch a new analysis/crawling suite.
-```
-
-**Blank Suite:** Create an empty suite for manual configuration:
-
-```
-Use the wopee_create_blank_suite tool to create a blank analysis suite.
-```
-
-Both options will return a suite UUID, which you can use for subsequent operations.
-
-## Available Tools
-
-### Suite Management
-
-#### `wopee_fetch_analysis_suites`
-
-Fetches all analysis suites for your project. This is a good starting point to see what suites are available.
-
-- **Returns:** Array of analysis suites with their UUIDs, names, statuses, and metadata
-
-**Example Usage:**
-
-```
-Fetch all existing analysis suites for my project
-```
-
-#### `wopee_dispatch_analysis`
-
-Creates and dispatches a new analysis/crawling suite for your project, or reruns an existing one. Use this to start a fresh analysis session or to re-trigger a previous analysis.
-
-- **Parameters:**
-  - `additionalInstructions` _(optional)_ - Additional instructions to guide the agent during the analysis/crawling phase (e.g. focus areas, things to ignore, login steps, etc.)
-  - `additionalVariables` _(optional)_ - Additional environment variables to pass to the analysis. Array of objects, each with:
-    - `key` - Variable name, must be uppercase with underscores only (e.g. `MY_VAR`, `BASE_URL`)
-    - `value` - Variable value (non-empty string)
-  - `rerun` _(optional)_ - If provided, reruns an existing analysis suite instead of creating a new one. Object with:
-    - `suiteUuid` - UUID of the existing suite to rerun
-    - `analysisIdentifier` - Analysis identifier of the existing suite
-    - `mode` - Rerun mode: `FULL` (reruns the entire analysis including crawling and generation) or `CRAWLING` (reruns only the crawling phase)
-- **Returns:** Success message with the created/rerun suite information
-
-**Example Usage:**
-
-```
-Dispatch a new analysis suite
-```
-
-```
-Dispatch a new analysis suite and focus on the checkout flow
-```
-
-```
-Dispatch a new analysis suite with additional variables CARD_FILAMENT=123321123 and AUTH_TOKEN=abc123
-```
-
-```
-Rerun the full analysis for suite <suiteUuid> with analysis identifier <analysisIdentifier>
-```
-
-```
-Rerun only the crawling phase for suite <suiteUuid> with analysis identifier <analysisIdentifier>
-```
-
-#### `wopee_create_blank_suite`
-
-Creates a blank analysis suite for your project. Use this when you want to manually configure and populate a suite rather than having it automatically analyzed.
-
-- **Returns:** The created suite information including its UUID
-
-**Example Usage:**
-
-```
-Create a blank analysis suite for my project
-```
-
-### Generation Tools
-
-These tools generate various artifacts for a specific suite. All require a `suiteUuid` and `type` to generate.
-
-#### `wopee_generate_artifact`
-
-Generates a specific file(artifact) for the selected suite.
-
-- **Parameters:**
-  - `suiteUuid` - The UUID of the suite
-  - `type` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES_WITH_TEST_CASES" | "TEST_CASES" | "TEST_CASE_STEPS" | "REUSABLE_TEST_CASES" | "REUSABLE_TEST_CASE_STEPS"`
-  - `mode` _(optional, `TEST_CASES` only)_ - `"UPDATE"` (default) keeps existing test cases with their steps and run history; `"CREATE"` replaces the test cases in scope and deletes their steps, runs and code
-  - `selectedUserStories` _(optional)_ - user story ids to limit `TEST_CASES` / `TEST_CASE_STEPS` to, e.g. `["US001"]`; empty means every story
-  - `selectedTestCases` _(optional)_ - test case identifiers to limit `TEST_CASE_STEPS` to, e.g. `["US001:TC002"]`
-  - `instructions` _(optional)_ - the change request passed to the AI engine
-  - `async` _(optional, `TEST_CASES` / `USER_STORIES_WITH_TEST_CASES`)_ - return as soon as the run is queued instead of waiting for the artifact
-- **Returns:** Generated output in case of successful generation.
-
-**Example Usage:**
-
-```
-Generate app context for my most recent analysis suite
-```
-
-### Fetch Tools
-
-These tools retrieve generated artifacts for a specific suite. All require a `suiteUuid` and `type`.
-
-#### `wopee_fetch_artifact`
-
-Fetches the enquired file(artifact) from the selected suite.
-
-- **Parameters:**
-  - `suiteUuid` - The UUID of the suite
-  - `type` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES" | "PLAYWRIGHT_CODE" | "PROJECT_CONTEXT"`
-  - `identifier` - Identifier of the test case to fetch Playwright code for, ex. `US003:TC004`
-- **Returns:** The file contents in case of successful fetch.
-
-**Example Usage:**
-
-```
-Fetch user stories for the latest suite
-```
-
-### Update Tools
-
-These tools are used to update or set certain files(artifacts) for a specific suite. `suiteUuid`, `type` and `content` is required.
-
-#### `wopee_update_artifact`
-
-Updates/replaces existing file(artifact) for a specific suite
-
-- **Parameters:**
-  - `suiteUuid` - The UUID of the suite
-  - `type` - `"APP_CONTEXT" | "GENERAL_USER_STORIES" | "USER_STORIES" | "PLAYWRIGHT_CODE" | "PROJECT_CONTEXT"`
-  - `content` - Markdown content for `app context`, `general user stories` and `project context`, structured JSON for `user stories`
-  - `identifier` - Identifier of the test case to fetch Playwright code for, ex. `US003:TC004`
-- **Returns:** Boolean based of success status of the tool call
-
-**Example Usage:**
-
-```
-Update app context file for the most recent suite with this content: <YourMarkdown>
-```
-
-### Agent Testing
-
-#### `wopee_dispatch_agent`
-
-Dispatches an autonomous testing agent to execute test cases for a selected suite. Tests run **asynchronously** (typically 1-3 minutes). This tool confirms dispatch and returns tracking info — not final results.
-
-- **Parameters:**
-  - `suiteUuid` - The UUID of the suite containing the test cases
-  - `analysisIdentifier` - The analysis identifier for the suite
-  - `testCases` - Array of test case objects to execute, each containing:
-    - `testCaseId` - The ID of the test case
-    - `userStoryId` - The ID of the associated user story
-- **Returns:** Dispatch confirmation with tracking info (suite UUID, analysis identifier, per-test-case execution status). Does NOT return pass/fail results — use `wopee_fetch_recent_executions` or `wopee_fetch_executed_test_cases` to check results later.
-
-**Example Usage:**
-
-```
-Dispatch agent for my latest suite's user story US001 and test case TC003
-```
-
-### Test Results
-
-#### `wopee_fetch_recent_executions`
-
-Fetches the most recent test case executions for the current project (up to 20, newest first). Use this to quickly check the status of recently dispatched tests without needing to remember specific suite UUIDs.
-
-- **Parameters:** None (uses `WOPEE_PROJECT_UUID` from environment)
-- **Returns:** List of recent executions with execution status (IN_PROGRESS, IN_QUEUE, FINISHED, FAILED), agent reports, and pass/fail results
-
-**Example Usage:**
-
-```
-What's the status of my recent test runs?
-```
-
-```
-How did my tests go?
-```
-
-#### `wopee_fetch_executed_test_cases`
-
-Fetches executed test cases and their results for a given analysis suite. Use this to check the status and reports of dispatched agent runs.
-
-- **Parameters:**
-  - `suiteUuid` - The UUID of the analysis suite to fetch results for
-  - `analysisIdentifier` _(optional)_ - Analysis identifier to narrow results (e.g. `A068`)
-- **Returns:** Array of results grouped by user story, each containing executed test cases with execution status, agent report, agent report status, code report, and code report status
-
-**Example Usage:**
-
-```
-Fetch test results for suite <suiteUuid>
-```
-
-```
-Show me the executed test cases for my latest analysis suite
-```
-
-### Reporting
-
-#### `wopee_create_github_issue`
-
-Files a GitHub issue into the repository linked to the current project. Given a failed run's `executedTestCaseUuid`, Wopee.io adds what it knows about that run below your text: the failing step, expected vs actual, the failing step's screenshot and a link to the run in Commander.
-
-- **Parameters:**
-  - `title` - The issue title
-  - `body` _(optional)_ - Markdown, kept verbatim above the run evidence
-  - `labels` _(optional)_ - Labels to apply, e.g. `["bug"]`. GitHub may skip labels the repository doesn't have; the result says which were applied
-  - `executedTestCaseUuid` _(optional)_ - The run to attach evidence from, as shown by `wopee_fetch_recent_executions` or `wopee_dispatch_agent`
-- **Returns:** The issue number and URL, plus notes on anything left out (e.g. a screenshot that could not be uploaded)
-- **Requirements:** The issue is created by the Wopee.io GitHub App and names you in its body. The App's installation needs the **Issues: Read & write** repository permission, and **Contents: Read & write** for the screenshot, which is committed to a separate `wopee-issue-assets` branch. That branch has no shared history with your code and is safe to delete; deleting it only breaks the images in existing issues.
-
-**Example Usage:**
-
-```
-File the failed checkout test as a GitHub issue
-```
-
-## Typical Workflow
-
-1. **Start with a suite:**
-   - Use `wopee_fetch_analysis_suites` to see existing suites, OR
-   - Use `wopee_dispatch_analysis` to create a new suite
-
-2. **Generate artifacts:**
-   - Generate app context: `wopee_generate_artifact` with `APP_CONTEXT` and specific `suiteUuid`
-   - Generate general user stories: `wopee_generate_artifact` with `GENERAL_USER_STORIES` and specific `suiteUuid`
-   - Generate user stories with test cases: `wopee_generate_artifact` with `USER_STORIES_WITH_TEST_CASES` and specific `suiteUuid`
-   - Generate reusable test cases: `wopee_generate_artifact` with `REUSABLE_TEST_CASES` and specific `suiteUuid`
-   - Generate reusable test case steps: `wopee_generate_artifact` with `REUSABLE_TEST_CASE_STEPS` and specific `suiteUuid`
-   - Generate test case steps: `wopee_generate_artifact` with `TEST_CASE_STEPS` and specific `suiteUuid`
-
-3. **Fetch generated content:**
-   - Use the fetch tools to retrieve generated markdown/JSON files
-
-4. **Run tests:**
-   - Use `wopee_dispatch_agent` to execute test cases with the autonomous testing agent
-
-5. **Check results:**
-   - Use `wopee_fetch_recent_executions` to quickly check status of recent test runs
-   - Use `wopee_fetch_executed_test_cases` to check detailed status and reports for a specific suite
-   - Or use the `fetch-test-results` prompt for a formatted summary of all test results
-
-6. **Report failures:**
-   - Use `wopee_create_github_issue` with the failed run's `executedTestCaseUuid` to file it into your repository
-
-## Available Prompts
-
-### `fetch-project-summary`
-
-Fetches analysis suites and their user stories/test cases, then displays a formatted summary with two markdown tables: a suite overview and a detailed test case breakdown.
-
-### `fetch-test-results`
-
-Fetches analysis suites and their executed test case results, then displays formatted markdown tables showing execution status, agent report status, and code report status for each test case. Also surfaces failed report details.
-
-## Notes
-
-- Most tools require a `suiteUuid`. Always start by fetching or creating a suite.
-- `wopee_dispatch_analysis` tool will go through whole cycle of processing - crawling the application and generating all of the files(artifacts) one by one.
-- It is advisable to use [cmd.wopee.io](https://cmd.wopee.io) for a convenient visual representation of the generated data and results of the agent runs.
+Do not switch TLS verification off. More fixes: [Troubleshooting](https://docs.wopee.io/guides/wopee-mcp/troubleshooting/).
