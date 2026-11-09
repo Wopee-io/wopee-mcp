@@ -5,6 +5,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 
 import { TOOLS } from "./tools/index.js";
 import { PROMPTS } from "./prompts/index.js";
+import { packageVersion } from "./utils/packageVersion.js";
 
 const proxyUrl =
   process.env.HTTPS_PROXY ||
@@ -19,7 +20,7 @@ if (proxyUrl) {
 
 const server = new McpServer({
   name: "wopee-mcp",
-  version: "1.0.0",
+  version: packageVersion(),
 });
 
 for (const { name, config, handler } of TOOLS) {

@@ -24,7 +24,10 @@ export function requestHeaders({
   if (authToken) {
     headers.authorization = `Bearer ${authToken}`;
   } else if (apiKey) {
+    // Corporate gateways drop headers with underscores; the api reads `x-api-key` when `api_key`
+    // did not arrive.
     headers.api_key = apiKey;
+    headers["x-api-key"] = apiKey;
   }
   return headers;
 }
