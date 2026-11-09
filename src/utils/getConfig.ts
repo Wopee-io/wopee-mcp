@@ -10,11 +10,13 @@ export const getConfig = () => {
   const WOPEE_API_KEY = fromEnv("WOPEE_API_KEY");
   const WOPEE_PROJECT_UUID = fromEnv("WOPEE_PROJECT_UUID");
   const WOPEE_AUTH_TOKEN = fromEnv("WOPEE_AUTH_TOKEN");
+  const WOPEE_SETUP_REF = fromEnv("WOPEE_SETUP_REF");
 
   return {
     WOPEE_API_URL,
     WOPEE_API_KEY,
     WOPEE_PROJECT_UUID,
     WOPEE_AUTH_TOKEN,
+    WOPEE_SETUP_REF,
   };
 };

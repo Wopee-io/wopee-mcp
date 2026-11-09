@@ -340,3 +340,18 @@ export const CreateGitHubIssue = `
     }
   }
 `;
+
+export const SetupCheck = `
+  query SetupCheck {
+    setupCheck {
+      projectUuid
+      projectName
+      appUrl
+      plan
+      stepsLeft
+      stepsLimit
+      resetAt
+      commanderUrl
+    }
+  }
+`;

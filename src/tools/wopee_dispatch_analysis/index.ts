@@ -8,9 +8,10 @@ import { createDispatchAnalysisInput } from "./factory.js";
 import { formatAnalysisDispatched } from "./format.js";
 import { DispatchAnalysis } from "../shared/gql-queries.js";
 import {
-  ASSISTANT_DISPATCH_HEADERS,
+  dispatchSourceHeaders,
   requestClient,
 } from "../../utils/requestClient.js";
+import { getConfig } from "../../utils/getConfig.js";
 import { withRetry } from "../../utils/withRetry.js";
 import { AnalysisSuite, ToolName } from "../shared/types.js";
 
@@ -32,7 +33,7 @@ export const wopeeDispatchAnalysis = {
         requestClient<{ dispatchAnalysis: AnalysisSuite }>(
           DispatchAnalysis,
           { input: parsedInput },
-          { headers: ASSISTANT_DISPATCH_HEADERS },
+          { headers: dispatchSourceHeaders(getConfig().WOPEE_AUTH_TOKEN) },
         ),
       );
 

@@ -58,7 +58,7 @@ This writes `.mcp.json` with `${VAR}` references, so the key never lands in the 
 
 ### Verify the connection
 
-Your client should list the `wopee` server with **15 tools** starting with `wopee_` (`/mcp` in Claude Code). Then ask:
+Your client should list the `wopee` server with **16 tools** starting with `wopee_` (`/mcp` in Claude Code). Then ask:
 
 ```
 How many tests do I have in Wopee.io, and which ones have never run?
@@ -68,7 +68,7 @@ The agent calls the read-only `wopee_fetch_test_inventory`. A new project return
 
 ## Tools
 
-All 15 tools work in the project set by `WOPEE_PROJECT_UUID`. **Write** tools change data in your project; let your agent ask before it calls them.
+All 16 tools work in the project set by `WOPEE_PROJECT_UUID`. **Write** tools change data in your project; let your agent ask before it calls them.
 
 | Tool | What it does | Access | Timing |
 | --- | --- | --- | --- |
@@ -82,6 +82,7 @@ All 15 tools work in the project set by `WOPEE_PROJECT_UUID`. **Write** tools ch
 | `wopee_fetch_artifact` | Reads `APP_CONTEXT`, `GENERAL_USER_STORIES`, `USER_STORIES`, `PLAYWRIGHT_CODE` or `PROJECT_CONTEXT` | read | seconds |
 | `wopee_update_artifact` | Replaces one of those artifacts with content from the agent (whole file, not a patch) | write | seconds |
 | `wopee_generate_artifact` | Generates app context, user stories, test cases or steps with Wopee.io's AI | write | up to 5 min; `async: true` for large `TEST_CASES` |
+| `wopee_setup_check` | Checks the connection: project, app URL, plan, steps left and Commander link; names a wrong key or missing UUID | read | seconds |
 | `wopee_fetch_variables` | Reads run-time variables at project or analysis level | read | seconds |
 | `wopee_update_variables` | Adds or overwrites run-time variables (merge, no delete) | write | seconds |
 | `wopee_create_github_issue` | Files a GitHub issue in the project's connected repository, with run evidence when given a run UUID | write | seconds |

@@ -1,5 +1,6 @@
 import { getConfig } from "./getConfig.js";
 import { requestHeaders } from "./requestHeaders.js";
+import { clientLabel } from "./clientInfo.js";
 import { classifyGraphQLErrors, classifyHttpError, RequestError } from "./requestErrors.js";
 import type { GraphQLErrorLike } from "./requestErrors.js";
 
@@ -12,7 +13,7 @@ export interface RequestClientOptions {
   headers?: Record<string, string>;
 }
 
-export { ASSISTANT_DISPATCH_HEADERS } from "./requestHeaders.js";
+export { dispatchSourceHeaders } from "./requestHeaders.js";
 
 const DEFAULT_TIMEOUT_MS = 30000;
 
@@ -21,7 +22,8 @@ export const requestClient = async <T>(
   variables: Record<string, any>,
   options?: RequestClientOptions,
 ): Promise<T> => {
-  const { WOPEE_API_URL, WOPEE_API_KEY, WOPEE_AUTH_TOKEN } = getConfig();
+  const { WOPEE_API_URL, WOPEE_API_KEY, WOPEE_AUTH_TOKEN, WOPEE_SETUP_REF } =
+    getConfig();
 
   if (!WOPEE_API_KEY && !WOPEE_AUTH_TOKEN) {
     throw new RequestError(
@@ -34,6 +36,8 @@ export const requestClient = async <T>(
     authToken: WOPEE_AUTH_TOKEN,
     apiKey: WOPEE_API_KEY,
     extra: options?.headers,
+    client: clientLabel(),
+    setupRef: WOPEE_SETUP_REF,
   });
 
   let response: Response;
