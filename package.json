@@ -8,6 +8,9 @@
   "mcpName": "io.github.Wopee-io/wopee-mcp",
   "description": "Wopee.io MCP server: dispatch analyses and test runs, fetch artifacts and results, and chat with the Wopee.io testing assistant from your AI client.",
   "main": "./build/index.js",
+  "engines": {
+    "node": ">=20.18.1"
+  },
   "scripts": {
     "build": "tsc && chmod 755 build/index.js",
     "build:clean": "rm -rf build && npm run build",
