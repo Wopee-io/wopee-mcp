@@ -45,7 +45,13 @@ export default {
     [
       "@semantic-release/git",
       {
-        assets: ["CHANGELOG.md", "package.json", "package-lock.json"],
+        assets: [
+          "CHANGELOG.md",
+          "package.json",
+          "package-lock.json",
+          "server.json",
+          ".cursor-plugin/plugin.json",
+        ],
         message:
           "chore(release): Wopee MCP v${nextRelease.version}\n\n${nextRelease.notes}",
       },

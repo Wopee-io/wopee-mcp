@@ -22,12 +22,12 @@
     "url": "https://github.com/Wopee-io/wopee-mcp",
     "source": "github"
   },
-  "version": "1.16.0",
+  "version": "1.33.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "wopee-mcp",
-      "version": "1.16.0",
+      "version": "1.33.0",
       "transport": {
         "type": "stdio"
       },
@@ -41,13 +41,13 @@
         },
         {
           "description": "UUID of the Wopee.io project to work with",
-          "isRequired": false,
+          "isRequired": true,
           "format": "string",
           "isSecret": false,
           "name": "WOPEE_PROJECT_UUID"
         },
         {
-          "description": "Wopee.io API base URL (defaults to https://api.wopee.io)",
+          "description": "Wopee.io API base URL, only for dedicated or self-hosted instances (defaults to https://api.wopee.io)",
           "isRequired": false,
           "format": "string",
           "isSecret": false,
