@@ -1,3 +1,16 @@
+## [1.33.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.33.0...v1.33.1) (2026-11-09)
+
+
+### Bug Fixes
+
+  **registry:**require WOPEE_PROJECT_UUID and keep server.json and the Cursor plugin at the package version([1867234](https://github.com/Wopee-io/wopee-mcp/commit/1867234f1d560f36dde14810e5411c4a6a3d9147))
+- server.json marks WOPEE_PROJECT_UUID as required; every tool fails without it, so registry
+  installs (VS Code MCP gallery and others) now ask for it.
+- server.json and .cursor-plugin/plugin.json are at 1.33.0. The npm `version` script copies the
+  package version into both, and semantic-release commits them with the release, so the repo
+  copies no longer lag behind.
+- A unit test checks the versions and the required variables.
+
 # [1.33.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.32.1...v1.33.0) (2026-11-03)
 
 
