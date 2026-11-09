@@ -1,3 +1,41 @@
+# [1.34.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.33.2...v1.34.0) (2026-11-09)
+
+
+### Bug Fixes
+
+  **docs:**README and npm page with a working client config, Node 20.18+ and all 15 tools([39d04c2](https://github.com/Wopee-io/wopee-mcp/commit/39d04c2e386acc1c8a4076efb02126fb9bcee67c))
+- The config example uses "command": "npx" with "args": ["-y", "wopee-mcp"]; the single-string
+  "npx wopee-mcp" does not start in clients that spawn without a shell. Adds the `claude mcp add`
+  one-liner, the native Windows `cmd /c` note and a link to the per-client docs.
+- Node.js 20.18 or newer (undici 7 needs 20.18.1), and package.json declares
+  "engines": {"node": ">=20.18.1"} so npx warns on older Node.
+- Lists all 15 tools and the 3 prompts, starts with the read-only wopee_fetch_test_inventory and
+  describes WOPEE_API_URL as being for dedicated or self-hosted instances.
+return the analysis suite ID on dispatch and report usage-limit and auth errors as such([bda973e](https://github.com/Wopee-io/wopee-mcp/commit/bda973e5e1e3f54a2681d5e8dbce66cb4c213a90))
+- wopee_dispatch_analysis returns the suite UUID, analysis identifier and status, and tells the
+  caller to poll wopee_fetch_analysis_suites every 30-60 s (5-10 minutes). Its description no
+  longer promises starting URL, login or cookie inputs it does not have.
+- Errors are classified by the api's GraphQL error code as well as the message, also in non-2xx
+  bodies: USAGE_LIMIT_EXCEEDED keeps its reset time, 401/403, FORBIDDEN, UNAUTHENTICATED and
+  "Not Authorised!" become AUTH_ERROR. Both come back with what to do instead of retrying, in
+  wopee_dispatch_agent and in every other tool.
+- wopee_dispatch_agent promises a chat notification only inside Commander (WOPEE_AUTH_TOKEN set);
+  other clients are told to poll for the verdict.
+
+
+### Features
+
+  **skill:**add the wopee Agent Skill([6a49348](https://github.com/Wopee-io/wopee-mcp/commit/6a49348ea245754bb4d54c4ea49a490f4d4fd3fd))
+skills/wopee/SKILL.md, installable with
+`npx skills add Wopee-io/wopee-mcp --skill wopee`, teaches everyday use of the `wopee` MCP
+server: inventory first, run a test case after a yes, poll for the verdict, read results, file
+failures, start an analysis, change tests safely, usage-limit and auth errors, and that
+localhost cannot be reached. When the server is not connected, it sends the agent to
+https://wopee.io/agent-setup/prompt.md instead of repeating the setup steps.
+
+The tool and prompt tables are generated from the definitions the server registers
+(`npm run skill`); `npm run check:skill` fails in CI when they are stale.
+
 ## [1.33.2](https://github.com/Wopee-io/wopee-mcp/compare/v1.33.1...v1.33.2) (2026-11-09)
 
 
