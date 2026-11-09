@@ -35,3 +35,19 @@ test("extra headers cannot replace the auth or the content type", () => {
   assert.equal(headers.authorization, "Bearer token-1");
   assert.equal(headers["Content-Type"], "application/json");
 });
+
+test("an api key is sent as both api_key and x-api-key", () => {
+  const headers = requestHeaders({ authToken: null, apiKey: "key-1" });
+
+  assert.equal(headers.api_key, "key-1");
+  assert.equal(headers["x-api-key"], "key-1");
+  assert.equal(headers.authorization, undefined);
+});
+
+test("a Commander token is sent alone, without the api key headers", () => {
+  const headers = requestHeaders({ authToken: "token-1", apiKey: "key-1" });
+
+  assert.equal(headers.authorization, "Bearer token-1");
+  assert.equal(headers.api_key, undefined);
+  assert.equal(headers["x-api-key"], undefined);
+});
