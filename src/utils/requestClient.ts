@@ -1,6 +1,7 @@
 import { getConfig } from "./getConfig.js";
 import { requestHeaders } from "./requestHeaders.js";
 import { clientLabel } from "./clientInfo.js";
+import { packageVersion } from "./packageVersion.js";
 import { classifyGraphQLErrors, classifyHttpError, RequestError } from "./requestErrors.js";
 import type { GraphQLErrorLike } from "./requestErrors.js";
 
@@ -38,6 +39,7 @@ export const requestClient = async <T>(
     extra: options?.headers,
     client: clientLabel(),
     setupRef: WOPEE_SETUP_REF,
+    mcpVersion: packageVersion(),
   });
 
   let response: Response;

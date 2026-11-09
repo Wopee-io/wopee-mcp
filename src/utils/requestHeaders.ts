@@ -16,6 +16,7 @@ export function requestHeaders({
   extra,
   client,
   setupRef,
+  mcpVersion,
 }: {
   authToken: string | null;
   apiKey: string | null;
@@ -24,6 +25,8 @@ export function requestHeaders({
   client?: string;
   /** WOPEE_SETUP_REF, sent with API key requests only when set. */
   setupRef?: string | null;
+  /** This server's package version, sent with API key requests. */
+  mcpVersion?: string;
 }): Record<string, string> {
   const headers: Record<string, string> = {
     ...extra,
@@ -37,6 +40,7 @@ export function requestHeaders({
     headers.api_key = apiKey;
     headers["x-api-key"] = apiKey;
     headers["x-wopee-client"] = client || "unknown";
+    if (mcpVersion) headers["x-wopee-mcp-version"] = mcpVersion;
     if (setupRef) headers["x-wopee-setup-ref"] = setupRef;
   }
   return headers;

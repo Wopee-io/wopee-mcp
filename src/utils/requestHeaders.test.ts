@@ -68,9 +68,11 @@ test("api key requests carry the client and the setup ref", () => {
     apiKey: "key-1",
     client: "claude-code/2.1.3",
     setupRef: "prompt-md",
+    mcpVersion: "1.35.0",
   });
 
   assert.equal(headers["x-wopee-client"], "claude-code/2.1.3");
+  assert.equal(headers["x-wopee-mcp-version"], "1.35.0");
   assert.equal(headers["x-wopee-setup-ref"], "prompt-md");
 });
 
