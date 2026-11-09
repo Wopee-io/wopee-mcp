@@ -7,7 +7,9 @@ import { ExecutedTestCase, ToolName } from "../shared/types.js";
 import { _parseError } from "../shared/helpers.js";
 import { createDispatchAgentInput } from "./factory.js";
 import { DispatchAgent } from "../shared/gql-queries.js";
-import { formatDispatchSuccess } from "./format.js";
+import { formatDispatchFailure, formatDispatchSuccess } from "./format.js";
+import { getConfig } from "../../utils/getConfig.js";
+import { errorHint } from "../../utils/requestErrors.js";
 import {
   ASSISTANT_DISPATCH_HEADERS,
   requestClient,
@@ -19,7 +21,7 @@ export const wopeeDispatchAgent = {
   config: {
     title: "Dispatch autonomous testing agent",
     description:
-      "Dispatch an autonomous AI agent to execute specific test cases. The agent opens a real browser, navigates the app, follows test steps, and reports results. Tests run ASYNCHRONOUSLY (1-3 minutes). This tool returns tracking info confirming dispatch — NOT final results. Do NOT interpret the response as pass/fail. Results arrive later via chat notifications. Prerequisite: test cases must exist in the suite (generate with wopee_generate_artifact type USER_STORIES_WITH_TEST_CASES). Use wopee_fetch_recent_executions or wopee_fetch_executed_test_cases to check status later.",
+      "Dispatch an autonomous AI agent to execute specific test cases. The agent opens a real browser, navigates the app, follows test steps, and reports results. Tests run ASYNCHRONOUSLY (1-3 minutes). This tool returns tracking info confirming dispatch — NOT final results. Do NOT interpret the response as pass/fail. Poll wopee_fetch_recent_executions or wopee_fetch_executed_test_cases every 30-60 s for the verdict (inside the Commander Assistant, results also arrive as a chat notification). Prerequisite: test cases must exist in the suite (generate with wopee_generate_artifact type USER_STORIES_WITH_TEST_CASES).",
     inputSchema: WopeeDispatchAgentInputSchema.shape,
   },
   handler: async (input: WopeeDispatchAgentInput) => {
@@ -49,7 +51,9 @@ export const wopeeDispatchAgent = {
         content: [
           {
             type: "text" as const,
-            text: formatDispatchSuccess(result.dispatchAgent, input),
+            text: formatDispatchSuccess(result.dispatchAgent, input, {
+              insideCommander: Boolean(getConfig().WOPEE_AUTH_TOKEN),
+            }),
           },
         ],
       };
@@ -59,7 +63,10 @@ export const wopeeDispatchAgent = {
           content: [
             {
               type: "text" as const,
-              text: `DISPATCH FAILED — tests were NOT started.\nReason: ${error.message}\nThis is a dispatch/infrastructure error, not a test failure. Suggest the user try again.`,
+              text: formatDispatchFailure(
+                error as Error & { code?: string },
+                errorHint((error as { code?: string }).code),
+              ),
             },
           ],
         };

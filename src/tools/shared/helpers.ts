@@ -10,6 +10,7 @@ import {
 } from "./gql-queries.js";
 import { ArtifactType, GenerateArtifactType } from "./types.js";
 import { RequestError } from "../../utils/requestClient.js";
+import { describeRequestError } from "../../utils/requestErrors.js";
 import { compactUserStoriesContent } from "./artifactContent.js";
 
 export function _convertToArtifactType(
@@ -88,10 +89,9 @@ export function _parseGenerateArtifactType(type: GenerateArtifactType) {
   }
 }
 
-/** One-line description of a failed request, e.g. "[GRAPHQL_ERROR] Not Authorised!". */
+/** One-line description of a failed request, e.g. "[GRAPHQL_ERROR] Something went wrong". */
 export function _describeError(error: unknown): string {
-  if (error instanceof RequestError)
-    return `[${error.code}] ${error.message}${error.retryable ? " (retryable)" : ""}`;
+  if (error instanceof RequestError) return describeRequestError(error);
   return error instanceof Error ? error.message : String(error);
 }
 
