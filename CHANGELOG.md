@@ -1,3 +1,18 @@
+## [1.33.2](https://github.com/Wopee-io/wopee-mcp/compare/v1.33.1...v1.33.2) (2026-11-09)
+
+
+### Bug Fixes
+
+treat an empty WOPEE_API_URL as unset, send x-api-key and report the package version([4eb3fa5](https://github.com/Wopee-io/wopee-mcp/commit/4eb3fa545b5efaecb0ec50c7f27210ec27fd99b9))
+- An empty or blank WOPEE_API_URL (what an unset "${WOPEE_API_URL}" expands to) now falls back
+  to https://api.wopee.io instead of failing every call with NETWORK_ERROR. The same applies to
+  the other WOPEE_* variables.
+- mcp.json (also used by the Cursor plugin) names the server `wopee` and no longer passes
+  WOPEE_API_URL.
+- The api key goes out as both `api_key` and `x-api-key`, so gateways that drop underscore
+  headers still authenticate.
+- The server reports the version from package.json instead of 1.0.0.
+
 ## [1.33.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.33.0...v1.33.1) (2026-11-09)
 
 
