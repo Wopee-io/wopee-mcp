@@ -1,3 +1,15 @@
+## [1.34.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.34.0...v1.34.1) (2026-11-11)
+
+
+### Bug Fixes
+
+  **dispatch:**say a test case without steps runs from its description([4d5e8a2](https://github.com/Wopee-io/wopee-mcp/commit/4d5e8a27c88092d571f3e52510c32867439c28ba))
+The dispatch description read as if a test case needed steps to run, so a
+caller asked to run new tests generated their steps first, or gave up. A
+test case without steps runs as it is, and the run records its steps.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 # [1.34.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.33.2...v1.34.0) (2026-11-09)
 
 
