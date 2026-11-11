@@ -11,7 +11,7 @@ import { formatDispatchFailure, formatDispatchSuccess } from "./format.js";
 import { getConfig } from "../../utils/getConfig.js";
 import { errorHint } from "../../utils/requestErrors.js";
 import {
-  ASSISTANT_DISPATCH_HEADERS,
+  dispatchSourceHeaders,
   requestClient,
 } from "../../utils/requestClient.js";
 import { withRetry } from "../../utils/withRetry.js";
@@ -33,7 +33,7 @@ export const wopeeDispatchAgent = {
         requestClient<{ dispatchAgent: ExecutedTestCase[] }>(
           DispatchAgent,
           { input: parsedInput },
-          { headers: ASSISTANT_DISPATCH_HEADERS },
+          { headers: dispatchSourceHeaders(getConfig().WOPEE_AUTH_TOKEN) },
         ),
       );
 

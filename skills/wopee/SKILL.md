@@ -5,7 +5,7 @@ description: Test web apps with Wopee.io's AI testing agent through the `wopee` 
 
 # Wopee.io
 
-Wopee.io tests web apps with an AI testing agent that runs in the cloud: it explores the app, writes user stories and test cases, runs them in a real browser and gives a verdict. You drive it through the `wopee` MCP server: 15 tools named `wopee_*` and 3 prompts. Everything happens in one Wopee.io project, the one set by `WOPEE_PROJECT_UUID`.
+Wopee.io tests web apps with an AI testing agent that runs in the cloud: it explores the app, writes user stories and test cases, runs them in a real browser and gives a verdict. You drive it through the `wopee` MCP server: 16 tools named `wopee_*` and 3 prompts. Everything happens in one Wopee.io project, the one set by `WOPEE_PROJECT_UUID`.
 
 ## Setup
 
@@ -68,7 +68,7 @@ After a `FAILED` verdict, offer to file it. On a yes, call `wopee_create_github_
 ## When a call fails
 
 - `[USAGE_LIMIT_EXCEEDED]`: the user's plan limit is reached. The message says when the session resets. Do not retry before then; tell the user, who can check usage or upgrade in Commander.
-- `[AUTH_ERROR]`, `Not Authorised!` or `HTTP 401`/`403`: the API key does not match the project in `WOPEE_PROJECT_UUID`, or a suite UUID belongs to another project. Retrying will not help; ask the user to check the key and project UUID in their MCP config (https://docs.wopee.io/guides/api-keys/).
+- `[AUTH_ERROR]`, `Not Authorised!` or `HTTP 401`/`403`: the API key does not match the project in `WOPEE_PROJECT_UUID`, or a suite UUID belongs to another project. Retrying will not help; call `wopee_setup_check` to see which project the key belongs to, then ask the user to check the key and project UUID in their MCP config (https://docs.wopee.io/guides/api-keys/).
 - `[RATE_LIMITED]`: wait 10 seconds and try once more.
 - `[NETWORK_ERROR]` or `HTTP 5xx`: retry once after a minute, then report it.
 - More: https://docs.wopee.io/guides/wopee-mcp/troubleshooting/
@@ -83,7 +83,7 @@ The table is generated from the server's tool and prompt definitions.
 
 <!-- generated:tools start (npm run skill) -->
 
-### Tools (15)
+### Tools (16)
 
 | Tool | Access | What it does |
 | --- | --- | --- |
@@ -94,6 +94,7 @@ The table is generated from the server's tool and prompt definitions.
 | `wopee_fetch_test_inventory` | read | The authoritative tool for how many tests exist and their latest status. |
 | `wopee_fetch_variables` | read | Read the run-time variables (additionalVariables) that drive analysis/agent runs, at either level. |
 | `wopee_update_variables` | write | Upsert the run-time variables (additionalVariables) that drive analysis/agent runs, at either level. |
+| `wopee_setup_check` | read | Verify that Wopee.io is connected: returns the project name and UUID, app URL, plan, steps left, reset time and the Commander link for the project of WOPEE_API_KEY, and names the problem when the key belongs to another project than WOPEE_PROJECT_UUID, the UUID is missing or the key is rejected. |
 | `wopee_dispatch_analysis` | write | Create a new analysis suite AND dispatch an AI crawling agent in one step. |
 | `wopee_dispatch_agent` | write | Dispatch an autonomous AI agent to execute specific test cases. |
 | `wopee_fetch_artifact` | read | Retrieve a specific test artifact from a suite. |

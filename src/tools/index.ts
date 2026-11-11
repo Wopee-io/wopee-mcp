@@ -13,6 +13,7 @@ import { wopeeReadChatHistory } from "./wopee_read_chat_history/index.js";
 import { wopeeCreateGithubIssue } from "./wopee_create_github_issue/index.js";
 import { wopeeFetchVariables } from "./wopee_fetch_variables/index.js";
 import { wopeeUpdateVariables } from "./wopee_update_variables/index.js";
+import { wopeeSetupCheck } from "./wopee_setup_check/index.js";
 
 export const TOOLS = [
   wopeeCreateBlankSuite,
@@ -22,6 +23,7 @@ export const TOOLS = [
   wopeeFetchTestInventory,
   wopeeFetchVariables,
   wopeeUpdateVariables,
+  wopeeSetupCheck,
 
   wopeeDispatchAnalysis,
   wopeeDispatchAgent,

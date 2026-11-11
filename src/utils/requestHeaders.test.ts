@@ -3,15 +3,15 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  ASSISTANT_DISPATCH_HEADERS,
+  dispatchSourceHeaders,
   requestHeaders,
 } from "./requestHeaders.ts";
 
-test("the run tools mark their requests as coming from the Assistant", () => {
+test("inside Commander (a token) the run tools mark their requests ASSISTANT", () => {
   const headers = requestHeaders({
     authToken: "token-1",
     apiKey: null,
-    extra: ASSISTANT_DISPATCH_HEADERS,
+    extra: dispatchSourceHeaders("token-1"),
   });
 
   assert.equal(headers["x-wopee-dispatch-source"], "ASSISTANT");
@@ -50,4 +50,47 @@ test("a Commander token is sent alone, without the api key headers", () => {
   assert.equal(headers.authorization, "Bearer token-1");
   assert.equal(headers.api_key, undefined);
   assert.equal(headers["x-api-key"], undefined);
+});
+
+test("a run from an external client (an api key) is marked MCP", () => {
+  const headers = requestHeaders({
+    authToken: null,
+    apiKey: "key-1",
+    extra: dispatchSourceHeaders(null),
+  });
+
+  assert.equal(headers["x-wopee-dispatch-source"], "MCP");
+});
+
+test("api key requests carry the client and the setup ref", () => {
+  const headers = requestHeaders({
+    authToken: null,
+    apiKey: "key-1",
+    client: "claude-code/2.1.3",
+    setupRef: "prompt-md",
+    mcpVersion: "1.35.0",
+  });
+
+  assert.equal(headers["x-wopee-client"], "claude-code/2.1.3");
+  assert.equal(headers["x-wopee-mcp-version"], "1.35.0");
+  assert.equal(headers["x-wopee-setup-ref"], "prompt-md");
+});
+
+test("without a client the header says unknown, and no setup ref means no header", () => {
+  const headers = requestHeaders({ authToken: null, apiKey: "key-1", setupRef: null });
+
+  assert.equal(headers["x-wopee-client"], "unknown");
+  assert.equal(headers["x-wopee-setup-ref"], undefined);
+});
+
+test("Commander token requests carry no client headers", () => {
+  const headers = requestHeaders({
+    authToken: "token-1",
+    apiKey: null,
+    client: "claude-code/2.1.3",
+    setupRef: "x",
+  });
+
+  assert.equal(headers["x-wopee-client"], undefined);
+  assert.equal(headers["x-wopee-setup-ref"], undefined);
 });

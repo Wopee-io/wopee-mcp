@@ -6,6 +6,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { TOOLS } from "./tools/index.js";
 import { PROMPTS } from "./prompts/index.js";
 import { packageVersion } from "./utils/packageVersion.js";
+import { setClientInfo } from "./utils/clientInfo.js";
 
 const proxyUrl =
   process.env.HTTPS_PROXY ||
@@ -22,6 +23,9 @@ const server = new McpServer({
   name: "wopee-mcp",
   version: packageVersion(),
 });
+
+// The client names itself in `initialize`; the api logs it per API key (x-wopee-client).
+server.server.oninitialized = () => setClientInfo(server.server.getClientVersion());
 
 for (const { name, config, handler } of TOOLS) {
   server.registerTool(

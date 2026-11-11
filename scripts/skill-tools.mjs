@@ -22,7 +22,7 @@ const firstSentence = (text) => {
   return text.trim();
 };
 
-const access = (name) => (/^wopee_(fetch|read)_/.test(name) ? "read" : "write");
+const access = (name) => (/^wopee_(fetch_|read_|setup_check$)/.test(name) ? "read" : "write");
 const cell = (text) => text.replace(/\|/g, "\\|").replace(/\s+/g, " ").trim();
 
 const generated = [
