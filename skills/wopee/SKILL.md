@@ -27,7 +27,7 @@ Call `wopee_fetch_test_inventory` first. It is read-only and answers "what do I 
 
 1. Find the test case that matches the request: `wopee_fetch_test_inventory`, or `wopee_fetch_artifact` with type `USER_STORIES` on the analysis suite. Match on intent, not exact words.
 2. Show the user the analysis, the test case identifier and a one-line description, and ask "Run this test?". Never dispatch without a yes.
-3. Call `wopee_dispatch_agent` with the **analysis** suite UUID, the analysis identifier and `testCases: [{ userStoryId, testCaseId }]`. Below the Premium plan it takes one test case per call; dispatch several one by one. Each project accepts one dispatch every 10 seconds; the server retries rate-limit answers itself.
+3. Call `wopee_dispatch_agent` with the **analysis** suite UUID, the analysis identifier and `testCases: [{ userStoryId, testCaseId }]`. Below the Premium plan it takes one test case per call; dispatch several one by one. Each project accepts one dispatch every 10 seconds; the server retries rate-limit answers itself. A test case without steps runs as it is: the agent follows its description and the run records its steps. Do not generate steps first.
 
 The `run-test` prompt walks through the same steps.
 

@@ -21,7 +21,7 @@ export const wopeeDispatchAgent = {
   config: {
     title: "Dispatch autonomous testing agent",
     description:
-      "Dispatch an autonomous AI agent to execute specific test cases. The agent opens a real browser, navigates the app, follows test steps, and reports results. Tests run ASYNCHRONOUSLY (1-3 minutes). This tool returns tracking info confirming dispatch — NOT final results. Do NOT interpret the response as pass/fail. Poll wopee_fetch_recent_executions or wopee_fetch_executed_test_cases every 30-60 s for the verdict (inside the Commander Assistant, results also arrive as a chat notification). Prerequisite: test cases must exist in the suite (generate with wopee_generate_artifact type USER_STORIES_WITH_TEST_CASES).",
+      "Dispatch an autonomous AI agent to execute specific test cases. The agent opens a real browser, navigates the app, follows the test case's steps, and reports results. A test case without steps runs as it is: the agent follows its description and the run records the steps it took, so never generate steps first just to be able to run it. Tests run ASYNCHRONOUSLY (1-3 minutes). This tool returns tracking info confirming dispatch — NOT final results. Do NOT interpret the response as pass/fail. Poll wopee_fetch_recent_executions or wopee_fetch_executed_test_cases every 30-60 s for the verdict (inside the Commander Assistant, results also arrive as a chat notification). Prerequisite: test cases must exist in the suite (generate with wopee_generate_artifact type USER_STORIES_WITH_TEST_CASES).",
     inputSchema: WopeeDispatchAgentInputSchema.shape,
   },
   handler: async (input: WopeeDispatchAgentInput) => {
