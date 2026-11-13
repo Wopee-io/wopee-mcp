@@ -11,6 +11,7 @@ import {
 import { ArtifactType, GenerateArtifactType } from "./types.js";
 import { RequestError } from "../../utils/requestClient.js";
 import { describeRequestError } from "../../utils/requestErrors.js";
+import { NotConnectedError } from "../../utils/getConfig.js";
 import { compactUserStoriesContent } from "./artifactContent.js";
 
 export function _convertToArtifactType(
@@ -96,6 +97,14 @@ export function _describeError(error: unknown): string {
 }
 
 export function _parseError(error: unknown) {
+  // No credentials: an isError result that tells the agent how to connect.
+  if (error instanceof NotConnectedError) {
+    return {
+      content: [{ type: "text" as const, text: error.message }],
+      isError: true,
+    };
+  }
+
   console.error(error instanceof z.ZodError ? error.issues : error);
 
   if (error instanceof RequestError) {

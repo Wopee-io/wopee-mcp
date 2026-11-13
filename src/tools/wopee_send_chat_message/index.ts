@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getConfig } from "../../utils/getConfig.js";
+import { requireProjectUuid } from "../../utils/getConfig.js";
 import { requestClient } from "../../utils/requestClient.js";
 import { _parseError } from "../shared/helpers.js";
 import { ToolName } from "../shared/types.js";
@@ -27,14 +27,7 @@ export const wopeeSendChatMessage = {
   },
   handler: async (input: Input) => {
     try {
-      const { WOPEE_PROJECT_UUID } = getConfig();
-
-      if (!WOPEE_PROJECT_UUID)
-        return {
-          content: [
-            { type: "text" as const, text: "WOPEE_PROJECT_UUID is not set" },
-          ],
-        };
+      const WOPEE_PROJECT_UUID = requireProjectUuid();
 
       // First fetch the chat room for this project
       const roomResult = await requestClient<{

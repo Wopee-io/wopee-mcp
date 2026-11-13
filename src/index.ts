@@ -2,10 +2,13 @@
 import { setGlobalDispatcher, ProxyAgent } from "undici";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { RootsListChangedNotificationSchema } from "@modelcontextprotocol/sdk/types.js";
+import { fileURLToPath } from "node:url";
 
 import { TOOLS } from "./tools/index.js";
 import { PROMPTS } from "./prompts/index.js";
 import { packageVersion } from "./utils/packageVersion.js";
+import { setWorkspaceRoots } from "./utils/getConfig.js";
 
 const proxyUrl =
   process.env.HTTPS_PROXY ||
@@ -38,6 +41,30 @@ for (const { name, config, handler } of PROMPTS) {
     handler as Parameters<typeof server.registerPrompt>[2]
   );
 }
+
+// The workspace .env is looked up in the client's roots when it offers them (else the working
+// directory), so a key-free `npx -y wopee-mcp` entry finds the repo's credentials.
+async function refreshWorkspaceRoots() {
+  if (!server.server.getClientCapabilities()?.roots) return;
+  try {
+    const { roots } = await server.server.listRoots();
+    setWorkspaceRoots(
+      roots
+        .filter((root) => root.uri.startsWith("file:"))
+        .map((root) => fileURLToPath(root.uri)),
+    );
+  } catch (error) {
+    console.error(
+      `[WOPEE]: Could not list the client's workspace roots, using the working directory: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}
+
+server.server.oninitialized = () => void refreshWorkspaceRoots();
+server.server.setNotificationHandler(
+  RootsListChangedNotificationSchema,
+  refreshWorkspaceRoots,
+);
 
 async function main() {
   const transport = new StdioServerTransport();

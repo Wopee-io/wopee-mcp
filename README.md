@@ -15,36 +15,48 @@ AI-powered autonomous testing for your apps -- connect Claude, Cursor, or any MC
 
 Per-client guides (Claude Code, Cursor, VS Code, Codex and more): [docs.wopee.io/guides/wopee-mcp](https://docs.wopee.io/guides/wopee-mcp/).
 
-### Claude Code
+`npx -y @wopee-io/init` sets all of this up in a repo: it writes a git-ignored `.env` and the entries below for each agent you pick.
 
-```bash
-export WOPEE_API_KEY="your-api-key"
-export WOPEE_PROJECT_UUID="your-project-uuid"
-claude mcp add --scope project wopee -e 'WOPEE_API_KEY=${WOPEE_API_KEY}' -e 'WOPEE_PROJECT_UUID=${WOPEE_PROJECT_UUID}' -- npx -y wopee-mcp
+### 1. Put the credentials in the repo's `.env`
+
+```
+WOPEE_API_KEY=your-api-key
+WOPEE_PROJECT_UUID=your-project-uuid
 ```
 
-This writes `.mcp.json` with `${VAR}` references, so the key never lands in the file. On native Windows (not WSL), Claude Code needs `cmd /c` in front of `npx`: `... -- cmd /c npx -y wopee-mcp`.
+Make sure git ignores the file (`git check-ignore .env`). The server reads `.env.local` and `.env` from the client's workspace folder (or the folder it starts in), so no MCP config needs the key and every config below is safe to commit.
 
-### Any MCP client
+### 2. Add the server, without a key
 
-```json
-{
-  "mcpServers": {
-    "wopee": {
-      "command": "npx",
-      "args": ["-y", "wopee-mcp"],
-      "env": {
-        "WOPEE_API_KEY": "your-api-key",
-        "WOPEE_PROJECT_UUID": "your-project-uuid"
-      }
-    }
-  }
-}
+| Client | File | Entry |
+| --- | --- | --- |
+| Claude Code | `.mcp.json` | `{ "mcpServers": { "wopee": { "command": "npx", "args": ["-y", "wopee-mcp"] } } }` |
+| Cursor | `.cursor/mcp.json` | `{ "mcpServers": { "wopee": { "command": "npx", "args": ["-y", "wopee-mcp"] } } }` |
+| VS Code | `.vscode/mcp.json` | `{ "servers": { "wopee": { "type": "stdio", "command": "npx", "args": ["-y", "wopee-mcp"] } } }` |
+| OpenCode | `opencode.json` | `{ "mcp": { "wopee": { "type": "local", "command": ["npx", "-y", "wopee-mcp"], "enabled": true } } }` |
+
+Codex reads project config only in trusted projects, so add the server to `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.wopee]
+command = "npx"
+args = ["-y", "wopee-mcp"]
 ```
 
 - Keep `command` and `args` as separate fields. Clients start the server without a shell, so `"command": "npx wopee-mcp"` in one string does not work everywhere.
-- Replace the values with references to environment variables in your client's syntax (for example `${WOPEE_API_KEY}` in Claude Code, `${env:WOPEE_API_KEY}` in Cursor). Never commit a real key.
-- VS Code uses `servers` instead of `mcpServers`, and OpenCode uses `mcp`.
+- On native Windows (not WSL), Claude Code needs `cmd /c` in front of `npx`: `"command": "cmd", "args": ["/c", "npx", "-y", "wopee-mcp"]`.
+- Values in the MCP process environment still win, so existing configs with `env` blocks or `${VAR}` references keep working.
+
+### Where the server looks
+
+Each value comes from the first place that has it; an empty value counts as unset:
+
+1. The MCP process environment.
+2. The file named by `WOPEE_ENV_FILE` (relative paths are read from the workspace folder).
+3. `.env.local`, then `.env`, in each workspace folder the client reports (MCP roots), then in the folder the server starts in.
+4. `~/.config/wopee/credentials.json` (or under `XDG_CONFIG_HOME`): `{ "default": "<project-uuid>", "projects": { "<project-uuid>": { "apiKey": "…", "apiUrl": "…" } } }`.
+
+The files are read on every call, so a tool works as soon as `.env` is in place, with no restart. Without credentials, tools return an error telling the agent to run `npx -y @wopee-io/init`. The server never prints the key.
 
 ### Environment variables
 
@@ -53,6 +65,7 @@ This writes `.mcp.json` with `${VAR}` references, so the key never lands in the 
 | `WOPEE_API_KEY` | yes | Project API key from **More** › **Settings** › **API Keys** |
 | `WOPEE_PROJECT_UUID` | yes | The project the server works with. Every tool uses it |
 | `WOPEE_API_URL` | no | Only for a dedicated or self-hosted Wopee.io instance; copy it from the **API Keys** screen. Defaults to `https://api.wopee.io`; omit it otherwise |
+| `WOPEE_ENV_FILE` | no | Path to an env file to read before the workspace `.env.local` and `.env` |
 | `HTTPS_PROXY`, `HTTP_PROXY` | no | Corporate proxy, see below |
 | `NODE_EXTRA_CA_CERTS` | no | PEM file with your company's root certificate, see below |
 

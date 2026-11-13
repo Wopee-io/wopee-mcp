@@ -1,4 +1,4 @@
-import { getConfig } from "../../utils/getConfig.js";
+import { requireProjectUuid } from "../../utils/getConfig.js";
 import type { WopeeUpdateVariablesInput } from "./schema.js";
 
 /**
@@ -19,8 +19,7 @@ export const createUpdateSuiteVariablesInput = (
 export const createUpdateProjectVariablesInput = (
   input: WopeeUpdateVariablesInput,
 ) => {
-  const { WOPEE_PROJECT_UUID } = getConfig();
-  if (!WOPEE_PROJECT_UUID) throw new Error("WOPEE_PROJECT_UUID is not set");
+  const WOPEE_PROJECT_UUID = requireProjectUuid();
 
   return {
     input: {
