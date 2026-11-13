@@ -1,3 +1,21 @@
+# [1.35.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.34.1...v1.35.0) (2026-11-13)
+
+
+### Features
+
+  **config:**read credentials from the workspace .env so MCP configs stay key-free([3eb3da0](https://github.com/Wopee-io/wopee-mcp/commit/3eb3da09d81561bc7b8992626da8a06c9af1e3d2))
+Each of WOPEE_API_KEY, WOPEE_PROJECT_UUID and WOPEE_API_URL now comes from the
+first place that has it: the process env, WOPEE_ENV_FILE, .env.local then .env
+in the client's workspace roots (then the working directory), then
+~/.config/wopee/credentials.json keyed by project. Empty values count as unset
+and process.env is never changed. Files are re-read per call, so no restart is
+needed once .env exists.
+
+Without credentials every tool returns an isError result that says to run
+npx -y @wopee-io/init, instead of "WOPEE_PROJECT_UUID is not set".
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 ## [1.34.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.34.0...v1.34.1) (2026-11-11)
 
 
