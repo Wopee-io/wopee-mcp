@@ -1,4 +1,4 @@
-import { getConfig } from "./getConfig.js";
+import { getConfig, NotConnectedError } from "./getConfig.js";
 import { requestHeaders } from "./requestHeaders.js";
 import { classifyGraphQLErrors, classifyHttpError, RequestError } from "./requestErrors.js";
 import type { GraphQLErrorLike } from "./requestErrors.js";
@@ -24,10 +24,7 @@ export const requestClient = async <T>(
   const { WOPEE_API_URL, WOPEE_API_KEY, WOPEE_AUTH_TOKEN } = getConfig();
 
   if (!WOPEE_API_KEY && !WOPEE_AUTH_TOKEN) {
-    throw new RequestError(
-      "WOPEE_API_KEY or WOPEE_AUTH_TOKEN must be set",
-      "AUTH_ERROR",
-    );
+    throw new NotConnectedError(["WOPEE_API_KEY"]);
   }
 
   const headers = requestHeaders({

@@ -6,14 +6,13 @@ import {
   GenerateAIDataInput,
   GenerateAIDataHandlerInput,
 } from "./schemas.js";
-import { getConfig } from "../../utils/getConfig.js";
+import { requireProjectUuid } from "../../utils/getConfig.js";
 import { generationOptions } from "../wopee_generate_artifact/request.js";
 
 export const createFetchArtifactInput = (
   input: FetchArtifactFactoryInput
 ): FetchArtifactInput => {
-  const { WOPEE_PROJECT_UUID } = getConfig();
-  if (!WOPEE_PROJECT_UUID) throw new Error("WOPEE_PROJECT_UUID is not set");
+  const WOPEE_PROJECT_UUID = requireProjectUuid();
 
   const { type, suiteUuid, identifier } = input;
 
@@ -28,8 +27,7 @@ export const createFetchArtifactInput = (
 export const createGenerateAIDataInput = (
   input: GenerateAIDataHandlerInput
 ): GenerateAIDataInput => {
-  const { WOPEE_PROJECT_UUID } = getConfig();
-  if (!WOPEE_PROJECT_UUID) throw new Error("WOPEE_PROJECT_UUID is not set");
+  const WOPEE_PROJECT_UUID = requireProjectUuid();
 
   return {
     projectUuid: WOPEE_PROJECT_UUID,
@@ -51,8 +49,7 @@ export const createGenerateAIDataInput = (
 export const createUpdateArtifactInput = (
   input: UpdateArtifactFactoryInput
 ): UpdateArtifactInput => {
-  const { WOPEE_PROJECT_UUID } = getConfig();
-  if (!WOPEE_PROJECT_UUID) throw new Error("WOPEE_PROJECT_UUID is not set");
+  const WOPEE_PROJECT_UUID = requireProjectUuid();
 
   const { type, suiteUuid, content, identifier } = input;
 

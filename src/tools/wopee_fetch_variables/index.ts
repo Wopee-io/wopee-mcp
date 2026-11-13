@@ -1,4 +1,4 @@
-import { getConfig } from "../../utils/getConfig.js";
+import { requireProjectUuid } from "../../utils/getConfig.js";
 import { requestClient } from "../../utils/requestClient.js";
 import { _parseError } from "../shared/helpers.js";
 import { ToolName, VariableLevel } from "../shared/types.js";
@@ -38,8 +38,7 @@ export const wopeeFetchVariables = {
         return textResult(result?.fetchSuiteVariables ?? "[]");
       }
 
-      const { WOPEE_PROJECT_UUID } = getConfig();
-      if (!WOPEE_PROJECT_UUID) return textResult("WOPEE_PROJECT_UUID is not set");
+      const WOPEE_PROJECT_UUID = requireProjectUuid();
 
       const result = await requestClient<{
         fetchProjectVariables: string | null;
