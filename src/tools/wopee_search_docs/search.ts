@@ -61,7 +61,12 @@ export function parseFullText(full: string, pageUrls: string[]): DocSection[] {
     let buf: string[] = [];
     let fence = false;
     const flush = () => {
-      const text = buf.join("\n").trim();
+      // A rule before the next heading would double the separator between hits.
+      const text = buf
+        .join("\n")
+        .trim()
+        .replace(/^(?:-{3,}[ \t]*(?:\n\s*|$))+|(?:(?:^|\n)\s*-{3,}[ \t]*)+$/g, "")
+        .trim();
       if (text) sections.push({ pageTitle: page.title, pageUrl, heading, text });
       buf = [];
     };
@@ -79,12 +84,38 @@ export function parseFullText(full: string, pageUrls: string[]): DocSection[] {
   return sections;
 }
 
+const keep = (t: string) => t.length > 1 && !STOPWORDS.has(t);
+
+// Compound names (`@wopee-io/wopee.pw`, `self-healing`) count as one token and as their
+// parts, so `wopee.pw` or `healing` still match them. `_` never splits: env var names.
 export const tokenize = (s: string) =>
   s
     .toLowerCase()
     .split(/[^a-z0-9_.@/-]+/)
-    .map((t) => t.replace(/^[.\-/]+|[.\-/]+$/g, ""))
-    .filter((t) => t.length > 1 && !STOPWORDS.has(t));
+    .map((t) => t.replace(/^[.@\-/]+|[.@\-/]+$/g, ""))
+    .flatMap((t) => {
+      const segments = t.split(/[@/]+/).filter(Boolean);
+      const words = segments.flatMap((seg) => seg.split(/[.-]+/));
+      return [...new Set([t, ...segments, ...words])];
+    })
+    .filter(keep);
+
+type TokenizedSection = { s: DocSection; title: string[]; body: string[] };
+
+// Tokenized once per loaded docs copy, not on every query.
+const tokenCache = new WeakMap<DocSection[], TokenizedSection[]>();
+function tokenized(sections: DocSection[]): TokenizedSection[] {
+  let docs = tokenCache.get(sections);
+  if (!docs) {
+    docs = sections.map((s) => ({
+      s,
+      title: tokenize(`${s.pageTitle} ${s.heading}`),
+      body: tokenize(s.text),
+    }));
+    tokenCache.set(sections, docs);
+  }
+  return docs;
+}
 
 export function searchSections(
   sections: DocSection[],
@@ -94,11 +125,7 @@ export function searchSections(
   const terms = [...new Set(tokenize(query))];
   if (!terms.length) return [];
 
-  const docs = sections.map((s) => ({
-    s,
-    title: tokenize(`${s.pageTitle} ${s.heading}`),
-    body: tokenize(s.text),
-  }));
+  const docs = tokenized(sections);
   const n = docs.length;
   const df = new Map<string, number>();
   for (const t of terms)
@@ -123,11 +150,23 @@ export function searchSections(
   return hits.sort((a, b) => b.score - a.score).slice(0, maxResults);
 }
 
+// A cut inside a code block would leave its fence open and turn the rest of the
+// output, later hits included, into code: close it.
+function excerpt(text: string, maxChars: number): string {
+  const cut = text.slice(0, maxChars).trimEnd();
+  let fence: string | null = null;
+  for (const line of cut.split("\n")) {
+    const m = line.match(/^\s*(```|~~~)/);
+    if (m) fence = fence ? null : m[1];
+  }
+  return fence ? `${cut}\n${fence}\n…` : `${cut} …`;
+}
+
 export function formatHits(hits: DocHit[], maxChars: number): string {
   return hits
     .map((h, i) => {
       const where = h.heading === h.pageTitle ? h.pageTitle : `${h.pageTitle} › ${h.heading}`;
-      const text = h.text.length > maxChars ? `${h.text.slice(0, maxChars).trimEnd()} …` : h.text;
+      const text = h.text.length > maxChars ? excerpt(h.text, maxChars) : h.text;
       return `## ${i + 1}. ${where}\n${h.pageUrl ? `Source: ${h.pageUrl}\n` : ""}\n${text}`;
     })
     .join("\n\n---\n\n");
