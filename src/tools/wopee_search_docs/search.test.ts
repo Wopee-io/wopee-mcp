@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { parseFullText, parseLlmsIndex, searchSections, formatHits } from "./search.ts";
+import { parseFullText, parseLlmsIndex, searchSections, formatHits, tokenize } from "./search.ts";
 
 const LLMS = `# Wopee.io
 
@@ -82,4 +82,29 @@ test("formatHits prints title, source and a trimmed excerpt", () => {
   const out = formatHits(searchSections(sections, "sign in", 1), 10);
   assert.match(out, /^## 1\. Getting started › 1\. Sign in to Wopee Commander\nSource: https:\/\/docs\.wopee\.io\/ai-agent\//);
   assert.match(out, / …$/);
+});
+
+test("tokenize keeps compound names and their parts", () => {
+  const tokens = tokenize("npm i @wopee-io/wopee.pw, self-healing WOPEE_API_KEY.");
+  for (const t of ["wopee-io/wopee.pw", "wopee-io", "wopee.pw", "pw", "self-healing", "healing", "wopee_api_key"])
+    assert.ok(tokens.includes(t), t);
+  assert.ok(!tokens.includes("wopee_api_key."));
+});
+
+test("searchSections finds a package name inside a scoped package", () => {
+  const sections = parseFullText(FULL, parseLlmsIndex(LLMS));
+  assert.equal(searchSections(sections, "wopee.pw", 1)[0]?.heading, "3. Install");
+});
+
+test("formatHits closes a code block that the excerpt cuts", () => {
+  const sections = parseFullText(FULL, parseLlmsIndex(LLMS));
+  const out = formatHits(searchSections(sections, "install playwright", 1), 30);
+  assert.equal((out.match(/```/g) ?? []).length % 2, 0);
+  assert.match(out, /\n```\n…$/);
+});
+
+test("parseFullText drops horizontal rules at the edges of a section", () => {
+  const full = "# Site\n\nIntro.\n\n# Page\n\nBody --- stays\n\n---\n\n## Next\n\n---\n\nText.\n";
+  const sections = parseFullText(full, []);
+  assert.deepEqual(sections.map((s) => s.text), ["Body --- stays", "Text."]);
 });

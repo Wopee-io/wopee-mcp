@@ -8,9 +8,11 @@ const CACHE_MS = 60 * 60 * 1000;
 const EXCERPT_CHARS = 1500;
 
 let cache: { at: number; sections: DocSection[] } | null = null;
+let loading: Promise<DocSection[]> | null = null;
 
-const textResult = (text: string) => ({
+const textResult = (text: string, isError = false) => ({
   content: [{ type: "text" as const, text }],
+  ...(isError ? { isError: true } : {}),
 });
 
 async function getText(url: string): Promise<string> {
@@ -19,15 +21,33 @@ async function getText(url: string): Promise<string> {
   return res.text();
 }
 
-async function loadSections(): Promise<DocSection[]> {
-  if (cache && Date.now() - cache.at < CACHE_MS) return cache.sections;
+async function fetchSections(): Promise<DocSection[]> {
   const [index, full] = await Promise.all([
     getText(`${DOCS_URL}/llms.txt`),
     getText(`${DOCS_URL}/llms-full.txt`),
   ]);
   const sections = parseFullText(full, parseLlmsIndex(index));
+  if (!sections.length) throw new Error(`${DOCS_URL}/llms-full.txt has no sections`);
   cache = { at: Date.now(), sections };
   return sections;
+}
+
+// Parallel calls share one download. When a refresh fails, the expired copy is
+// still better than no answer.
+async function loadSections(): Promise<DocSection[]> {
+  if (cache && Date.now() - cache.at < CACHE_MS) return cache.sections;
+  loading ??= fetchSections().finally(() => {
+    loading = null;
+  });
+  try {
+    return await loading;
+  } catch (error) {
+    if (cache) {
+      console.error(`[WOPEE]: Docs refresh failed, using the cached copy: ${error instanceof Error ? error.message : String(error)}`);
+      return cache.sections;
+    }
+    throw error;
+  }
 }
 
 export const wopeeSearchDocs = {
@@ -50,6 +70,7 @@ export const wopeeSearchDocs = {
     } catch (error) {
       return textResult(
         `Could not search the Wopee.io docs: ${error instanceof Error ? error.message : String(error)}. The docs are at ${DOCS_URL}.`,
+        true,
       );
     }
   },

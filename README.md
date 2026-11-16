@@ -71,7 +71,7 @@ The files are read on every call, so a tool works as soon as `.env` is in place,
 
 ### Verify the connection
 
-Your client should list the `wopee` server with **15 tools** starting with `wopee_` (`/mcp` in Claude Code). Then ask:
+Your client should list the `wopee` server with **16 tools** starting with `wopee_` (`/mcp` in Claude Code). Then ask:
 
 ```
 How many tests do I have in Wopee.io, and which ones have never run?
@@ -81,7 +81,7 @@ The agent calls the read-only `wopee_fetch_test_inventory`. A new project return
 
 ## Tools
 
-All 15 tools work in the project set by `WOPEE_PROJECT_UUID`. **Write** tools change data in your project; let your agent ask before it calls them.
+All tools except `wopee_search_docs` work in the project set by `WOPEE_PROJECT_UUID`. **Write** tools change data in your project; let your agent ask before it calls them.
 
 | Tool | What it does | Access | Timing |
 | --- | --- | --- | --- |
@@ -100,6 +100,7 @@ All 15 tools work in the project set by `WOPEE_PROJECT_UUID`. **Write** tools ch
 | `wopee_create_github_issue` | Files a GitHub issue in the project's connected repository, with run evidence when given a run UUID | write | seconds |
 | `wopee_send_chat_message` | Posts to the project chat. For the in-app chat only; not available with a project API key | write | seconds |
 | `wopee_read_chat_history` | Reads the project chat. For the in-app chat only; not available with a project API key | read | seconds |
+| `wopee_search_docs` | Searches the Wopee.io docs (docs.wopee.io) and returns the best matching sections with their page URL. Needs no API key or project; cached for an hour | read | seconds |
 
 `wopee_generate_artifact` types: `APP_CONTEXT`, `GENERAL_USER_STORIES`, `USER_STORIES_WITH_TEST_CASES`, `TEST_CASES`, `TEST_CASE_STEPS`, `REUSABLE_TEST_CASES`, `REUSABLE_TEST_CASE_STEPS`. Generate in that order. `USER_STORIES_WITH_TEST_CASES` rebuilds every user story and test case of the suite, and `TEST_CASES` with `mode: CREATE` replaces test cases with their run history; use them on an existing suite only when you mean it.
 

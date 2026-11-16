@@ -5,7 +5,7 @@ description: Test web apps with Wopee.io's AI testing agent through the `wopee` 
 
 # Wopee.io
 
-Wopee.io tests web apps with an AI testing agent that runs in the cloud: it explores the app, writes user stories and test cases, runs them in a real browser and gives a verdict. You drive it through the `wopee` MCP server: 15 tools named `wopee_*` and 3 prompts. Everything happens in one Wopee.io project, the one set by `WOPEE_PROJECT_UUID`.
+Wopee.io tests web apps with an AI testing agent that runs in the cloud: it explores the app, writes user stories and test cases, runs them in a real browser and gives a verdict. You drive it through the `wopee` MCP server: 16 tools named `wopee_*` and 3 prompts. Everything happens in one Wopee.io project, the one set by `WOPEE_PROJECT_UUID`; only `wopee_search_docs` needs no project.
 
 ## Setup
 
@@ -71,7 +71,7 @@ After a `FAILED` verdict, offer to file it. On a yes, call `wopee_create_github_
 - `[AUTH_ERROR]`, `Not Authorised!` or `HTTP 401`/`403`: the API key does not match the project in `WOPEE_PROJECT_UUID`, or a suite UUID belongs to another project. Retrying will not help; ask the user to check the key and project UUID in their MCP config (https://docs.wopee.io/guides/api-keys/).
 - `[RATE_LIMITED]`: wait 10 seconds and try once more.
 - `[NETWORK_ERROR]` or `HTTP 5xx`: retry once after a minute, then report it.
-- More: https://docs.wopee.io/guides/wopee-mcp/troubleshooting/
+- Anything else: search the docs with `wopee_search_docs` and the error text, or read https://docs.wopee.io/guides/wopee-mcp/troubleshooting/
 
 ## Localhost cannot be reached
 
@@ -83,7 +83,7 @@ The table is generated from the server's tool and prompt definitions.
 
 <!-- generated:tools start (npm run skill) -->
 
-### Tools (15)
+### Tools (16)
 
 | Tool | Access | What it does |
 | --- | --- | --- |
@@ -102,6 +102,7 @@ The table is generated from the server's tool and prompt definitions.
 | `wopee_send_chat_message` | write | Send a message to the current project's chat room. |
 | `wopee_read_chat_history` | read | Read recent messages from the current project's chat room. |
 | `wopee_create_github_issue` | write | Create a new GitHub issue in the project's connected repository. |
+| `wopee_search_docs` | read | Search the Wopee.io documentation (docs.wopee.io, from its llms-full.txt) and return the best matching sections with their page URL. |
 
 ### Prompts (3)
 
