@@ -1,3 +1,16 @@
+# [1.37.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.36.0...v1.37.0) (2026-11-16)
+
+
+### Features
+
+wopee_setup_check tool, x-wopee-client, x-wopee-mcp-version and x-wopee-setup-ref headers, dispatch source MCP([1d99b85](https://github.com/Wopee-io/wopee-mcp/commit/1d99b85b3bed625d1c194ab54f8056b9db8ffe37))
+wopee_setup_check returns the project, app URL, plan, steps left and Commander link of the API key and names a key from another project or a missing WOPEE_PROJECT_UUID. It falls back to a key and project check when the api has no setupCheck query yet (HTTP 400), and inside Commander (WOPEE_AUTH_TOKEN) it says there is no key setup to check.
+
+Every API key request now carries x-wopee-client (the MCP client from initialize, name/version, or unknown), x-wopee-mcp-version and x-wopee-setup-ref (WOPEE_SETUP_REF from the env, the workspace .env or the credentials file, when set). Header values are reduced to printable ASCII so a client name with an en dash or newline cannot make fetch throw. Runs dispatched without WOPEE_AUTH_TOKEN use dispatch source MCP; inside Commander it stays ASSISTANT.
+
+Co-Authored-By: Šota Giorgadze <giorgadze@inbox.lv>
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 # [1.36.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.35.0...v1.36.0) (2026-11-16)
 
 
