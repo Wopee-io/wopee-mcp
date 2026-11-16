@@ -1,3 +1,22 @@
+# [1.36.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.35.0...v1.36.0) (2026-11-16)
+
+
+### Bug Fixes
+
+  **docs:**match package names in wopee_search_docs, keep excerpts well-formed, list it as read-only([5f9620f](https://github.com/Wopee-io/wopee-mcp/commit/5f9620f9838e19bbded0d31c7ae2d5d29d3aff37))
+- Compound tokens (`@wopee-io/wopee.pw`, `self-healing`) also index their parts, so `wopee.pw` finds the Playwright SDK pages.
+- An excerpt cut inside a code block closes the fence, and rules at the edges of a section are dropped, so hits stay separate.
+- Parallel calls share one download, an expired copy answers when a refresh fails, and failures return isError.
+- Tokens are computed once per docs copy.
+- skill-tools treats wopee_search_* as read; SKILL.md and README list 16 tools and that the docs tool needs no project.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+
+### Features
+
+  **docs:**wopee_search_docs tool searches docs.wopee.io (llms-full.txt) and returns matching sections with their page URL([2c43568](https://github.com/Wopee-io/wopee-mcp/commit/2c43568f6ce8680ebb2849fccd2affbc10432301))
+
 # [1.35.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.34.1...v1.35.0) (2026-11-13)
 
 
