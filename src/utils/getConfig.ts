@@ -9,6 +9,7 @@ const FILE_KEYS = [
   "WOPEE_API_URL",
   "WOPEE_API_KEY",
   "WOPEE_PROJECT_UUID",
+  "WOPEE_SETUP_REF",
 ] as const;
 type FileKey = (typeof FILE_KEYS)[number];
 type Values = Partial<Record<FileKey, string>>;
@@ -146,6 +147,7 @@ export const getConfig = () => {
     WOPEE_API_KEY,
     WOPEE_PROJECT_UUID,
     WOPEE_AUTH_TOKEN: fromEnv("WOPEE_AUTH_TOKEN"),
+    WOPEE_SETUP_REF: lookup("WOPEE_SETUP_REF"),
   };
 };
 

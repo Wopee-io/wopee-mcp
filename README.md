@@ -71,7 +71,7 @@ The files are read on every call, so a tool works as soon as `.env` is in place,
 
 ### Verify the connection
 
-Your client should list the `wopee` server with **16 tools** starting with `wopee_` (`/mcp` in Claude Code). Then ask:
+Your client should list the `wopee` server with **17 tools** starting with `wopee_` (`/mcp` in Claude Code). Then ask:
 
 ```
 How many tests do I have in Wopee.io, and which ones have never run?
@@ -95,6 +95,7 @@ All tools except `wopee_search_docs` work in the project set by `WOPEE_PROJECT_U
 | `wopee_fetch_artifact` | Reads `APP_CONTEXT`, `GENERAL_USER_STORIES`, `USER_STORIES`, `PLAYWRIGHT_CODE` or `PROJECT_CONTEXT` | read | seconds |
 | `wopee_update_artifact` | Replaces one of those artifacts with content from the agent (whole file, not a patch) | write | seconds |
 | `wopee_generate_artifact` | Generates app context, user stories, test cases or steps with Wopee.io's AI | write | up to 5 min; `async: true` for large `TEST_CASES` |
+| `wopee_setup_check` | Checks the connection: project, app URL, plan, steps left and Commander link; names a wrong key or missing UUID | read | seconds |
 | `wopee_fetch_variables` | Reads run-time variables at project or analysis level | read | seconds |
 | `wopee_update_variables` | Adds or overwrites run-time variables (merge, no delete) | write | seconds |
 | `wopee_create_github_issue` | Files a GitHub issue in the project's connected repository, with run evidence when given a run UUID | write | seconds |

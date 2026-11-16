@@ -14,6 +14,7 @@ import { wopeeCreateGithubIssue } from "./wopee_create_github_issue/index.js";
 import { wopeeFetchVariables } from "./wopee_fetch_variables/index.js";
 import { wopeeUpdateVariables } from "./wopee_update_variables/index.js";
 import { wopeeSearchDocs } from "./wopee_search_docs/index.js";
+import { wopeeSetupCheck } from "./wopee_setup_check/index.js";
 
 export const TOOLS = [
   wopeeCreateBlankSuite,
@@ -23,6 +24,7 @@ export const TOOLS = [
   wopeeFetchTestInventory,
   wopeeFetchVariables,
   wopeeUpdateVariables,
+  wopeeSetupCheck,
 
   wopeeDispatchAnalysis,
   wopeeDispatchAgent,

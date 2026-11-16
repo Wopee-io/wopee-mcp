@@ -9,6 +9,7 @@ import { TOOLS } from "./tools/index.js";
 import { PROMPTS } from "./prompts/index.js";
 import { packageVersion } from "./utils/packageVersion.js";
 import { setWorkspaceRoots } from "./utils/getConfig.js";
+import { setClientInfo } from "./utils/clientInfo.js";
 
 const proxyUrl =
   process.env.HTTPS_PROXY ||
@@ -60,7 +61,12 @@ async function refreshWorkspaceRoots() {
   }
 }
 
-server.server.oninitialized = () => void refreshWorkspaceRoots();
+// One handler: the client names itself in `initialize` (the api logs it per API key as
+// x-wopee-client), and its roots are where the workspace .env is looked up.
+server.server.oninitialized = () => {
+  setClientInfo(server.server.getClientVersion());
+  void refreshWorkspaceRoots();
+};
 server.server.setNotificationHandler(
   RootsListChangedNotificationSchema,
   refreshWorkspaceRoots,
