@@ -1,3 +1,17 @@
+## [1.37.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.37.0...v1.37.1) (2026-11-17)
+
+
+### Bug Fixes
+
+  **tools:**wopee_generate_artifact points logins at credential variables([f3484bc](https://github.com/Wopee-io/wopee-mcp/commit/f3484bc0336ecfa613cf86e4568e8f1d5c9c93d0))
+The description now says credentials are ${TESTING_USERNAME} /
+${TESTING_PASSWORD} project variables, to check with
+wopee_fetch_variables and set with wopee_update_variables, and that a
+secret never goes into `instructions`, where it would be copied into
+the generated artifact.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 # [1.37.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.36.0...v1.37.0) (2026-11-16)
 
 
