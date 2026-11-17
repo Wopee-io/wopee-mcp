@@ -72,8 +72,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # npm 11.19.1, not the npm 10 that Node 22 bundles: npm 10 (its pacote) demands a registry key
+      # for every attestation bundle, so a package whose answer carries only keyless SLSA
+      # provenance fails with EMISSINGSIGNATUREKEY although nothing is wrong with it. npm 11.19.1
+      # checks keys for keyed (publish) attestations only, and still verifies everything else.
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
-        run: npm audit signatures
+        run: npx --yes npm@11.19.1 audit signatures
 
       - name: Release
         env:
