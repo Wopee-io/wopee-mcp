@@ -33,7 +33,7 @@ export const wopeeDispatchAnalysis = {
         requestClient<{ dispatchAnalysis: AnalysisSuite }>(
           DispatchAnalysis,
           { input: parsedInput },
-          { headers: dispatchSourceHeaders(getConfig().WOPEE_AUTH_TOKEN) },
+          { headers: dispatchSourceHeaders(getConfig().WOPEE_INSIDE_COMMANDER) },
         ),
       );
 

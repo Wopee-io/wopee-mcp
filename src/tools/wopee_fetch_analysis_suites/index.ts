@@ -9,7 +9,7 @@ export const wopeeFetchAnalysisSuites = {
   config: {
     title: "List analysis suites",
     description:
-      "List all analysis suites in the current project. Returns an array of suite objects with UUIDs, names, types (ANALYSIS, AGENT, etc.), and running statuses (IDLE, IN_PROGRESS, FINISHED). Use this to discover existing suites before calling other tools — you need a suite UUID for wopee_generate_artifact, wopee_fetch_artifact, wopee_update_artifact, and wopee_dispatch_agent. Read-only: does not create or modify anything. Takes no input; uses WOPEE_PROJECT_UUID from environment. Returns an empty array if no suites exist. Fails if WOPEE_PROJECT_UUID is not configured.",
+      "List all analysis suites in the current project. Returns an array of suite objects with UUIDs, names, types (ANALYSIS, AGENT, etc.), and running statuses (IDLE, IN_PROGRESS, FINISHED). Use this to discover existing suites before calling other tools — you need a suite UUID for wopee_generate_artifact, wopee_fetch_artifact, wopee_update_artifact, and wopee_dispatch_agent. Read-only: does not create or modify anything. Takes no input; works in the connected project. Returns an empty array if no suites exist.",
   },
   handler: async () => {
     try {

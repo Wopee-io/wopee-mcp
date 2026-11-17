@@ -22,7 +22,7 @@ export const wopeeSendChatMessage = {
   config: {
     title: "Send chat message",
     description:
-      "Send a message to the current project's chat room. Use this to post status updates (e.g., 'Test run started...', 'Analysis complete') or informational messages to the chat. The message will appear as a SYSTEM message in the chat room. Requires WOPEE_PROJECT_UUID to be configured.",
+      "Send a message to the current project's chat room. Use this to post status updates (e.g., 'Test run started...', 'Analysis complete') or informational messages to the chat. The message will appear as a SYSTEM message in the chat room.",
     inputSchema: InputSchema.shape,
   },
   handler: async (input: Input) => {

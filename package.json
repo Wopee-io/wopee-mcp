@@ -2,7 +2,8 @@
   "type": "module",
   "name": "wopee-mcp",
   "bin": {
-    "wopee-mcp": "./build/index.js"
+    "wopee-mcp": "./build/index.js",
+    "wopee-mcp-http": "./build/http.js"
   },
   "version": "1.37.1",
   "mcpName": "io.github.Wopee-io/wopee-mcp",
@@ -12,7 +13,7 @@
     "node": ">=20.18.1"
   },
   "scripts": {
-    "build": "tsc && chmod 755 build/index.js",
+    "build": "tsc && chmod 755 build/index.js build/http.js",
     "build:clean": "rm -rf build && npm run build",
     "test": "node --test \"src/**/*.test.ts\"",
     "version": "node scripts/sync-version.mjs",

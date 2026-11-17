@@ -1,47 +1,16 @@
 #!/usr/bin/env node
-import { setGlobalDispatcher, ProxyAgent } from "undici";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { RootsListChangedNotificationSchema } from "@modelcontextprotocol/sdk/types.js";
 import { fileURLToPath } from "node:url";
 
-import { TOOLS } from "./tools/index.js";
-import { PROMPTS } from "./prompts/index.js";
-import { packageVersion } from "./utils/packageVersion.js";
+import { createServer } from "./server.js";
 import { setWorkspaceRoots } from "./utils/getConfig.js";
 import { setClientInfo } from "./utils/clientInfo.js";
+import { useProxyFromEnv } from "./utils/proxy.js";
 
-const proxyUrl =
-  process.env.HTTPS_PROXY ||
-  process.env.https_proxy ||
-  process.env.HTTP_PROXY ||
-  process.env.http_proxy;
+useProxyFromEnv();
 
-if (proxyUrl) {
-  setGlobalDispatcher(new ProxyAgent(proxyUrl));
-  console.error(`[WOPEE]: Using proxy ${proxyUrl}`);
-}
-
-const server = new McpServer({
-  name: "wopee-mcp",
-  version: packageVersion(),
-});
-
-for (const { name, config, handler } of TOOLS) {
-  server.registerTool(
-    name,
-    config as Parameters<typeof server.registerTool>[1],
-    handler as Parameters<typeof server.registerTool>[2]
-  );
-}
-
-for (const { name, config, handler } of PROMPTS) {
-  server.registerPrompt(
-    name,
-    config as Parameters<typeof server.registerPrompt>[1],
-    handler as Parameters<typeof server.registerPrompt>[2]
-  );
-}
+const server = createServer();
 
 // The workspace .env is looked up in the client's roots when it offers them (else the working
 // directory), so a key-free `npx -y wopee-mcp` entry finds the repo's credentials.

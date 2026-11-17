@@ -5,7 +5,7 @@ export const WopeeFetchVariablesInputSchema = z.object({
   level: z
     .enum(VariableLevel)
     .describe(
-      "Which variable set to read. PROJECT reads the project-level variables (uses WOPEE_PROJECT_UUID from the environment). ANALYSIS reads a specific analysis suite's variables and requires suiteUuid.",
+      "Which variable set to read. PROJECT reads the project-level variables (the connected project). ANALYSIS reads a specific analysis suite's variables and requires suiteUuid.",
     ),
   suiteUuid: z
     .string()
