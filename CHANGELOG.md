@@ -1,3 +1,43 @@
+# [1.38.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.37.1...v1.38.0) (2026-11-17)
+
+
+### Bug Fixes
+
+  **ci:**run the release signature audit with npm 11.19.1([f3ebb50](https://github.com/Wopee-io/wopee-mcp/commit/f3ebb500e3d83d4139de736dffe8ac0a328200d8))
+npm 10.9.9, which Node 22 bundles, refuses a package whose attestation
+answer carries only keyless SLSA provenance with EMISSINGSIGNATUREKEY
+("has attestations but no corresponding public key(s)"), although the
+package is fine: mime@4.1.2 stopped the release twice in a row. npm
+11.19.1 asks for a registry key only for keyed (publish) attestations
+and still verifies every signature and attestation.
+
+Also lists the wopee-mcp-http bin in package-lock.json, which the
+previous change added to package.json only.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+
+### Features
+
+  **http:**serve the tools over Streamable HTTP as an OAuth resource server([016b59e](https://github.com/Wopee-io/wopee-mcp/commit/016b59e77bd87da4fbc74755af69f86041fc6d8c))
+A second bin, wopee-mcp-http, for an instance that runs the server next
+to its api. Each POST /mcp gets its own stateless server, authenticated
+by the caller's bearer token: an OAuth access token from the api, or a
+project API key for headless clients. The token is checked with the
+api's setupCheck (a good answer is kept 30 s, keyed by its hash), which
+also names its project. Without a valid token the answer is 401 with a
+WWW-Authenticate pointing at the RFC 9728 metadata.
+
+Inside a remote request getConfig() answers from that request alone,
+never from the server's env, .env files, roots or credentials file. Runs
+started remotely are marked MCP: only Commander's own session token
+counts as the Assistant. The project chat tools, which need a Commander
+session, are not offered remotely. setup_check runs the real check for
+remote callers; two tools that read the project unchecked now use
+requireProjectUuid().
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 ## [1.37.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.37.0...v1.37.1) (2026-11-17)
 
 
