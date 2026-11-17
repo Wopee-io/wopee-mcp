@@ -24,7 +24,7 @@ export const wopeeUpdateVariables = {
   config: {
     title: "Update run-time variables",
     description:
-      "Upsert the run-time variables (additionalVariables) that drive analysis/agent runs, at either level. level: PROJECT writes the project-level variables (uses WOPEE_PROJECT_UUID from the environment); level: ANALYSIS writes a specific analysis suite's variables and requires suiteUuid. Merge semantics: keys in variables[] are added or overwritten, existing keys not listed are preserved. Keys must be uppercase (e.g. BASE_URL); the server re-sanitizes and drops invalid keys. Returns a confirmation on success.",
+      "Upsert the run-time variables (additionalVariables) that drive analysis/agent runs, at either level. level: PROJECT writes the project-level variables (the connected project); level: ANALYSIS writes a specific analysis suite's variables and requires suiteUuid. Merge semantics: keys in variables[] are added or overwritten, existing keys not listed are preserved. Keys must be uppercase (e.g. BASE_URL); the server re-sanitizes and drops invalid keys. Returns a confirmation on success.",
     inputSchema: WopeeUpdateVariablesInputSchema.shape,
   },
   handler: async (input: WopeeUpdateVariablesInput) => {

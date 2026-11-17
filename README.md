@@ -132,6 +132,25 @@ Good to know:
 - **10 seconds between dispatches** per project; the server retries automatically after a rate-limit answer.
 - [Commander](https://cmd.wopee.io) shows the generated tests and every run visually.
 
+## Running it as a remote (HTTP) server
+
+`wopee-mcp-http` serves the same tools over [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http) for a Wopee.io instance that runs it next to its api. It is an OAuth resource server: clients add it by its URL alone, and the instance's api signs them in (`/oauth/*`). Nothing about a caller comes from the server's own environment or files; every request carries the caller's token, and the api checks it.
+
+```bash
+MCP_RESOURCE_URL=https://mcp.example.com/mcp WOPEE_AUTHORIZATION_SERVER=https://api.example.com WOPEE_API_URL=http://api:4000 PORT=8080 npx -y -p wopee-mcp wopee-mcp-http
+```
+
+| Variable | What it is |
+| --- | --- |
+| `MCP_RESOURCE_URL` | The public URL of the MCP endpoint. Tokens are issued for exactly this URL. |
+| `WOPEE_AUTHORIZATION_SERVER` | The api's public URL, its OAuth issuer. |
+| `WOPEE_API_URL` | Where the server sends its api requests; defaults to `WOPEE_AUTHORIZATION_SERVER`. |
+| `PORT` | Defaults to `8080`. |
+
+- `POST /mcp` (the path of `MCP_RESOURCE_URL`): stateless JSON responses. Without a valid `Authorization: Bearer` it answers `401` with a `WWW-Authenticate` that points at `/.well-known/oauth-protected-resource/mcp` (RFC 9728).
+- Headless clients (`claude -p`, the Agent SDK, CI) can send a project API key as the bearer token instead of signing in.
+- `GET /healthz` for the container's health check.
+
 ## Corporate proxy
 
 Behind a corporate proxy or VPN, set the standard proxy variables in the server's `env`:

@@ -22,7 +22,7 @@ export const wopeeReadChatHistory = {
   config: {
     title: "Read chat history",
     description:
-      "Read recent messages from the current project's chat room. Returns the last N messages in chronological order, including sender info and timestamps. Use this to understand the conversation context or review what has been discussed. Requires WOPEE_PROJECT_UUID to be configured.",
+      "Read recent messages from the current project's chat room. Returns the last N messages in chronological order, including sender info and timestamps. Use this to understand the conversation context or review what has been discussed.",
     inputSchema: InputSchema.shape,
   },
   handler: async (input: Input) => {

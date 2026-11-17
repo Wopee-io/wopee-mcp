@@ -1,12 +1,12 @@
 /**
  * Marks where a run was started. The api stores it on the run, and only ASSISTANT runs (started
- * inside Commander, which authenticates with WOPEE_AUTH_TOKEN) get their AI summary in chat
- * without being asked. Runs from any other MCP client authenticate with an API key and are MCP.
+ * inside Commander's Assistant) get their AI summary in chat without being asked. Runs from any
+ * other MCP client, the remote server included, are MCP.
  */
-export function dispatchSourceHeaders(authToken: string | null): {
+export function dispatchSourceHeaders(insideCommander: boolean): {
   "x-wopee-dispatch-source": "ASSISTANT" | "MCP";
 } {
-  return { "x-wopee-dispatch-source": authToken ? "ASSISTANT" : "MCP" };
+  return { "x-wopee-dispatch-source": insideCommander ? "ASSISTANT" : "MCP" };
 }
 
 /**

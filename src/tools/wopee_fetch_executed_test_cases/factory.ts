@@ -1,4 +1,4 @@
-import { getConfig } from "../../utils/getConfig.js";
+import { requireProjectUuid } from "../../utils/getConfig.js";
 import {
   FetchExecutedTestCasesInput,
   WopeeFetchExecutedTestCasesInput,
@@ -7,8 +7,7 @@ import {
 export const createFetchExecutedTestCasesInput = (
   input: WopeeFetchExecutedTestCasesInput,
 ): FetchExecutedTestCasesInput => {
-  const { WOPEE_PROJECT_UUID } = getConfig();
-  if (!WOPEE_PROJECT_UUID) throw new Error("WOPEE_PROJECT_UUID is not set");
+  const WOPEE_PROJECT_UUID = requireProjectUuid();
 
   return {
     projectUuid: WOPEE_PROJECT_UUID,

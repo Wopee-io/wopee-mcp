@@ -6,7 +6,7 @@ export const WopeeUpdateVariablesInputSchema = z.object({
   level: z
     .enum(VariableLevel)
     .describe(
-      "Which variable set to write. PROJECT writes the project-level variables (uses WOPEE_PROJECT_UUID from the environment). ANALYSIS writes a specific analysis suite's variables and requires suiteUuid.",
+      "Which variable set to write. PROJECT writes the project-level variables (the connected project). ANALYSIS writes a specific analysis suite's variables and requires suiteUuid.",
     ),
   suiteUuid: z
     .string()

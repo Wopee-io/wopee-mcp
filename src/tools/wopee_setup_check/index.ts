@@ -26,10 +26,11 @@ export const wopeeSetupCheck = {
     inputSchema: {},
   },
   handler: async () => {
-    const { WOPEE_PROJECT_UUID, WOPEE_AUTH_TOKEN } = getConfig();
-    // Inside Commander the server signs in as the user (a token, no API key): the api's
-    // setupCheck is for API keys and would answer "Not Authorised!", read as a rejected key.
-    if (WOPEE_AUTH_TOKEN) return textResult(COMMANDER_SESSION);
+    const { WOPEE_PROJECT_UUID, WOPEE_INSIDE_COMMANDER } = getConfig();
+    // Inside Commander the server signs in as the user (a session token, no API key): the api's
+    // setupCheck is for API keys and MCP connections, and would answer "Not Authorised!", read as
+    // a rejected key. The remote server's token is an MCP connection or a key: it gets the check.
+    if (WOPEE_INSIDE_COMMANDER) return textResult(COMMANDER_SESSION);
     try {
       const result = await requestClient<{ setupCheck: SetupCheckData | null }>(
         SetupCheck,

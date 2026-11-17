@@ -33,7 +33,7 @@ export const wopeeDispatchAgent = {
         requestClient<{ dispatchAgent: ExecutedTestCase[] }>(
           DispatchAgent,
           { input: parsedInput },
-          { headers: dispatchSourceHeaders(getConfig().WOPEE_AUTH_TOKEN) },
+          { headers: dispatchSourceHeaders(getConfig().WOPEE_INSIDE_COMMANDER) },
         ),
       );
 
@@ -52,7 +52,7 @@ export const wopeeDispatchAgent = {
           {
             type: "text" as const,
             text: formatDispatchSuccess(result.dispatchAgent, input, {
-              insideCommander: Boolean(getConfig().WOPEE_AUTH_TOKEN),
+              insideCommander: getConfig().WOPEE_INSIDE_COMMANDER,
             }),
           },
         ],

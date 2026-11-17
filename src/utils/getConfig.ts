@@ -1,5 +1,6 @@
 // Where wopee-mcp finds its credentials, so an agent's MCP config can be a key-free
 // `npx -y wopee-mcp`. Only node: imports, so it loads under `node --test` in strip-only mode.
+import { AsyncLocalStorage } from "node:async_hooks";
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { isAbsolute, join, resolve } from "node:path";
@@ -19,6 +20,25 @@ type Values = Partial<Record<FileKey, string>>;
 const present = (value: string | undefined): string | null =>
   value?.trim() || null;
 const fromEnv = (name: string): string | null => present(process.env[name]);
+
+/**
+ * One request of the remote (HTTP) server: the caller's bearer token (an MCP access token or a
+ * project API key), the api to send it to, and the project the api said it belongs to. Inside one,
+ * getConfig() answers from it alone: never from the process env, a .env file, the client's roots
+ * or ~/.config/wopee, which belong to whoever runs the server, not to the caller.
+ */
+export interface RemoteContext {
+  authToken: string;
+  apiUrl: string;
+  projectUuid: string;
+}
+
+const remote = new AsyncLocalStorage<RemoteContext>();
+
+/** Runs `fn` (and everything it awaits) as one remote request. */
+export function runWithRemoteContext<T>(context: RemoteContext, fn: () => T): T {
+  return remote.run(context, fn);
+}
 
 // The client's workspace folders (MCP roots), when it offers them; else the working directory.
 let workspaceRoots: string[] = [];
@@ -123,6 +143,19 @@ function envFileLayers(): Values[] {
  * credentials file for that project. WOPEE_AUTH_TOKEN (set by Commander) is read from the env only.
  */
 export const getConfig = () => {
+  const context = remote.getStore();
+  if (context) {
+    return {
+      WOPEE_API_URL: context.apiUrl,
+      WOPEE_API_KEY: null,
+      WOPEE_PROJECT_UUID: context.projectUuid,
+      WOPEE_AUTH_TOKEN: context.authToken,
+      WOPEE_SETUP_REF: null,
+      WOPEE_REMOTE: true,
+      WOPEE_INSIDE_COMMANDER: false,
+    };
+  }
+
   const layers = envFileLayers();
   const lookup = (key: FileKey): string | null =>
     fromEnv(key) ?? layers.map((l) => l[key]).find(Boolean) ?? null;
@@ -142,17 +175,25 @@ export const getConfig = () => {
     }
   }
 
+  const WOPEE_AUTH_TOKEN = fromEnv("WOPEE_AUTH_TOKEN");
   return {
     WOPEE_API_URL: WOPEE_API_URL ?? DEFAULT_API_URL,
     WOPEE_API_KEY,
     WOPEE_PROJECT_UUID,
-    WOPEE_AUTH_TOKEN: fromEnv("WOPEE_AUTH_TOKEN"),
+    WOPEE_AUTH_TOKEN,
     WOPEE_SETUP_REF: lookup("WOPEE_SETUP_REF"),
+    WOPEE_REMOTE: false,
+    // Commander's Assistant runs this server with the user's session token: its runs post their
+    // results to chat. A remote client's token never means that.
+    WOPEE_INSIDE_COMMANDER: Boolean(WOPEE_AUTH_TOKEN),
   };
 };
 
 /** What a tool says when it has no credentials: how to connect, never "paste your key". */
 export function notConnectedMessage(missing: string[]): string {
+  if (remote.getStore()) {
+    return `Wopee.io is not connected: no ${missing.join(" or ")} for this connection. Reconnect the Wopee.io server from your MCP client, then try again.`;
+  }
   return `Wopee.io is not connected: no ${missing.join(" or ")} in the environment, the workspace .env.local or .env, or ~/.config/wopee/credentials.json. Run \`npx -y @wopee-io/init\` in this repo, then try again (no restart needed).`;
 }
 

@@ -10,6 +10,7 @@ import {
   notConnectedMessage,
   parseDotenv,
   requireProjectUuid,
+  runWithRemoteContext,
   setWorkspaceRoots,
 } from "./getConfig.ts";
 
@@ -230,4 +231,63 @@ test("missing credentials point to npx @wopee-io/init and never ask for a pasted
   );
   write(join(workspace, ".env"), `WOPEE_PROJECT_UUID=${UUID_A}\n`);
   assert.equal(requireProjectUuid(), UUID_A);
+});
+
+const REMOTE = {
+  authToken: "caller-token",
+  apiUrl: "http://api:4000",
+  projectUuid: UUID_B,
+};
+
+test("a remote request is answered from its own context, never the server's env or files", () => {
+  // Everything the server process could leak: its env, a workspace .env and the user credentials.
+  process.env.WOPEE_API_KEY = "server-key";
+  process.env.WOPEE_PROJECT_UUID = UUID_A;
+  process.env.WOPEE_AUTH_TOKEN = "server-session";
+  process.env.WOPEE_API_URL = "https://api.server.example";
+  write(join(workspace, ".env"), "WOPEE_API_KEY=file-key\nWOPEE_SETUP_REF=file-ref\n");
+  write(
+    join(configHome, "wopee", "credentials.json"),
+    JSON.stringify({ default: UUID_A, projects: { [UUID_A]: { apiKey: "user-key" } } }),
+  );
+
+  const config = runWithRemoteContext(REMOTE, () => getConfig());
+
+  assert.deepEqual(config, {
+    WOPEE_API_URL: "http://api:4000",
+    WOPEE_API_KEY: null,
+    WOPEE_PROJECT_UUID: UUID_B,
+    WOPEE_AUTH_TOKEN: "caller-token",
+    WOPEE_SETUP_REF: null,
+    WOPEE_REMOTE: true,
+    WOPEE_INSIDE_COMMANDER: false,
+  });
+  assert.equal(runWithRemoteContext(REMOTE, () => requireProjectUuid()), UUID_B);
+  // Outside the request, the server's own configuration is untouched.
+  assert.equal(getConfig().WOPEE_API_KEY, "server-key");
+});
+
+test("concurrent remote requests each see only their own caller", async () => {
+  const seen = await Promise.all(
+    ["a", "b", "c"].map((name, i) =>
+      runWithRemoteContext({ ...REMOTE, authToken: `token-${name}` }, async () => {
+        await new Promise((resolve) => setTimeout(resolve, 15 - i * 5));
+        return getConfig().WOPEE_AUTH_TOKEN;
+      }),
+    ),
+  );
+  assert.deepEqual(seen, ["token-a", "token-b", "token-c"]);
+});
+
+test("only Commander's own session token counts as inside Commander", () => {
+  assert.equal(getConfig().WOPEE_INSIDE_COMMANDER, false);
+  process.env.WOPEE_AUTH_TOKEN = "commander-session";
+  assert.equal(getConfig().WOPEE_INSIDE_COMMANDER, true);
+  assert.equal(runWithRemoteContext(REMOTE, () => getConfig().WOPEE_INSIDE_COMMANDER), false);
+});
+
+test("a remote caller without a project is told to reconnect, not to run init", () => {
+  const message = runWithRemoteContext(REMOTE, () => notConnectedMessage(["WOPEE_PROJECT_UUID"]));
+  assert.match(message, /Reconnect the Wopee\.io server from your MCP client/);
+  assert.doesNotMatch(message, /@wopee-io\/init/);
 });

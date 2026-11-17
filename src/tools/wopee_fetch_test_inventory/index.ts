@@ -1,4 +1,4 @@
-import { getConfig } from "../../utils/getConfig.js";
+import { requireProjectUuid } from "../../utils/getConfig.js";
 import { requestClient } from "../../utils/requestClient.js";
 import { _describeError, _parseError } from "../shared/helpers.js";
 import {
@@ -28,14 +28,7 @@ export const wopeeFetchTestInventory = {
   },
   handler: async (input: WopeeFetchTestInventoryInput) => {
     try {
-      const { WOPEE_PROJECT_UUID } = getConfig();
-
-      if (!WOPEE_PROJECT_UUID)
-        return {
-          content: [
-            { type: "text" as const, text: "WOPEE_PROJECT_UUID is not set" },
-          ],
-        };
+      const WOPEE_PROJECT_UUID = requireProjectUuid();
 
       const parsed = WopeeFetchTestInventoryInputSchema.parse(input ?? {});
 

@@ -12,7 +12,7 @@ test("inside Commander (a token) the run tools mark their requests ASSISTANT", (
   const headers = requestHeaders({
     authToken: "token-1",
     apiKey: null,
-    extra: dispatchSourceHeaders("token-1"),
+    extra: dispatchSourceHeaders(true),
   });
 
   assert.equal(headers["x-wopee-dispatch-source"], "ASSISTANT");
@@ -57,10 +57,21 @@ test("a run from an external client (an api key) is marked MCP", () => {
   const headers = requestHeaders({
     authToken: null,
     apiKey: "key-1",
-    extra: dispatchSourceHeaders(null),
+    extra: dispatchSourceHeaders(false),
   });
 
   assert.equal(headers["x-wopee-dispatch-source"], "MCP");
+});
+
+test("a run from the remote server (a bearer token, not Commander) is marked MCP", () => {
+  const headers = requestHeaders({
+    authToken: "mcp-access-token",
+    apiKey: null,
+    extra: dispatchSourceHeaders(false),
+  });
+
+  assert.equal(headers["x-wopee-dispatch-source"], "MCP");
+  assert.equal(headers.authorization, "Bearer mcp-access-token");
 });
 
 test("api key requests carry the client and the setup ref", () => {
