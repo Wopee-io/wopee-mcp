@@ -29,11 +29,7 @@ export function markProjectData(text: string, marker = randomBytes(12).toString(
 }
 
 const MARKED_DATA =
-  /^(?:The text between the two <<<WOPEE_DATA_([0-9a-f]+)>>> lines[^
-]*
-)?<<<WOPEE_DATA_([0-9a-f]+)>>>
-([\s\S]*)
-<<<WOPEE_DATA_>>>\s*$/;
+  /^(?:The text between the two <<<WOPEE_DATA_([0-9a-f]+)>>> lines[^\n]*\n)?<<<WOPEE_DATA_([0-9a-f]+)>>>\n([\s\S]*)\n<<<WOPEE_DATA_\2>>>\s*$/;
 
 /** The stored text again, for an agent that passes a marked result back whole. */
 export function unmarkProjectData(text: string): string {

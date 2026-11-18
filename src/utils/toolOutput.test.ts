@@ -39,21 +39,11 @@ test("stored text cannot guess the markers of the next call", () => {
 });
 
 test("marked text passed back whole is saved without the markers", () => {
-  assert.equal(unmarkProjectData(markProjectData("# App
-
-line")), "# App
-
-line");
-  assert.equal(unmarkProjectData("<<<WOPEE_DATA_ab>>>
-body
-<<<WOPEE_DATA_ab>>>
-"), "body");
+  assert.equal(unmarkProjectData(markProjectData("# App\n\nline")), "# App\n\nline");
+  assert.equal(unmarkProjectData("<<<WOPEE_DATA_ab>>>\nbody\n<<<WOPEE_DATA_ab>>>\n"), "body");
   assert.equal(unmarkProjectData("# Plain text"), "# Plain text");
-  assert.equal(unmarkProjectData("<<<WOPEE_DATA_ab>>>
-body
-<<<WOPEE_DATA_cd>>>"), "<<<WOPEE_DATA_ab>>>
-body
-<<<WOPEE_DATA_cd>>>");
+  const mismatched = "<<<WOPEE_DATA_ab>>>\nbody\n<<<WOPEE_DATA_cd>>>";
+  assert.equal(unmarkProjectData(mismatched), mismatched);
 });
 
 test("a result is cleaned, and marked only when it carries project data", () => {
