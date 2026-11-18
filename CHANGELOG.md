@@ -1,3 +1,27 @@
+# [1.39.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.38.0...v1.39.0) (2026-11-18)
+
+
+### Bug Fixes
+
+  **tools:**repair the check for marked project data([8505ef5](https://github.com/Wopee-io/wopee-mcp/commit/8505ef5c36dc157d66259b1d3b9f55b5b0a737ca))
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+
+### Features
+
+  **tools:**label tools and mark stored project data([dcac446](https://github.com/Wopee-io/wopee-mcp/commit/dcac4464916ad8e69da220921544a759671851d2))
+Every tool now carries read-only, destructive and open-world hints. A
+read-only connection lists only the tools that read, and a write call
+on it gets a 403 scope challenge. Stored project data comes back between
+random markers, without control characters and with a size limit.
+
+The HTTP endpoint takes one message per request, refuses other origins,
+limits concurrent token checks and briefly remembers refused tokens.
+Client cancellation reaches the api, failed dispatches are not repeated
+unless the api rate limited them, and errors are shorter and flagged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 # [1.38.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.37.1...v1.38.0) (2026-11-17)
 
 
