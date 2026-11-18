@@ -1,3 +1,11 @@
+## [1.39.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.39.0...v1.39.1) (2026-11-18)
+
+
+### Bug Fixes
+
+  **package:**publish the exact dependency versions([98dc694](https://github.com/Wopee-io/wopee-mcp/commit/98dc6949b4ae5e0e0d5a43ebf7a4d391c72af0f1))
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 # [1.39.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.38.0...v1.39.0) (2026-11-18)
 
 
