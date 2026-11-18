@@ -3,6 +3,8 @@ import { RequestError } from "./requestClient.js";
 interface RetryOptions {
   maxRetries?: number;
   baseDelayMs?: number;
+  /** Narrows which retryable errors are retried, for requests that must not run twice. */
+  retryIf?: (error: RequestError) => boolean;
 }
 
 export async function withRetry<T>(
@@ -11,6 +13,7 @@ export async function withRetry<T>(
 ): Promise<T> {
   const maxRetries = options?.maxRetries ?? 3;
   const baseDelayMs = options?.baseDelayMs ?? 2000;
+  const retryIf = options?.retryIf ?? (() => true);
 
   let lastError: RequestError | undefined;
 
@@ -21,6 +24,7 @@ export async function withRetry<T>(
       if (
         error instanceof RequestError &&
         error.retryable &&
+        retryIf(error) &&
         attempt < maxRetries
       ) {
         lastError = error;

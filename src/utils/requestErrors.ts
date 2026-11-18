@@ -9,6 +9,9 @@ export type RequestErrorCode =
   | "NETWORK_ERROR"
   | "AUTH_ERROR";
 
+// The api's or a proxy's text goes to the agent and the logs; a whole error page does not.
+const MAX_ERROR_CHARS = 1000;
+
 export class RequestError extends Error {
   code: RequestErrorCode;
   status: number | null;
@@ -19,7 +22,7 @@ export class RequestError extends Error {
     code: RequestErrorCode,
     options?: { status?: number; retryable?: boolean },
   ) {
-    super(message);
+    super(message.slice(0, MAX_ERROR_CHARS));
     this.name = "RequestError";
     this.code = code;
     this.status = options?.status ?? null;
@@ -112,12 +115,24 @@ export function classifyHttpError(
   });
 }
 
+/**
+ * For a request that must not run twice: only a rate limit proves the api did not act on it. After
+ * a network error or a 5xx the first attempt may have gone through.
+ */
+export const safeToRepeat = (error: RequestError): boolean => error.code === "RATE_LIMITED";
+
 /** What the agent should do about an error that retrying does not fix, or null. */
-export function errorHint(code: RequestErrorCode | string | undefined): string | null {
+export function errorHint(
+  code: RequestErrorCode | string | undefined,
+  { remote = false }: { remote?: boolean } = {},
+): string | null {
   switch (code) {
     case "USAGE_LIMIT_EXCEEDED":
       return "This is the plan's usage limit, not a test failure or an outage. Do not retry before the reset time above; tell the user, who can check usage or upgrade at https://cmd.wopee.io.";
     case "AUTH_ERROR":
+      if (remote) {
+        return "Retrying will not help. This connection does not allow the action, or the suite belongs to another project. A read-only connection cannot change anything: to allow more, connect again from your MCP client.";
+      }
       return "Retrying will not help. Check that WOPEE_API_KEY is a key of the project in WOPEE_PROJECT_UUID and that any suite UUID used belongs to that project: https://docs.wopee.io/guides/api-keys/";
     default:
       return null;
@@ -125,7 +140,10 @@ export function errorHint(code: RequestErrorCode | string | undefined): string |
 }
 
 /** One-line description of a failed request, e.g. "[AUTH_ERROR] Not Authorised! Retrying …". */
-export function describeRequestError(error: RequestError): string {
-  const hint = errorHint(error.code);
+export function describeRequestError(
+  error: RequestError,
+  options?: { remote?: boolean },
+): string {
+  const hint = errorHint(error.code, options);
   return `[${error.code}] ${error.message}${error.retryable ? " (retryable)" : ""}${hint ? ` ${hint}` : ""}`;
 }

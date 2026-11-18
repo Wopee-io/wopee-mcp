@@ -10,6 +10,7 @@ import {
   COMMANDER_SESSION,
   MISMATCH_FROM_AUTH_ERROR,
   MISSING_UUID_NO_KEY_CHECK,
+  REMOTE_CONNECTION_REFUSED,
   SetupCheckData,
 } from "./format.js";
 
@@ -26,7 +27,7 @@ export const wopeeSetupCheck = {
     inputSchema: {},
   },
   handler: async () => {
-    const { WOPEE_PROJECT_UUID, WOPEE_INSIDE_COMMANDER } = getConfig();
+    const { WOPEE_PROJECT_UUID, WOPEE_INSIDE_COMMANDER, WOPEE_REMOTE } = getConfig();
     // Inside Commander the server signs in as the user (a session token, no API key): the api's
     // setupCheck is for API keys and MCP connections, and would answer "Not Authorised!", read as
     // a rejected key. The remote server's token is an MCP connection or a key: it gets the check.
@@ -38,11 +39,17 @@ export const wopeeSetupCheck = {
       );
       if (!result?.setupCheck)
         return textResult(
-          "SETUP CHECK FAILED: the api returned no project for this API key. Check WOPEE_API_KEY.",
+          WOPEE_REMOTE
+            ? REMOTE_CONNECTION_REFUSED
+            : "SETUP CHECK FAILED: the api returned no project for this API key. Check WOPEE_API_KEY.",
         );
-      return textResult(formatSetupCheck(result.setupCheck, WOPEE_PROJECT_UUID));
+      return textResult(
+        formatSetupCheck(result.setupCheck, WOPEE_PROJECT_UUID, { remote: WOPEE_REMOTE }),
+      );
     } catch (error) {
       if (error instanceof RequestError) {
+        if (WOPEE_REMOTE && error.code === "AUTH_ERROR")
+          return textResult(REMOTE_CONNECTION_REFUSED);
         // An api without setupCheck answers HTTP 400 (a validation error), which arrives as
         // HTTP_ERROR "HTTP 400: Cannot query field …", so match the message, not the code.
         if (isUnknownSetupCheck(error.message))

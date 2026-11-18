@@ -5,7 +5,9 @@ import assert from "node:assert/strict";
 import {
   classifyGraphQLErrors,
   classifyHttpError,
+  RequestError,
   describeRequestError,
+  safeToRepeat,
 } from "./requestErrors.ts";
 
 const USAGE_LIMIT = {
@@ -82,4 +84,20 @@ test("rate limits and 5xx stay retryable; other errors keep their codes", () => 
     describeRequestError(classifyGraphQLErrors([{ message: "Suite not found" }])),
     "[GRAPHQL_ERROR] Suite not found",
   );
+});
+
+test("a remote connection is not told about API keys", () => {
+  const text = describeRequestError(classifyHttpError(403, "Forbidden"), { remote: true });
+  assert.match(text, /read-only connection/);
+  assert.doesNotMatch(text, /WOPEE_API_KEY/);
+});
+
+test("an upstream error is cut to a readable length", () => {
+  assert.ok(classifyHttpError(502, "x".repeat(50_000)).message.length <= 1000);
+});
+
+test("only a rate limit is safe to repeat for a request that must not run twice", () => {
+  assert.equal(safeToRepeat(classifyHttpError(429, "slow down")), true);
+  assert.equal(safeToRepeat(classifyHttpError(503, "bad gateway")), false);
+  assert.equal(safeToRepeat(new RequestError("reset", "NETWORK_ERROR", { retryable: true })), false);
 });

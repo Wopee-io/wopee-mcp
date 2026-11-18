@@ -149,6 +149,8 @@ MCP_RESOURCE_URL=https://mcp.example.com/mcp WOPEE_AUTHORIZATION_SERVER=https://
 
 - `POST /mcp` (the path of `MCP_RESOURCE_URL`): stateless JSON responses. Without a valid `Authorization: Bearer` it answers `401` with a `WWW-Authenticate` that points at `/.well-known/oauth-protected-resource/mcp` (RFC 9728).
 - Headless clients (`claude -p`, the Agent SDK, CI) can send a project API key as the bearer token instead of signing in.
+- A read-only connection lists only the tools that read. Calling a tool that writes answers `403` with `error="insufficient_scope"`.
+- One JSON-RPC message per request. Requests with an `Origin` other than the server's own are refused.
 - `GET /healthz` for the container's health check.
 
 ## Corporate proxy

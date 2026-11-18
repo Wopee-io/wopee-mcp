@@ -22,6 +22,7 @@ const steps = (d: SetupCheckData): string => {
 export function formatSetupCheck(
   d: SetupCheckData,
   configuredUuid: string | null,
+  { remote = false }: { remote?: boolean } = {},
 ): string {
   const lines = [
     `Project: ${d.projectName} (${d.projectUuid})`,
@@ -30,6 +31,8 @@ export function formatSetupCheck(
     `Steps: ${steps(d)}`,
     `Commander: ${d.commanderUrl}`,
   ];
+
+  if (remote) return ["CONNECTED: this connection works.", ...lines].join("\n");
 
   if (!configuredUuid) {
     return [
@@ -52,6 +55,9 @@ export function formatSetupCheck(
 
 export const MISMATCH_FROM_AUTH_ERROR = (uuid: string) =>
   `SETUP MISMATCH: the API key was rejected for project ${uuid}. It is a key of another project, revoked or mistyped. Create or copy an API key of project ${uuid} in Commander (More › Settings › API Keys), set it as WOPEE_API_KEY in the workspace .env (or run "npx -y @wopee-io/init"), then run this check again: https://docs.wopee.io/guides/api-keys/`;
+
+export const REMOTE_CONNECTION_REFUSED =
+  "SETUP CHECK FAILED: the api refused this connection. It may have been disconnected. Connect the Wopee.io server again from your MCP client.";
 
 export const MISSING_UUID_NO_KEY_CHECK =
   "SETUP INCOMPLETE: WOPEE_PROJECT_UUID is not set, and this server does not support the full check yet. Set WOPEE_PROJECT_UUID to the project's UUID (Commander: More › Settings › API Keys) and run this check again.";

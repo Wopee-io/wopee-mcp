@@ -4,6 +4,7 @@ import { clientLabel } from "./clientInfo.js";
 import { packageVersion } from "./packageVersion.js";
 import { classifyGraphQLErrors, classifyHttpError, RequestError } from "./requestErrors.js";
 import type { GraphQLErrorLike } from "./requestErrors.js";
+import { requestCancelled, requestSignal } from "./requestSignal.js";
 
 export { RequestError } from "./requestErrors.js";
 export type { RequestErrorCode } from "./requestErrors.js";
@@ -45,13 +46,13 @@ export const requestClient = async <T>(
       method: "POST",
       headers,
       body: JSON.stringify({ query, variables }),
-      signal: AbortSignal.timeout(options?.timeoutMs ?? DEFAULT_TIMEOUT_MS),
+      signal: requestSignal(options?.timeoutMs ?? DEFAULT_TIMEOUT_MS),
     });
   } catch (error) {
     throw new RequestError(
       `Network error: ${error instanceof Error ? error.message : String(error)}`,
       "NETWORK_ERROR",
-      { retryable: true },
+      { retryable: !requestCancelled() },
     );
   }
 

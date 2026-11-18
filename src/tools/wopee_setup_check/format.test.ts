@@ -68,3 +68,9 @@ test("an api without setupCheck is recognised from the GraphQL validation error"
   assert.ok(isUnknownSetupCheck(`HTTP 400: Cannot query field "setupCheck" on type "Query".`));
   assert.ok(!isUnknownSetupCheck("Not Authorised!"));
 });
+
+test("a remote connection is reported without API key advice", () => {
+  const text = formatSetupCheck(data, data.projectUuid, { remote: true });
+  assert.match(text, /^CONNECTED: this connection works\./);
+  assert.doesNotMatch(text, /API key|WOPEE_/);
+});

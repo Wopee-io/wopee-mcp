@@ -4,8 +4,11 @@ import assert from "node:assert/strict";
 
 import {
   TokenCache,
+  TokenChecker,
   bearerToken,
   checkTokenWithApi,
+  isAllowedOrigin,
+  isReadOnlyToken,
   metadataPath,
   metadataUrl,
   protectedResourceMetadata,
@@ -115,4 +118,81 @@ test("a good answer is kept for its TTL, under the token's hash, in a bounded ma
   assert.equal(cache.get("token-a", 1), null);
   assert.equal(cache.get("token-c", 1), "p-c");
   assert.equal(cache.get("unknown", 1), null);
+});
+
+test("the challenge can name an error and the scopes to ask for", () => {
+  assert.match(
+    wwwAuthenticate(config, "insufficient_scope", "read write"),
+    /error="insufficient_scope", scope="read write"$/,
+  );
+});
+
+test("only requests without an Origin or from this server's own are allowed", () => {
+  assert.equal(isAllowedOrigin(undefined, config.resourceUrl), true);
+  assert.equal(isAllowedOrigin("https://mcp.example.com", config.resourceUrl), true);
+  assert.equal(isAllowedOrigin("https://elsewhere.example", config.resourceUrl), false);
+  assert.equal(isAllowedOrigin("null", config.resourceUrl), false);
+});
+
+test("a read limit comes from an MCP token's claims; an API key has none", () => {
+  const jwt = (claims: object) =>
+    `x.${Buffer.from(JSON.stringify(claims)).toString("base64url")}.y`;
+  assert.equal(isReadOnlyToken(jwt({ kind: "mcp", scope: "read" })), true);
+  assert.equal(isReadOnlyToken(jwt({ kind: "mcp" })), true);
+  assert.equal(isReadOnlyToken(jwt({ kind: "mcp", scope: "write" })), false);
+  assert.equal(isReadOnlyToken(jwt({ scope: "read" })), false);
+  assert.equal(isReadOnlyToken("wopee-project-api-key"), false);
+});
+
+test("a refusal is kept briefly and does not count as a project", () => {
+  const cache = new TokenCache(30_000, 10, 5_000);
+  cache.refuse("bad", 0);
+  assert.equal(cache.isRefused("bad", 4_999), true);
+  assert.equal(cache.get("bad", 1), null);
+  assert.equal(cache.isRefused("bad", 5_000), false);
+  cache.set("good", "p", 0);
+  assert.equal(cache.isRefused("good", 1), false);
+});
+
+test("the checker shares one api check per token and remembers the answer", async () => {
+  let calls = 0;
+  const checker = new TokenChecker(async () => {
+    calls += 1;
+    return { status: "ok", projectUuid: "p-1" };
+  });
+  const answers = await Promise.all([checker.callerOf("t"), checker.callerOf("t")]);
+  assert.deepEqual(answers, [{ projectUuid: "p-1" }, { projectUuid: "p-1" }]);
+  await checker.callerOf("t");
+  assert.equal(calls, 1);
+});
+
+test("the checker does not ask again about a refused token", async () => {
+  let calls = 0;
+  const checker = new TokenChecker(async () => {
+    calls += 1;
+    return { status: "invalid" };
+  });
+  assert.deepEqual(await checker.callerOf("bad"), { status: 401 });
+  assert.deepEqual(await checker.callerOf("bad"), { status: 401 });
+  assert.equal(calls, 1);
+});
+
+test("the checker turns away new tokens while too many checks run, and keeps no outage", async () => {
+  let release = (_value: { status: "unavailable"; reason: string }) => {};
+  const pending = new Promise<{ status: "unavailable"; reason: string }>((resolve) => {
+    release = resolve;
+  });
+  const logged = console.error;
+  console.error = () => {};
+  try {
+    const cache = new TokenCache();
+    const checker = new TokenChecker(() => pending, cache, 1);
+    const first = checker.callerOf("a");
+    assert.deepEqual(await checker.callerOf("b"), { status: 503 });
+    release({ status: "unavailable", reason: "down" });
+    assert.deepEqual(await first, { status: 503 });
+    assert.equal(cache.isRefused("a"), false);
+  } finally {
+    console.error = logged;
+  }
 });

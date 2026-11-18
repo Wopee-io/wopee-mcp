@@ -11,7 +11,7 @@ import {
 import { ArtifactType, GenerateArtifactType } from "./types.js";
 import { RequestError } from "../../utils/requestClient.js";
 import { describeRequestError } from "../../utils/requestErrors.js";
-import { NotConnectedError } from "../../utils/getConfig.js";
+import { getConfig, NotConnectedError } from "../../utils/getConfig.js";
 import { compactUserStoriesContent } from "./artifactContent.js";
 
 export function _convertToArtifactType(
@@ -92,7 +92,9 @@ export function _parseGenerateArtifactType(type: GenerateArtifactType) {
 
 /** One-line description of a failed request, e.g. "[GRAPHQL_ERROR] Something went wrong". */
 export function _describeError(error: unknown): string {
-  if (error instanceof RequestError) return describeRequestError(error);
+  if (error instanceof RequestError) {
+    return describeRequestError(error, { remote: getConfig().WOPEE_REMOTE });
+  }
   return error instanceof Error ? error.message : String(error);
 }
 
@@ -110,6 +112,7 @@ export function _parseError(error: unknown) {
   if (error instanceof RequestError) {
     return {
       content: [{ type: "text" as const, text: _describeError(error) }],
+      isError: true,
     };
   }
 
@@ -131,6 +134,7 @@ export function _parseError(error: unknown) {
         }`,
       },
     ],
+    isError: true,
   };
 }
 

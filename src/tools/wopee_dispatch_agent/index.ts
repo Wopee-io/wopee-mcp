@@ -15,6 +15,7 @@ import {
   requestClient,
 } from "../../utils/requestClient.js";
 import { withRetry } from "../../utils/withRetry.js";
+import { safeToRepeat } from "../../utils/requestErrors.js";
 
 export const wopeeDispatchAgent = {
   name: ToolName.WOPEE_DISPATCH_AGENT,
@@ -29,12 +30,14 @@ export const wopeeDispatchAgent = {
       const dispatchAgentInput = createDispatchAgentInput(input);
       const parsedInput = DispatchAgentInputSchema.parse(dispatchAgentInput);
 
-      const result = await withRetry(() =>
-        requestClient<{ dispatchAgent: ExecutedTestCase[] }>(
-          DispatchAgent,
-          { input: parsedInput },
-          { headers: dispatchSourceHeaders(getConfig().WOPEE_INSIDE_COMMANDER) },
-        ),
+      const result = await withRetry(
+        () =>
+          requestClient<{ dispatchAgent: ExecutedTestCase[] }>(
+            DispatchAgent,
+            { input: parsedInput },
+            { headers: dispatchSourceHeaders(getConfig().WOPEE_INSIDE_COMMANDER) },
+          ),
+        { retryIf: safeToRepeat },
       );
 
       if (!result?.dispatchAgent?.length)
@@ -45,6 +48,7 @@ export const wopeeDispatchAgent = {
               text: "DISPATCH FAILED — tests were NOT started.\nReason: No dispatch result returned from the API.\nSuggest the user try again or check that the suite and test cases exist.",
             },
           ],
+          isError: true,
         };
 
       return {
@@ -65,10 +69,13 @@ export const wopeeDispatchAgent = {
               type: "text" as const,
               text: formatDispatchFailure(
                 error as Error & { code?: string },
-                errorHint((error as { code?: string }).code),
+                errorHint((error as { code?: string }).code, {
+                  remote: getConfig().WOPEE_REMOTE,
+                }),
               ),
             },
           ],
+          isError: true,
         };
       }
       return _parseError(error);
