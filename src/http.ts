@@ -8,11 +8,15 @@ import { createServer as createHttpServer, type IncomingMessage, type ServerResp
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 
 import { createServer } from "./server.js";
-import { runWithRemoteContext } from "./utils/getConfig.js";
+import { callsWriteTool } from "./tools/shared/toolSafety.js";
+import { runWithRemoteContext, setRemoteOnly } from "./utils/getConfig.js";
 import {
   TokenCache,
+  TokenChecker,
   bearerToken,
   checkTokenWithApi,
+  isAllowedOrigin,
+  isReadOnlyToken,
   metadataPath,
   protectedResourceMetadata,
   readHttpConfig,
@@ -22,6 +26,7 @@ import {
 import { useProxyFromEnv } from "./utils/proxy.js";
 
 const MAX_BODY_BYTES = 1024 * 1024;
+const ALL_SCOPES = "read write";
 
 function sendJson(res: ServerResponse, status: number, body: unknown, headers: Record<string, string> = {}) {
   res.writeHead(status, { "Content-Type": "application/json", "Cache-Control": "no-store", ...headers });
@@ -62,20 +67,9 @@ export function createRequestHandler(config: HttpConfig, tokens = new TokenCache
       res,
       401,
       { error: error ?? "unauthorized", error_description: "Connect through OAuth, or send a project API key as a Bearer token." },
-      { "WWW-Authenticate": wwwAuthenticate(config, error) },
+      { "WWW-Authenticate": wwwAuthenticate(config, error, ALL_SCOPES) },
     );
-
-  async function projectOf(token: string): Promise<{ projectUuid: string } | { status: number }> {
-    const cached = tokens.get(token);
-    if (cached) return { projectUuid: cached };
-    const check = await checkTokenWithApi(config.apiUrl, token);
-    if (check.status === "ok") {
-      tokens.set(token, check.projectUuid);
-      return { projectUuid: check.projectUuid };
-    }
-    if (check.status === "unavailable") console.error(`[WOPEE]: token check failed: ${check.reason}`);
-    return { status: check.status === "invalid" ? 401 : 503 };
-  }
+  const checker = new TokenChecker((token) => checkTokenWithApi(config.apiUrl, token), tokens);
 
   return async function handle(req: IncomingMessage, res: ServerResponse) {
     const path = new URL(req.url ?? "/", "http://localhost").pathname;
@@ -88,9 +82,14 @@ export function createRequestHandler(config: HttpConfig, tokens = new TokenCache
       return sendJson(res, 405, { error: "method_not_allowed" }, { Allow: "POST" });
     }
 
+    // Browsers send this; no other site's page may talk to the server.
+    if (!isAllowedOrigin(req.headers.origin, config.resourceUrl)) {
+      return sendJson(res, 403, { error: "forbidden", error_description: "This origin is not allowed." });
+    }
+
     const token = bearerToken(req.headers.authorization);
     if (!token) return unauthorized(res);
-    const caller = await projectOf(token);
+    const caller = await checker.callerOf(token);
     if ("status" in caller) {
       return caller.status === 401
         ? unauthorized(res, "invalid_token")
@@ -104,9 +103,23 @@ export function createRequestHandler(config: HttpConfig, tokens = new TokenCache
       const status = (error as { status?: number }).status ?? 400;
       return sendJson(res, status, { error: "invalid_request", error_description: (error as Error).message });
     }
+    // One message per request keeps each tool call under the checks below.
+    if (Array.isArray(body)) {
+      return sendJson(res, 400, { error: "invalid_request", error_description: "Send one JSON-RPC message per request." });
+    }
+
+    const readOnly = isReadOnlyToken(token);
+    if (readOnly && callsWriteTool(body)) {
+      return sendJson(
+        res,
+        403,
+        { error: "insufficient_scope", error_description: "This connection is read-only." },
+        { "WWW-Authenticate": wwwAuthenticate(config, "insufficient_scope", ALL_SCOPES) },
+      );
+    }
 
     await runWithRemoteContext({ authToken: token, apiUrl: config.apiUrl, projectUuid: caller.projectUuid }, async () => {
-      const server = createServer({ remote: true });
+      const server = createServer({ remote: true, readOnly });
       const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
       res.on("close", () => {
         void transport.close();
@@ -120,6 +133,7 @@ export function createRequestHandler(config: HttpConfig, tokens = new TokenCache
 
 async function main() {
   useProxyFromEnv();
+  setRemoteOnly(true);
   const config = readHttpConfig(process.env);
   const handle = createRequestHandler(config);
   const httpServer = createHttpServer((req, res) => {
@@ -129,6 +143,9 @@ async function main() {
       else res.end();
     });
   });
+  // Time to send the request. Answers can take minutes, and this does not limit them.
+  httpServer.headersTimeout = 15_000;
+  httpServer.requestTimeout = 30_000;
   httpServer.listen(config.port, () => {
     console.error(`Wopee MCP server on http://0.0.0.0:${config.port}${new URL(config.resourceUrl).pathname} (resource ${config.resourceUrl})`);
   });

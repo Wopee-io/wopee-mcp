@@ -13,6 +13,7 @@ import {
 } from "../../utils/requestClient.js";
 import { getConfig } from "../../utils/getConfig.js";
 import { withRetry } from "../../utils/withRetry.js";
+import { safeToRepeat } from "../../utils/requestErrors.js";
 import { AnalysisSuite, ToolName } from "../shared/types.js";
 
 export const wopeeDispatchAnalysis = {
@@ -29,12 +30,14 @@ export const wopeeDispatchAnalysis = {
       const rawInput = createDispatchAnalysisInput(input);
       const parsedInput = DispatchAnalysisInputSchema.parse(rawInput);
 
-      const result = await withRetry(() =>
-        requestClient<{ dispatchAnalysis: AnalysisSuite }>(
-          DispatchAnalysis,
-          { input: parsedInput },
-          { headers: dispatchSourceHeaders(getConfig().WOPEE_INSIDE_COMMANDER) },
-        ),
+      const result = await withRetry(
+        () =>
+          requestClient<{ dispatchAnalysis: AnalysisSuite }>(
+            DispatchAnalysis,
+            { input: parsedInput },
+            { headers: dispatchSourceHeaders(getConfig().WOPEE_INSIDE_COMMANDER) },
+          ),
+        { retryIf: safeToRepeat },
       );
 
       if (!result?.dispatchAnalysis)
@@ -45,6 +48,7 @@ export const wopeeDispatchAnalysis = {
               text: "Failed to dispatch agent: no analysis suite returned",
             },
           ],
+          isError: true,
         };
 
       return {

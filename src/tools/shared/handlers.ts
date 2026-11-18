@@ -14,6 +14,7 @@ import {
 } from "./factories.js";
 import { isQueuedGeneration } from "../wopee_generate_artifact/request.js";
 import { requestClient } from "../../utils/requestClient.js";
+import { unmarkProjectData } from "../../utils/toolOutput.js";
 import {
   _compactArtifactContentForModel,
   _convertToArtifactType,
@@ -140,7 +141,7 @@ export async function updateArtifact(input: UpdateArtifactHandlerInput) {
 
     const updateArtifactInput = createUpdateArtifactInput({
       type,
-      content,
+      content: unmarkProjectData(content),
       suiteUuid,
       ...(identifier ? { identifier } : {}),
     });

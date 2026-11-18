@@ -11,6 +11,7 @@ import {
   parseDotenv,
   requireProjectUuid,
   runWithRemoteContext,
+  setRemoteOnly,
   setWorkspaceRoots,
 } from "./getConfig.ts";
 
@@ -290,4 +291,14 @@ test("a remote caller without a project is told to reconnect, not to run init", 
   const message = runWithRemoteContext(REMOTE, () => notConnectedMessage(["WOPEE_PROJECT_UUID"]));
   assert.match(message, /Reconnect the Wopee\.io server from your MCP client/);
   assert.doesNotMatch(message, /@wopee-io\/init/);
+});
+
+test("the HTTP server has no configuration outside a request", () => {
+  setRemoteOnly(true);
+  try {
+    assert.throws(() => getConfig(), /No connection for this request/);
+    assert.equal(runWithRemoteContext(REMOTE, () => getConfig().WOPEE_AUTH_TOKEN), "caller-token");
+  } finally {
+    setRemoteOnly(false);
+  }
 });

@@ -54,11 +54,37 @@ export function protectedResourceMetadata(config: HttpConfig) {
   };
 }
 
-/** The `WWW-Authenticate` of a 401: where the client finds how to get a token (MCP spec). */
-export function wwwAuthenticate(config: HttpConfig, error?: "invalid_token"): string {
+/**
+ * The `WWW-Authenticate` of a 401 or 403: where the client finds how to get a token, and which
+ * scopes to ask for (MCP spec).
+ */
+export function wwwAuthenticate(
+  config: HttpConfig,
+  error?: "invalid_token" | "insufficient_scope",
+  scope?: string,
+): string {
   const parts = [`resource_metadata="${metadataUrl(config.resourceUrl)}"`];
   if (error) parts.push(`error="${error}"`);
+  if (scope) parts.push(`scope="${scope}"`);
   return `Bearer ${parts.join(", ")}`;
+}
+
+/** No `Origin` (not a browser), or this server's own. */
+export function isAllowedOrigin(origin: string | undefined, resourceUrl: string): boolean {
+  return origin === undefined || origin === new URL(resourceUrl).origin;
+}
+
+/**
+ * Whether a token the api has accepted is limited to reading. An MCP access token says so in its
+ * claims; a project API key is opaque and has no such limit. Never use this on an unchecked token.
+ */
+export function isReadOnlyToken(token: string): boolean {
+  try {
+    const claims = JSON.parse(Buffer.from(token.split(".")[1], "base64url").toString("utf8"));
+    return claims?.kind === "mcp" && claims.scope !== "write";
+  } catch {
+    return false;
+  }
 }
 
 /** The token of an `Authorization: Bearer <token>` header, else null. */
@@ -117,46 +143,113 @@ export async function checkTokenWithApi(
 
 /**
  * Good answers, kept a short while so a client's burst of messages (initialize, tools/list, the
- * call) costs one check. Keyed by the token's SHA-256, never the token. A refusal is never kept:
- * the next request asks again. The api still checks the connection on every tool call, so a
- * revoked token loses its tools at once; it only stops getting 401 here up to `ttlMs` later.
+ * call) costs one check. Keyed by the token's SHA-256, never the token. A refusal is kept for a few
+ * seconds, so repeating a bad token does not reach the api each time. The api still checks the
+ * connection on every tool call, so a revoked token loses its tools at once; it only stops getting
+ * 401 here up to `ttlMs` later.
  */
 export class TokenCache {
-  private readonly entries = new Map<string, { projectUuid: string; until: number }>();
+  private readonly entries = new Map<string, { projectUuid: string | null; until: number }>();
   private readonly ttlMs: number;
   private readonly maxEntries: number;
+  private readonly refusedTtlMs: number;
 
   // No parameter properties: `node --test` strips types and cannot run them.
-  constructor(ttlMs = 30_000, maxEntries = 1000) {
+  constructor(ttlMs = 30_000, maxEntries = 1000, refusedTtlMs = 5_000) {
     this.ttlMs = ttlMs;
     this.maxEntries = maxEntries;
+    this.refusedTtlMs = refusedTtlMs;
   }
 
   private key(token: string) {
     return createHash("sha256").update(token).digest("hex");
   }
 
-  get(token: string, now = Date.now()): string | null {
+  private live(token: string, now: number) {
     const key = this.key(token);
     const entry = this.entries.get(key);
-    if (!entry) return null;
-    if (entry.until <= now) {
+    if (entry && entry.until <= now) {
       this.entries.delete(key);
-      return null;
+      return undefined;
     }
-    return entry.projectUuid;
+    return entry;
   }
 
-  set(token: string, projectUuid: string, now = Date.now()): void {
+  private store(token: string, projectUuid: string | null, until: number) {
+    const key = this.key(token);
+    this.entries.delete(key);
     if (this.entries.size >= this.maxEntries) {
       // The oldest entry goes first (a Map keeps insertion order).
       const oldest = this.entries.keys().next().value;
       if (oldest !== undefined) this.entries.delete(oldest);
     }
-    this.entries.set(this.key(token), { projectUuid, until: now + this.ttlMs });
+    this.entries.set(key, { projectUuid, until });
+  }
+
+  get(token: string, now = Date.now()): string | null {
+    return this.live(token, now)?.projectUuid ?? null;
+  }
+
+  isRefused(token: string, now = Date.now()): boolean {
+    return this.live(token, now)?.projectUuid === null;
+  }
+
+  set(token: string, projectUuid: string, now = Date.now()): void {
+    this.store(token, projectUuid, now + this.ttlMs);
+  }
+
+  refuse(token: string, now = Date.now()): void {
+    this.store(token, null, now + this.refusedTtlMs);
   }
 
   get size() {
     return this.entries.size;
+  }
+}
+
+export type Caller = { projectUuid: string } | { status: 401 | 503 };
+
+/**
+ * Who a token belongs to, through the cache. Simultaneous requests with one token share one api
+ * check, and at most `maxChecks` run at once: beyond that the caller is asked to come back.
+ */
+export class TokenChecker {
+  private readonly running = new Map<string, Promise<Caller>>();
+  private readonly check: (token: string) => Promise<TokenCheck>;
+  private readonly cache: TokenCache;
+  private readonly maxChecks: number;
+
+  constructor(check: (token: string) => Promise<TokenCheck>, cache = new TokenCache(), maxChecks = 20) {
+    this.check = check;
+    this.cache = cache;
+    this.maxChecks = maxChecks;
+  }
+
+  private async ask(token: string): Promise<Caller> {
+    const answer = await this.check(token);
+    if (answer.status === "ok") {
+      this.cache.set(token, answer.projectUuid);
+      return { projectUuid: answer.projectUuid };
+    }
+    if (answer.status === "invalid") {
+      this.cache.refuse(token);
+      return { status: 401 };
+    }
+    console.error(`[WOPEE]: token check failed: ${answer.reason}`);
+    return { status: 503 };
+  }
+
+  callerOf(token: string): Promise<Caller> {
+    const projectUuid = this.cache.get(token);
+    if (projectUuid) return Promise.resolve({ projectUuid });
+    if (this.cache.isRefused(token)) return Promise.resolve({ status: 401 });
+
+    const running = this.running.get(token);
+    if (running) return running;
+    if (this.running.size >= this.maxChecks) return Promise.resolve({ status: 503 });
+
+    const asked = this.ask(token).finally(() => this.running.delete(token));
+    this.running.set(token, asked);
+    return asked;
   }
 }

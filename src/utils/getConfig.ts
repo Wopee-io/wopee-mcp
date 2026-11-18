@@ -34,6 +34,15 @@ export interface RemoteContext {
 }
 
 const remote = new AsyncLocalStorage<RemoteContext>();
+let remoteOnly = false;
+
+/**
+ * For the HTTP server: from now on a config read outside a request is an error, so a lost context
+ * can never fall back to this process's own credentials.
+ */
+export function setRemoteOnly(value: boolean): void {
+  remoteOnly = value;
+}
 
 /** Runs `fn` (and everything it awaits) as one remote request. */
 export function runWithRemoteContext<T>(context: RemoteContext, fn: () => T): T {
@@ -155,6 +164,7 @@ export const getConfig = () => {
       WOPEE_INSIDE_COMMANDER: false,
     };
   }
+  if (remoteOnly) throw new Error("No connection for this request.");
 
   const layers = envFileLayers();
   const lookup = (key: FileKey): string | null =>
