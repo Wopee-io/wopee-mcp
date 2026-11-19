@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 import { TOOLS } from "../build/tools/index.js";
 import { PROMPTS } from "../build/prompts/index.js";
+import { COMMANDER_ONLY_TOOLS } from "../build/tools/shared/toolAvailability.js";
 
 const SKILL = fileURLToPath(new URL("../skills/wopee/SKILL.md", import.meta.url));
 const START = "<!-- generated:tools start (npm run skill) -->";
@@ -25,14 +26,18 @@ const firstSentence = (text) => {
 const access = (name) => (/^wopee_(fetch_|read_|search_|setup_check$)/.test(name) ? "read" : "write");
 const cell = (text) => text.replace(/\|/g, "\\|").replace(/\s+/g, " ").trim();
 
+// The tools an agent with this skill is offered: it connects with a project API key, never as
+// Commander's Assistant.
+const tools = TOOLS.filter(({ name }) => !COMMANDER_ONLY_TOOLS.has(name));
+
 const generated = [
   START,
   "",
-  `### Tools (${TOOLS.length})`,
+  `### Tools (${tools.length})`,
   "",
   "| Tool | Access | What it does |",
   "| --- | --- | --- |",
-  ...TOOLS.map(
+  ...tools.map(
     ({ name, config }) =>
       `| \`${name}\` | ${access(name)} | ${cell(firstSentence(config.description))} |`,
   ),
@@ -64,8 +69,8 @@ if (process.argv.includes("--check")) {
     );
     process.exit(1);
   }
-  console.log(`skills/wopee/SKILL.md is up to date (${TOOLS.length} tools, ${PROMPTS.length} prompts)`);
+  console.log(`skills/wopee/SKILL.md is up to date (${tools.length} tools, ${PROMPTS.length} prompts)`);
 } else {
   writeFileSync(SKILL, next);
-  console.log(`skills/wopee/SKILL.md written (${TOOLS.length} tools, ${PROMPTS.length} prompts)`);
+  console.log(`skills/wopee/SKILL.md written (${tools.length} tools, ${PROMPTS.length} prompts)`);
 }
