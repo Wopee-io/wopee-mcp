@@ -1,3 +1,16 @@
+## [1.39.2](https://github.com/Wopee-io/wopee-mcp/compare/v1.39.1...v1.39.2) (2026-11-19)
+
+
+### Bug Fixes
+
+  **tools:**describe the analysis' own account in wopee_fetch_variables([eeeb3a9](https://github.com/Wopee-io/wopee-mcp/commit/eeeb3a9f29a47079c27602696902d6b76fae11c8))
+At level ANALYSIS the api now also returns the analysis' own
+TESTING_USERNAME, TESTING_PASSWORD, WOPEE_DEVICE and WOPEE_BROWSER from
+its settings, each overriding the project variable of the same key.
+Say so in the tool description, and that secret values read as "***".
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 ## [1.39.1](https://github.com/Wopee-io/wopee-mcp/compare/v1.39.0...v1.39.1) (2026-11-18)
 
 
