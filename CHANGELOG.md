@@ -1,3 +1,21 @@
+## [1.39.4](https://github.com/Wopee-io/wopee-mcp/compare/v1.39.3...v1.39.4) (2026-11-19)
+
+
+### Bug Fixes
+
+  **server:**offer the chat tools over stdio only inside Commander([05a119c](https://github.com/Wopee-io/wopee-mcp/commit/05a119c15c66d35d763d55dc98a03ea0b8e7dff3))
+The api serves the project chat only to a signed-in Commander user, so
+with a project API key wopee_send_chat_message and
+wopee_read_chat_history always failed with Not Authorised, and the
+error sent the user to check a key that was fine. The stdio server now
+offers them only when WOPEE_AUTH_TOKEN is set (Commander's Assistant);
+the remote server keeps leaving them out.
+
+offersTool decides what each connection gets, and the skill's tool
+table uses the same list, so it no longer names the chat tools.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 ## [1.39.3](https://github.com/Wopee-io/wopee-mcp/compare/v1.39.2...v1.39.3) (2026-11-19)
 
 
