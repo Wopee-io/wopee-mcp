@@ -12,8 +12,12 @@ import {
   createUpdateArtifactInput,
   createGenerateAIDataInput,
 } from "./factories.js";
-import { isQueuedGeneration } from "../wopee_generate_artifact/request.js";
-import { requestClient } from "../../utils/requestClient.js";
+import {
+  GENERATION_TIMEOUT_MS,
+  generationTimeoutMessage,
+  isQueuedGeneration,
+} from "../wopee_generate_artifact/request.js";
+import { RequestError, requestClient } from "../../utils/requestClient.js";
 import { unmarkProjectData } from "../../utils/toolOutput.js";
 import {
   _compactArtifactContentForModel,
@@ -80,6 +84,7 @@ export async function generateAIDataFile(
     type: "text";
     text: string;
   }[];
+  isError?: boolean;
 }> {
   const { query, dataKey, description } = _parseGenerateArtifactType(
     input.type,
@@ -102,7 +107,7 @@ export async function generateAIDataFile(
       {
         input: parsedInput,
       },
-      { timeoutMs: 5 * 60 * 1000 },
+      { timeoutMs: GENERATION_TIMEOUT_MS },
     );
     if (!generationResult?.[dataKey])
       return {
@@ -131,6 +136,13 @@ export async function generateAIDataFile(
       type: convertedType,
     });
   } catch (error) {
+    if (error instanceof RequestError && error.timedOut)
+      return {
+        content: [
+          { type: "text" as const, text: generationTimeoutMessage(input) },
+        ],
+        isError: true,
+      };
     return _parseError(error);
   }
 }

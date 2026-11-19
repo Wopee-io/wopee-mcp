@@ -2,7 +2,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { generationOptions, isQueuedGeneration } from "./request.ts";
+import {
+  generationOptions,
+  generationTimeoutMessage,
+  isQueuedGeneration,
+} from "./request.ts";
 import type { GenerateAIDataHandlerInput } from "../shared/schemas.ts";
 
 // What the tool's schema hands the handler: `mode` already defaulted to UPDATE.
@@ -75,4 +79,25 @@ test("async is sent only where the api can queue the run", () => {
   assert.equal(isQueuedGeneration(steps), false);
   assert.equal("async" in generationOptions(steps), false);
   assert.equal("async" in generationOptions(request()), false);
+});
+
+// The api does not stop a generation when the call gives up, so a second call would start another
+// one on the same suite: the timeout says to read the result later, never to call again.
+test("a timed-out generation says it is still running and how to read it, not to retry", () => {
+  const text = generationTimeoutMessage(request({ type: "TEST_CASE_STEPS" }));
+
+  assert.match(text, /^\[TIMEOUT\] The TEST_CASE_STEPS generation did not finish within 5 minutes, but it is still running/);
+  assert.match(text, /Do not call wopee_generate_artifact again/);
+  assert.match(text, /Read the result with wopee_fetch_artifact/);
+  assert.doesNotMatch(text, /retryable|async: true/);
+});
+
+test("a timed-out generation the api can queue points to async: true", () => {
+  for (const type of ["TEST_CASES", "USER_STORIES_WITH_TEST_CASES"]) {
+    assert.match(
+      generationTimeoutMessage(request({ type })),
+      new RegExp(`pass async: true to get an answer at once for a long ${type} generation`),
+      type,
+    );
+  }
 });

@@ -2,7 +2,12 @@ import { getConfig, NotConnectedError } from "./getConfig.js";
 import { requestHeaders } from "./requestHeaders.js";
 import { clientLabel } from "./clientInfo.js";
 import { packageVersion } from "./packageVersion.js";
-import { classifyGraphQLErrors, classifyHttpError, RequestError } from "./requestErrors.js";
+import {
+  classifyGraphQLErrors,
+  classifyHttpError,
+  classifyNetworkError,
+  isTimeout,
+} from "./requestErrors.js";
 import type { GraphQLErrorLike } from "./requestErrors.js";
 import { requestCancelled, requestSignal } from "./requestSignal.js";
 
@@ -49,11 +54,7 @@ export const requestClient = async <T>(
       signal: requestSignal(options?.timeoutMs ?? DEFAULT_TIMEOUT_MS),
     });
   } catch (error) {
-    throw new RequestError(
-      `Network error: ${error instanceof Error ? error.message : String(error)}`,
-      "NETWORK_ERROR",
-      { retryable: !requestCancelled() },
-    );
+    throw classifyNetworkError(error, { cancelled: requestCancelled() });
   }
 
   if (!response.ok) {
@@ -61,10 +62,14 @@ export const requestClient = async <T>(
     throw classifyHttpError(response.status, errorText, response.statusText);
   }
 
-  const result = (await response.json()) as {
-    data?: any;
-    errors?: GraphQLErrorLike[];
-  };
+  let result: { data?: any; errors?: GraphQLErrorLike[] };
+  try {
+    result = await response.json();
+  } catch (error) {
+    // The timeout also cuts off a body still arriving.
+    if (isTimeout(error)) throw classifyNetworkError(error, { cancelled: requestCancelled() });
+    throw error;
+  }
 
   if (result.errors && result.errors.length > 0) {
     throw classifyGraphQLErrors(result.errors);
