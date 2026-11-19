@@ -20,7 +20,7 @@ export const wopeeFetchVariables = {
   config: {
     title: "Fetch run-time variables",
     description:
-      "Read the run-time variables (additionalVariables) that drive analysis/agent runs, at either level. level: PROJECT returns the project-level variables (the connected project); level: ANALYSIS returns a specific analysis suite's variables and requires suiteUuid. Read-only. Returns a JSON string array of { key, value, sourceType } entries, or [] when none are set. Use wopee_fetch_analysis_suites to discover suite UUIDs.",
+      "Read the run-time variables (additionalVariables) that drive analysis/agent runs, at either level. level: PROJECT returns the project-level variables (the connected project); level: ANALYSIS returns a specific analysis suite's variables and requires suiteUuid, including the analysis' own TESTING_USERNAME, TESTING_PASSWORD, WOPEE_DEVICE and WOPEE_BROWSER when its settings set them; each overrides the project variable of the same key for that analysis. Read-only. Returns a JSON string array of { key, value, sourceType } entries, or [] when none are set; secret values (e.g. passwords) read as \"***\". Use wopee_fetch_analysis_suites to discover suite UUIDs.",
     inputSchema: WopeeFetchVariablesInputSchema.shape,
   },
   handler: async (input: WopeeFetchVariablesInput) => {
