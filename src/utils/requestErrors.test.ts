@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 
 import {
   classifyGraphQLErrors,
+  classifyNetworkError,
   classifyHttpError,
   RequestError,
   describeRequestError,
@@ -100,4 +101,27 @@ test("only a rate limit is safe to repeat for a request that must not run twice"
   assert.equal(safeToRepeat(classifyHttpError(429, "slow down")), true);
   assert.equal(safeToRepeat(classifyHttpError(503, "bad gateway")), false);
   assert.equal(safeToRepeat(new RequestError("reset", "NETWORK_ERROR", { retryable: true })), false);
+});
+
+test("a request out of time is a timed-out network error; a dropped one is not", () => {
+  const timeout = classifyNetworkError(
+    new DOMException("The operation was aborted due to timeout", "TimeoutError"),
+    { cancelled: false },
+  );
+  assert.equal(timeout.code, "NETWORK_ERROR");
+  assert.equal(timeout.timedOut, true);
+  assert.equal(timeout.message, "Network error: The operation was aborted due to timeout");
+
+  const dropped = classifyNetworkError(new TypeError("fetch failed"), { cancelled: false });
+  assert.equal(dropped.timedOut, false);
+  assert.equal(dropped.retryable, true);
+});
+
+test("a request the client cancelled is not retryable", () => {
+  const cancelled = classifyNetworkError(
+    new DOMException("This operation was aborted", "AbortError"),
+    { cancelled: true },
+  );
+  assert.equal(cancelled.retryable, false);
+  assert.equal(cancelled.timedOut, false);
 });

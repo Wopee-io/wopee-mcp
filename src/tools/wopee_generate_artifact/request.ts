@@ -13,6 +13,9 @@ const QUEUEABLE_TYPES = [
   "USER_STORIES_WITH_TEST_CASES" as GenerateArtifactType,
 ];
 
+/** How long a call waits for the api to finish the generation. */
+export const GENERATION_TIMEOUT_MS = 5 * 60 * 1000;
+
 /** Whether this request is answered as soon as the api has queued it. */
 export const isQueuedGeneration = (input: GenerateAIDataHandlerInput) =>
   input.async === true && QUEUEABLE_TYPES.includes(input.type);
@@ -30,3 +33,17 @@ export const generationOptions = (input: GenerateAIDataHandlerInput) => ({
   ...(input.type === TEST_CASES ? { mode: input.mode } : {}),
   ...(isQueuedGeneration(input) ? { async: true } : {}),
 });
+
+/**
+ * What a call that ran out of time tells the agent. The api does not stop a generation when the
+ * client gives up, so calling again would start a second one on the same suite.
+ */
+export const generationTimeoutMessage = (input: GenerateAIDataHandlerInput) =>
+  [
+    `[TIMEOUT] The ${input.type} generation did not finish within ${GENERATION_TIMEOUT_MS / 60_000} minutes, but it is still running on the Wopee.io side.`,
+    "Do not call wopee_generate_artifact again for it: that starts a second generation.",
+    "Read the result with wopee_fetch_artifact in a few minutes.",
+    ...(QUEUEABLE_TYPES.includes(input.type)
+      ? [`Next time, pass async: true to get an answer at once for a long ${input.type} generation.`]
+      : []),
+  ].join(" ");

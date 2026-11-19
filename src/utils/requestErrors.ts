@@ -16,18 +16,37 @@ export class RequestError extends Error {
   code: RequestErrorCode;
   status: number | null;
   retryable: boolean;
+  /** The request ran out of time; the api may still be working on it. */
+  timedOut: boolean;
 
   constructor(
     message: string,
     code: RequestErrorCode,
-    options?: { status?: number; retryable?: boolean },
+    options?: { status?: number; retryable?: boolean; timedOut?: boolean },
   ) {
     super(message.slice(0, MAX_ERROR_CHARS));
     this.name = "RequestError";
     this.code = code;
     this.status = options?.status ?? null;
     this.retryable = options?.retryable ?? false;
+    this.timedOut = options?.timedOut ?? false;
   }
+}
+
+/** What fetch rejects with, and a body read throws, once AbortSignal.timeout fires. */
+export const isTimeout = (error: unknown): boolean =>
+  error instanceof Error && error.name === "TimeoutError";
+
+/** A request that got no answer: dropped, cancelled by the client, or out of time. */
+export function classifyNetworkError(
+  error: unknown,
+  { cancelled }: { cancelled: boolean },
+): RequestError {
+  return new RequestError(
+    `Network error: ${error instanceof Error ? error.message : String(error)}`,
+    "NETWORK_ERROR",
+    { retryable: !cancelled, timedOut: isTimeout(error) },
+  );
 }
 
 export type GraphQLErrorLike = {
