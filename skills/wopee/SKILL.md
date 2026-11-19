@@ -63,7 +63,6 @@ After a `FAILED` verdict, offer to file it. On a yes, call `wopee_create_github_
 - `wopee_generate_artifact` with `USER_STORIES_WITH_TEST_CASES`, with `TEST_CASE_STEPS`, or with `TEST_CASES` in `mode: CREATE` replaces existing tests and their run history. Use them on an existing suite only when the user asks for exactly that, and scope them with `selectedUserStories` / `selectedTestCases`. `TEST_CASES` in the default `UPDATE` mode keeps existing tests.
 - `wopee_update_artifact` replaces the whole file; fetch it first and send the full new content.
 - To point the tests at another environment, set a variable such as `BASE_URL` with `wopee_update_variables` (project or analysis level; merges, never deletes).
-- `wopee_send_chat_message` and `wopee_read_chat_history` work only inside the Commander Assistant, not with a project API key.
 
 ## When a call fails
 
@@ -83,7 +82,7 @@ The table is generated from the server's tool and prompt definitions.
 
 <!-- generated:tools start (npm run skill) -->
 
-### Tools (17)
+### Tools (15)
 
 | Tool | Access | What it does |
 | --- | --- | --- |
@@ -100,8 +99,6 @@ The table is generated from the server's tool and prompt definitions.
 | `wopee_fetch_artifact` | read | Retrieve a specific test artifact from a suite. |
 | `wopee_update_artifact` | write | Create or overwrite a test artifact in a suite with caller-supplied content. |
 | `wopee_generate_artifact` | write | Generate AI-powered test artifacts for a suite using the Wopee.io AI engine. |
-| `wopee_send_chat_message` | write | Send a message to the current project's chat room. |
-| `wopee_read_chat_history` | read | Read recent messages from the current project's chat room. |
 | `wopee_create_github_issue` | write | Create a new GitHub issue in the project's connected repository. |
 | `wopee_search_docs` | read | Search the Wopee.io documentation (docs.wopee.io, from its llms-full.txt) and return the best matching sections with their page URL. |
 
