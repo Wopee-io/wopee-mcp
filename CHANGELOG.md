@@ -1,3 +1,22 @@
+## [1.39.3](https://github.com/Wopee-io/wopee-mcp/compare/v1.39.2...v1.39.3) (2026-11-19)
+
+
+### Bug Fixes
+
+  **tools:**say wopee_generate_artifact waits for the artifact([bfe94ec](https://github.com/Wopee-io/wopee-mcp/commit/bfe94ec82a30e4fc50dea960ba32d0dbd6f470a3))
+The description said the call only starts the generation, so agents
+polled wopee_fetch_artifact for what the call had already returned. It
+now says a call waits up to 5 minutes and returns the artifact, that
+async: true queues TEST_CASES and USER_STORIES_WITH_TEST_CASES only,
+and what to do after a timeout.
+
+A timed-out generation was reported as a retryable network error, but
+the api keeps generating after the call gives up, so a retry started a
+second generation on the same suite. It now returns a [TIMEOUT] error
+that says to read the result later with wopee_fetch_artifact.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 ## [1.39.2](https://github.com/Wopee-io/wopee-mcp/compare/v1.39.1...v1.39.2) (2026-11-19)
 
 
