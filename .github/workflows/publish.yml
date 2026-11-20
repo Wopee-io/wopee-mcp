@@ -9,6 +9,8 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
 
     steps:
       - name: Checkout
@@ -33,3 +35,110 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish
+
+      # Only reached when npm accepted the version, and npm never accepts one twice,
+      # so the image job below runs once per release.
+      - name: Read the published version
+        id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+  # The container image of the remote MCP server (wopee-mcp-http), built ONCE from the
+  # package that was just published and tagged with its version. infra pins that tag
+  # (MCP_VERSION) and every environment pulls these exact bytes. A version tag is written
+  # once: if it already exists the job fails instead of overwriting it. sha-<short> is the
+  # forensic tag. No latest, no moving tags.
+  #
+  # ghcr.io/autonomous-testing is another organization than this repository's, so the
+  # push authenticates with GHCR_TOKEN (classic PAT, write:packages, from a member of
+  # autonomous-testing; its login in the GHCR_USERNAME variable). Without that secret it
+  # falls back to GITHUB_TOKEN, which works only if the package grants this repository
+  # Write under Manage Actions access. Actions are pinned by commit because this job
+  # holds a registry credential.
+  image:
+    needs: [publish]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: wopee-mcp-image
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE: ghcr.io/autonomous-testing/wopee-mcp
+      VERSION: ${{ needs.publish.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Check the version
+        run: |
+          set -euo pipefail
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::version '$VERSION' is not X.Y.Z"; exit 1; }
+          echo "SHA_TAG=sha-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_TOKEN && vars.GHCR_USERNAME || github.actor }}
+          password: ${{ secrets.GHCR_TOKEN || secrets.GITHUB_TOKEN }}
+
+      # Fails closed: only an explicit "not found" counts as free. Any other answer
+      # (denied, network) stops the job rather than risk pushing over a tag.
+      - name: Refuse to overwrite an existing version tag
+        run: |
+          set -euo pipefail
+          ref="$IMAGE:$VERSION"
+          if out="$(docker buildx imagetools inspect "$ref" 2>&1)"; then
+            echo "::error::$ref already exists; a version tag is written once. Release a new version instead."
+            exit 1
+          fi
+          case "$out" in
+            *": not found"*) echo "$ref does not exist yet" ;;
+            *) echo "::error::cannot tell whether $ref exists: $out"; exit 1 ;;
+          esac
+
+      - name: Wait for the npm version to be visible
+        run: |
+          for i in $(seq 1 30); do
+            if npm view "wopee-mcp@$VERSION" version >/dev/null 2>&1; then echo "wopee-mcp@$VERSION is on npm"; exit 0; fi
+            echo "wopee-mcp@$VERSION not on npm yet ($i/30)"; sleep 20
+          done
+          echo "::error::wopee-mcp@$VERSION still not visible on npm after 10 minutes"; exit 1
+
+      - name: Build
+        run: |
+          set -euo pipefail
+          docker buildx build --load --pull --platform linux/amd64 \
+            --build-arg "MCP_PACKAGE=wopee-mcp@$VERSION" \
+            --label "org.opencontainers.image.title=wopee mcp" \
+            --label "org.opencontainers.image.description=Remote Wopee.io MCP server (wopee-mcp-http $VERSION)" \
+            --label "org.opencontainers.image.version=$VERSION" \
+            --label "org.opencontainers.image.revision=$GITHUB_SHA" \
+            --label "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --label "org.opencontainers.image.licenses=MIT" \
+            --tag "$IMAGE:$VERSION" --tag "$IMAGE:$SHA_TAG" \
+            container
+
+      - name: Smoke test
+        run: bash scripts/smoke-image.sh "$IMAGE:$VERSION"
+
+      - name: Push
+        run: |
+          set -euo pipefail
+          docker push "$IMAGE:$VERSION"
+          docker push "$IMAGE:$SHA_TAG"
+          digest="$(docker buildx imagetools inspect --format '{{json .Manifest.Digest}}' "$IMAGE:$VERSION" | tr -d '"')"
+          {
+            echo "### MCP image"
+            echo
+            echo '```'
+            echo "$IMAGE:$VERSION"
+            echo "$IMAGE:$SHA_TAG"
+            echo "digest $digest"
+            echo '```'
+            echo
+            echo "Deploy: set \`MCP_VERSION=$VERSION\` in infra \`environment/default/versions.env\`."
+          } >> "$GITHUB_STEP_SUMMARY"
