@@ -22,12 +22,12 @@
     "url": "https://github.com/Wopee-io/wopee-mcp",
     "source": "github"
   },
-  "version": "1.39.4",
+  "version": "1.40.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "wopee-mcp",
-      "version": "1.39.4",
+      "version": "1.40.0",
       "transport": {
         "type": "stdio"
       },

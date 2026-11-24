@@ -1,3 +1,11 @@
+# [1.40.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.39.4...v1.40.0) (2026-11-24)
+
+
+### Features
+
+  **registry:**list the remote server next to the npm package([9c77be4](https://github.com/Wopee-io/wopee-mcp/commit/9c77be4d902a30cd48e7d62b43f9761abc1b2278))
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 ## [1.39.4](https://github.com/Wopee-io/wopee-mcp/compare/v1.39.3...v1.39.4) (2026-11-19)
 
 

@@ -5,7 +5,7 @@
     "wopee-mcp": "./build/index.js",
     "wopee-mcp-http": "./build/http.js"
   },
-  "version": "1.39.4",
+  "version": "1.40.0",
   "mcpName": "io.github.Wopee-io/wopee-mcp",
   "description": "Wopee.io MCP server: dispatch analyses and test runs, fetch artifacts and results, and chat with the Wopee.io testing assistant from your AI client.",
   "main": "./build/index.js",
