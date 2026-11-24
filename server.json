@@ -55,5 +55,11 @@
         }
       ]
     }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.wopee.io/mcp"
+    }
   ]
 }

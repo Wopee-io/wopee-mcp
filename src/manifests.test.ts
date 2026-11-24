@@ -25,3 +25,10 @@ test("the registry entry requires the api key and the project UUID", () => {
   assert.equal(env.WOPEE_PROJECT_UUID, true);
   assert.equal(env.WOPEE_API_URL, false);
 });
+
+test("the registry entry lists the remote server next to the npm package", () => {
+  assert.deepEqual(server.remotes, [
+    { type: "streamable-http", url: "https://mcp.wopee.io/mcp" },
+  ]);
+  assert.equal(server.packages[0].identifier, "wopee-mcp");
+});
