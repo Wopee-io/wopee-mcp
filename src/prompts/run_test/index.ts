@@ -24,7 +24,7 @@ Step 2 — Find a matching test case.
 For suites where generatedAnalysisDataState.testCases.isGenerated === true, call 'wopee_fetch_artifact' with type 'USER_STORIES' and scan for a test case that semantically matches the user's request. Match on intent ("add to cart" ≈ "add item to shopping cart"), not literal string equality.
 
 Step 3 — Match found → confirm and dispatch.
-Reply with: suite name, test case identifier (e.g. US004:TC006), and a one-line description. End with "Run this test? (yes/no)". Wait for explicit user confirmation before proceeding. On confirmation, call 'wopee_dispatch_agent' with suiteUuid, analysisIdentifier, and the matched testCases (array of { userStoryId, testCaseId }). After dispatch completes, call 'wopee_fetch_executed_test_cases' and summarize pass/fail results plus any failure findings.
+Reply with: suite name, test case identifier (e.g. US004:TC006), and a one-line description. End with "Run this test? (yes/no)". Wait for explicit user confirmation before proceeding. On confirmation, call 'wopee_dispatch_agent' with suiteUuid, analysisIdentifier, and the matched testCases (array of { userStoryId, testCaseId }; add stepsGenerationRequested: false when the user wants a test case without steps to stay that way). After dispatch completes, call 'wopee_fetch_executed_test_cases' and summarize pass/fail results plus any failure findings.
 
 Step 4 — No match found → offer concrete options.
 If suites exist but no test case matches, reply with exactly three options referencing the existing suites by name:
