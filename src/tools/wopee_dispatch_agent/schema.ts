@@ -11,6 +11,12 @@ const SelectedTestCasesSchema = z.object({
     .string()
     .min(1, "User story ID is required")
     .describe("ID of the user story that the test case belongs to (ex. US001)"),
+  stepsGenerationRequested: z
+    .boolean()
+    .optional()
+    .describe(
+      "Whether a PASSED run of a step-less test case saves the steps the agent took (default: true). Set false to keep the test case intent-only. A test case that already has steps is never changed.",
+    ),
 });
 
 export const WopeeDispatchAgentInputSchema = z.object({
