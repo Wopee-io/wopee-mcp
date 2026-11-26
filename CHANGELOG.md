@@ -1,3 +1,17 @@
+# [1.41.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.40.0...v1.41.0) (2026-11-26)
+
+
+### Features
+
+  **tools:**let wopee_dispatch_agent keep a step-less test case intent-only([58bf074](https://github.com/Wopee-io/wopee-mcp/commit/58bf07468dee89a97e44c580c7048397de57fe05))
+A test case without steps that passes through wopee_dispatch_agent always
+saved the steps of its run, because the tool had no way to say otherwise.
+Each test case now takes an optional stepsGenerationRequested. Only an
+explicit false is sent to the api: true would make it re-record the steps
+of a test case that already has them.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 # [1.40.0](https://github.com/Wopee-io/wopee-mcp/compare/v1.39.4...v1.40.0) (2026-11-24)
 
 
